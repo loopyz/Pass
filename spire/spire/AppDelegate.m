@@ -21,7 +21,8 @@
     [Parse setApplicationId:@"0tIsLeaAK4LvDqxYfrVc9Qzs7l3kyIqlmEYqsnRw"
                   clientKey:@"OxsqVethSVtjArsp2OPWN85RnAsLXQxKS7jbdwJv"];
     [PFFacebookUtils initializeFacebook];
-    
+    // tmp logout
+    [PFUser logOut];
     //login
     LoginViewController *loginViewController = [[LoginViewController alloc] init];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:loginViewController];

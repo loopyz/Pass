@@ -1,6 +1,8 @@
 # Xcode
 #
 build/
+project.xcworkspace/
+xcuserdata/
 *.xcuserstate
 !default.xcuserstate
 *.pbxproj

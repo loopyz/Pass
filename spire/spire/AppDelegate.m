@@ -15,31 +15,25 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-  // Override point for customization after application launch.
-  // adding Parse
-  [Parse setApplicationId:@"0tIsLeaAK4LvDqxYfrVc9Qzs7l3kyIqlmEYqsnRw"
-                clientKey:@"OxsqVethSVtjArsp2OPWN85RnAsLXQxKS7jbdwJv"];
-  
-  
-  [PFFacebookUtils initializeFacebook];
-  [PFUser logOut];
-  
-  // Create a LoginUIViewController instance where we will put the login button
-  LoginViewController *loginViewController = [[LoginViewController alloc] init];
-  
-  // Setting up UINavigationController
-  UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:loginViewController];
-  self.navigationController = navigationController;
-  // [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:149/255.0f green:25/255.0f blue:48/255.0f alpha:1.0f]];
-  
-  
-  // Updating self.window
-  self.window.rootViewController = navigationController;
-  self.window.backgroundColor = [UIColor colorWithRed:0.953 green:0.949 blue:0.949 alpha:1.0];
-  
-  [self.window makeKeyAndVisible];
-  return YES;
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    // Override point for customization after application launch.
+    
+    // parse
+    [Parse setApplicationId:@"0tIsLeaAK4LvDqxYfrVc9Qzs7l3kyIqlmEYqsnRw"
+                  clientKey:@"OxsqVethSVtjArsp2OPWN85RnAsLXQxKS7jbdwJv"];
+    [PFFacebookUtils initializeFacebook];
+    // tmp logout
+    [PFUser logOut];
+    //login
+    LoginViewController *loginViewController = [[LoginViewController alloc] init];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:loginViewController];
+    self.navigationController = navigationController;
+    
+    // window
+    self.window.rootViewController = navigationController;
+    self.window.backgroundColor = [UIColor whiteColor];
+    [self.window makeKeyAndVisible];
+    return YES;
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation

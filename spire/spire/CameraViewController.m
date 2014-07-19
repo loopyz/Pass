@@ -6,6 +6,7 @@
 //
 
 #import "CameraViewController.h"
+#import "PetPlacementViewController.h"
 
 @interface CameraViewController ()
 
@@ -66,8 +67,15 @@
         UIGraphicsEndImageContext();
     }
     NSLog(@"%f, %f", image.size.width, image.size.height);
+    // DONE WITH IMAGE
+    
+    PetPlacementViewController *pvc = [[PetPlacementViewController alloc] initWithImage:image];
+    [self.navigationController pushViewController:pvc animated:YES];
+
+    
+    //
     // Upload image
-    NSData *imageData = UIImageJPEGRepresentation(image, 0.05f);
+    //NSData *imageData = UIImageJPEGRepresentation(image, 0.05f);
     //[self uploadImage:imageData];
     //[picker release];
 }

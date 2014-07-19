@@ -119,10 +119,10 @@
     nvc.tabBarItem.image = [UIImage imageNamed:@"hometab.png"];
     
     FindPetViewController *evc = [[FindPetViewController alloc] initWithNibName:nil bundle:nil];
-    evc.tabBarItem.image = [UIImage imageNamed:@"search.png"];
+    evc.tabBarItem.image = [UIImage imageNamed:@"searchtab.png"];
     
     CameraViewController *nfvc = [[CameraViewController alloc] initWithNibName:nil bundle:nil];
-    nfvc.tabBarItem.image = [UIImage imageNamed:@"pet.png"];
+    nfvc.tabBarItem.image = [UIImage imageNamed:@"pettab.png"];
     
     FriendsFeedViewController *ffvc = [[FriendsFeedViewController alloc] initWithNibName:nil bundle:nil];
     ffvc.tabBarItem.image = [UIImage imageNamed:@"newstab.png"];

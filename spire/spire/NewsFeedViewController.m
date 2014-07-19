@@ -1,13 +1,15 @@
 //
 //  NewsFeedViewController.m
-//  spire
+//  clip
 //
-//  Created by Lucy Guo on 7/19/14.
+//  Created by Lucy Guo on 7/11/14.
 //  Copyright (c) 2014 Niveditha Jayasekar. All rights reserved.
 //
 
 #import "NewsFeedViewController.h"
 #import "PullToRefresh.h"
+
+#import <MediaPlayer/MediaPlayer.h>
 #import <Parse/Parse.h>
 
 @interface NewsFeedViewController () {
@@ -16,7 +18,9 @@
   UIImage *commentButtonIcon;
 }
 
+
 @end
+
 @implementation NewsFeedViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -83,7 +87,6 @@
   // Dispose of any resources that can be recreated.
 }
 
-
 #pragma mark - Table view data source
 
 // Table View Delegate Methods
@@ -92,12 +95,14 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  return [self.videos count];
+  // return [self.videos count];
+  return 20;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  return 375;
+  // return 375;
+  return 60;
 }
 
 
@@ -110,11 +115,12 @@
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
   }
   cell.backgroundColor = [UIColor clearColor];
+  cell.text = @"meow";
   
   
-  PFObject *object = self.videos[indexPath.row];
-  PFFile *videoFile = [object objectForKey:@"file"];
-  NSURL *fileUrl = [NSURL URLWithString:videoFile.url];
+//  PFObject *object = self.videos[indexPath.row];
+//  PFFile *videoFile = [object objectForKey:@"file"];
+//  NSURL *fileUrl = [NSURL URLWithString:videoFile.url];
 //  self.player = [[KSVideoPlayerView alloc] initWithFrame:CGRectMake(0, 0, 320, 280) contentURL:fileUrl];
 //  [cell addSubview:self.player];
   //[self.player play];
@@ -188,5 +194,6 @@
   
   return cell;
 }
+
 
 @end

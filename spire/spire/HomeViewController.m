@@ -36,7 +36,7 @@
         [self initNavBar];
         [self setupTabBars];
         
-        
+    
     }
     return self;
 }
@@ -99,6 +99,7 @@
                 [[PFUser currentUser] saveInBackground];
             }
         }];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated

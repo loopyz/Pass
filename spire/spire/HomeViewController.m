@@ -31,6 +31,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    NSLog(@"user is logged in");
 }
 
 - (void)didReceiveMemoryWarning

@@ -1,22 +1,18 @@
 //
-//  HomeViewController.m
+//  FindPetViewController.m
 //  spire
 //
 //  Created by Lucy Guo on 7/19/14.
 //  Copyright (c) 2014 Niveditha Jayasekar. All rights reserved.
 //
 
-#import "HomeViewController.h"
+#import "FindPetViewController.h"
 
-
-#define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
-#define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
-
-@interface HomeViewController ()
+@interface FindPetViewController ()
 
 @end
 
-@implementation HomeViewController
+@implementation FindPetViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

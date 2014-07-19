@@ -11,6 +11,8 @@
 #import "HomeViewController.h"
 #import "RegisterInformationViewController.h"
 
+#import "CameraViewController.h"
+
 @interface LoginViewController ()
 
 @end
@@ -77,8 +79,6 @@
             }
             RegisterInformationViewController *svc = [[RegisterInformationViewController alloc] init];
             [self.navigationController pushViewController:svc animated:YES];
-//            HomeViewController *svc = [[HomeViewController alloc] init];
-//            [self.navigationController pushViewController:svc animated:YES];
         } else {
             NSLog(@"Successful login.");
             HomeViewController *svc = [[HomeViewController alloc] init];
@@ -90,6 +90,9 @@
 - (void)normalLoginTouched
 {
     //lol we'll have this later
+    CameraViewController *cvc = [[CameraViewController alloc] init];
+    [self.navigationController pushViewController:cvc animated:YES];
+
 }
 
 #pragma mark - Button Setup
@@ -160,7 +163,7 @@
 
 - (void)addLogo
 {
-    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2, 230, 423/2, 231/2)];
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 230)/2, 50, 423/2, 231/2)];
     imgView.image = [UIImage imageNamed:@"logo.png"];
     [self.view addSubview:imgView];
 }

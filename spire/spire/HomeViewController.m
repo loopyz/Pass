@@ -1,4 +1,3 @@
-//
 //  HomeViewController.m
 //  spire
 //
@@ -15,6 +14,8 @@
 #import "FriendsFeedViewController.h"
 #import "ProfileViewController.h"
 #import "PetProfileViewController.h"
+
+#import <Parse/Parse.h>
 
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
@@ -98,7 +99,6 @@
                 [[PFUser currentUser] saveInBackground];
             }
         }];
-    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -127,10 +127,10 @@
     nvc.tabBarItem.image = [UIImage imageNamed:@"hometab.png"];
     
     FindPetViewController *evc = [[FindPetViewController alloc] initWithNibName:nil bundle:nil];
-    evc.tabBarItem.image = [UIImage imageNamed:@"search.png"];
+    evc.tabBarItem.image = [UIImage imageNamed:@"searchtab.png"];
     
     CameraViewController *nfvc = [[CameraViewController alloc] initWithNibName:nil bundle:nil];
-    nfvc.tabBarItem.image = [UIImage imageNamed:@"pet.png"];
+    nfvc.tabBarItem.image = [UIImage imageNamed:@"pettab.png"];
     
     FriendsFeedViewController *ffvc = [[FriendsFeedViewController alloc] initWithNibName:nil bundle:nil];
     ffvc.tabBarItem.image = [UIImage imageNamed:@"newstab.png"];

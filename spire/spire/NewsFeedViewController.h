@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PullToRefresh.h"
 
-@interface NewsFeedViewController : UIViewController
+@interface NewsFeedViewController : UITableViewController<UIScrollViewDelegate, BEMPullToRefreshDelegate>
+
+@property (nonatomic, strong) PullToRefresh *ptr;
+@property (nonatomic, strong) NSMutableArray *videos;
 
 @end

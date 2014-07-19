@@ -1,4 +1,3 @@
-//
 //  HomeViewController.m
 //  spire
 //
@@ -12,6 +11,8 @@
 #import "CameraViewController.h"
 #import "FriendsFeedViewController.h"
 #import "ProfileViewController.h"
+
+#import <Parse/Parse.h>
 
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
@@ -86,10 +87,10 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-//    if (![[PFUser currentUser] objectForKey:@"type"]) {
-//        [[PFUser currentUser] setObject:@"user" forKey:@"type"];
-//        [[PFUser currentUser] saveInBackground];
-//    }
+    if (![[PFUser currentUser] objectForKey:@"type"]) {
+        [[PFUser currentUser] setObject:@"user" forKey:@"type"];
+        [[PFUser currentUser] saveInBackground];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated

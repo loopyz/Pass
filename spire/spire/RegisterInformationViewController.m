@@ -8,6 +8,7 @@
 
 #import "RegisterInformationViewController.h"
 #import "HomeViewController.h"
+#import <Parse/Parse.h>
 
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
@@ -50,16 +51,16 @@
 
 - (IBAction)buttonTouched:(id)sender
 {
-    // PFUser *user = [PFUser currentUser];
+    PFUser *user = [PFUser currentUser];
     
-//    for (NSInteger i = 0; i < [self.formTable numberOfRowsInSection:0]; ++i)
-//    {
-//        ELCTextFieldCell *cell = [self.formTable cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
-//        NSString *text = [[cell rightTextField] text];
-//        [user setObject:text forKey:self.fields[i]];
-//    }
-    // [user setObject:@true forKey:@"registered"];
-    // [user saveInBackground];
+    for (NSInteger i = 0; i < [self.formTable numberOfRowsInSection:0]; ++i)
+    {
+        ELCTextFieldCell *cell = [self.formTable cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
+        NSString *text = [[cell rightTextField] text];
+        [user setObject:text forKey:self.fields[i]];
+    }
+    [user setObject:@true forKey:@"registered"];
+    [user saveInBackground];
     
     // open home view controller
     HomeViewController *svc = [[HomeViewController alloc] init];
@@ -86,7 +87,7 @@
     self.scrollView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); //scroll view occupies full parent view!
     //specify CGRect bounds in place of self.view.bounds to make it as a portion of parent view!
     
-    self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 870);   //scroll view size
+    self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 470);   //scroll view size
     
     self.scrollView.showsVerticalScrollIndicator = NO;    // to hide scroll indicators!
     

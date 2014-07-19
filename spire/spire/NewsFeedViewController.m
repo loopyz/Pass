@@ -101,8 +101,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  // return 375;
-  return 60;
+  return 375;
 }
 
 
@@ -115,7 +114,6 @@
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
   }
   cell.backgroundColor = [UIColor clearColor];
-  cell.text = @"meow";
   
   
 //  PFObject *object = self.videos[indexPath.row];

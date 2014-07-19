@@ -68,17 +68,12 @@
             NSLog(@"User just joined the app. Successful login.");
             RegisterInformationViewController *svc = [[RegisterInformationViewController alloc] init];
             [self.navigationController pushViewController:svc animated:YES];
-//            HomeViewController *svc = [[HomeViewController alloc] init];
-//            [self.navigationController pushViewController:svc animated:YES];
         } else {
             NSLog(@"Successful login.");
             HomeViewController *svc = [[HomeViewController alloc] init];
             [self.navigationController pushViewController:svc animated:YES];
         }
     }];
-    
-    HomeViewController *svc = [[HomeViewController alloc] init];
-    [self.navigationController pushViewController:svc animated:YES];
 }
 
 - (void)normalLoginTouched

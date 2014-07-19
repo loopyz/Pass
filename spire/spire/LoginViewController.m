@@ -11,6 +11,8 @@
 #import "HomeViewController.h"
 #import "RegisterInformationViewController.h"
 
+#import "CameraViewController.h"
+
 @interface LoginViewController ()
 
 @end
@@ -64,24 +66,33 @@
             }
         } else if (user.isNew || ![user objectForKey:@"registered"]) {
             NSLog(@"User just joined the app. Successful login.");
+            if (![[PFUser currentUser] objectForKey:@"fbId"]) {
+                FBRequest *request = [FBRequest requestForMe];
+                [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                    if (!error) {
+                        NSDictionary *userData = (NSDictionary *)result;
+                        [[PFUser currentUser] setObject:userData[@"id"] forKey:@"fbId"];
+                        [[PFUser currentUser] setObject:userData[@"name"] forKey:@"fbName"];
+                        [[PFUser currentUser] saveInBackground];
+                    }
+                }];
+            }
             RegisterInformationViewController *svc = [[RegisterInformationViewController alloc] init];
             [self.navigationController pushViewController:svc animated:YES];
-//            HomeViewController *svc = [[HomeViewController alloc] init];
-//            [self.navigationController pushViewController:svc animated:YES];
         } else {
             NSLog(@"Successful login.");
             HomeViewController *svc = [[HomeViewController alloc] init];
             [self.navigationController pushViewController:svc animated:YES];
         }
     }];
-    
-    HomeViewController *svc = [[HomeViewController alloc] init];
-    [self.navigationController pushViewController:svc animated:YES];
 }
 
 - (void)normalLoginTouched
 {
     //lol we'll have this later
+    CameraViewController *cvc = [[CameraViewController alloc] init];
+    [self.navigationController pushViewController:cvc animated:YES];
+
 }
 
 #pragma mark - Button Setup

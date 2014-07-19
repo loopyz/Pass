@@ -1,10 +1,11 @@
-//
 //  HomeViewController.m
 //  spire
 //
 //  Created by Lucy Guo on 7/19/14.
 //  Copyright (c) 2014 Niveditha Jayasekar. All rights reserved.
 //
+#import <Parse/Parse.h>
+#import <FacebookSDK/FacebookSDK.h>
 
 #import "HomeViewController.h"
 #import "NewsFeedViewController.h"
@@ -12,6 +13,9 @@
 #import "CameraViewController.h"
 #import "FriendsFeedViewController.h"
 #import "ProfileViewController.h"
+#import "PetProfileViewController.h"
+
+#import <Parse/Parse.h>
 
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
@@ -85,11 +89,16 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-//    if (![[PFUser currentUser] objectForKey:@"type"]) {
-//        [[PFUser currentUser] setObject:@"user" forKey:@"type"];
-//        [[PFUser currentUser] saveInBackground];
-//    }
+    if (![[PFUser currentUser] objectForKey:@"fbId"]) {
+        FBRequest *request = [FBRequest requestForMe];
+        [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if (!error) {
+                NSDictionary *userData = (NSDictionary *)result;
+                [[PFUser currentUser] setObject:userData[@"id"] forKey:@"fbId"];
+                [[PFUser currentUser] setObject:userData[@"name"] forKey:@"fbName"];
+                [[PFUser currentUser] saveInBackground];
+            }
+        }];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -118,15 +127,16 @@
     nvc.tabBarItem.image = [UIImage imageNamed:@"hometab.png"];
     
     FindPetViewController *evc = [[FindPetViewController alloc] initWithNibName:nil bundle:nil];
-    evc.tabBarItem.image = [UIImage imageNamed:@"search.png"];
+    evc.tabBarItem.image = [UIImage imageNamed:@"searchtab.png"];
     
     CameraViewController *nfvc = [[CameraViewController alloc] initWithNibName:nil bundle:nil];
-    nfvc.tabBarItem.image = [UIImage imageNamed:@"pet.png"];
+    nfvc.tabBarItem.image = [UIImage imageNamed:@"pettab.png"];
     
     FriendsFeedViewController *ffvc = [[FriendsFeedViewController alloc] initWithNibName:nil bundle:nil];
     ffvc.tabBarItem.image = [UIImage imageNamed:@"newstab.png"];
     
-    ProfileViewController *pvc = [[ProfileViewController alloc] initWithNibName:nil bundle:nil];
+//    ProfileViewController *pvc = [[ProfileViewController alloc] initWithNibName:nil bundle:nil];
+    PetProfileViewController *pvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];
     pvc.tabBarItem.image = [UIImage imageNamed:@"profiletab.png"];
     
     self.viewControllers=[NSArray arrayWithObjects:nvc, evc, nfvc, ffvc, pvc, nil];

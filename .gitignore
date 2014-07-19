@@ -3,10 +3,9 @@
 build/
 project.xcworkspace/
 xcuserdata/
+*.pbxproj
 *.xcuserstate
 !default.xcuserstate
-*.pbxproj
-!default.pbxproj
 *.pbxuser
 !default.pbxuser
 *.mode1v3

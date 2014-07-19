@@ -1,5 +1,5 @@
 //
-//  LoginViewController.h
+//  RegisterInformationViewController.h
 //  spire
 //
 //  Created by Lucy Guo on 7/19/14.
@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface LoginViewController : UIViewController
-
-@property (strong, nonatomic) IBOutlet UIButton *facebookButton;
+@interface RegisterInformationViewController : UIViewController
 
 @end

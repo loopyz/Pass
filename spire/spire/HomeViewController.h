@@ -10,4 +10,7 @@
 
 @interface HomeViewController : UITabBarController
 
+@property (strong, nonatomic) UIColor *bgColor;
+
+
 @end

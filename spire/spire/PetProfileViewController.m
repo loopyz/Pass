@@ -29,6 +29,10 @@
 //      [self setupPictureCollection];
 //      [self setupPetSnippet];
       [self setupPictureCollection];
+        // default button enabled settings
+        self.mapTouched = false;
+        self.photoTouched = true;
+        self.personTouched = false;
     }
     return self;
 }
@@ -62,7 +66,11 @@
 - (NSInteger) collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     // TODO with real data
-    return [self.photos count] + 1;
+    if (self.mapTouched) {
+        return 1;
+    } else { // photoTouched
+        return [self.photos count] + 1;
+    }
 }
 
 - (UICollectionViewCell *) collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -98,28 +106,36 @@
 //    }
 //  });
   
-
-  if (indexPath.row == 0) {
-    cell.backgroundView = self.header;
-  }
-  else {
-      PFFile *image = [[self.photos objectAtIndex:(indexPath.row - 1)] objectForKey:@"image"];
-      PFImageView *photo = [[PFImageView alloc] init];
-      photo.image = [UIImage imageNamed:@"tempsingleimage.png"];
-      photo.file = image;
-      [photo loadInBackground];
-    cell.backgroundView = photo;
-    cell.backgroundView.backgroundColor = [UIColor blackColor];
-  }
+    if (self.mapTouched) {
+        cell.backgroundView = self.mapView;
+        
+    } else { // photoTouched
+        if (indexPath.row == 0) {
+            cell.backgroundView = self.header;
+        }
+        else {
+            PFFile *image = [[self.photos objectAtIndex:(indexPath.row - 1)] objectForKey:@"image"];
+            PFImageView *photo = [[PFImageView alloc] init];
+            photo.image = [UIImage imageNamed:@"tempsingleimage.png"];
+            photo.file = image;
+            [photo loadInBackground];
+            cell.backgroundView = photo;
+            cell.backgroundView.backgroundColor = [UIColor blackColor];
+        }
+    }
     return cell;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-  if (indexPath.row == 0) {
-    return CGSizeMake (SCREEN_WIDTH, 164);
-  }
-    return CGSizeMake(105, 105);
+    if (self.mapTouched) {
+        return CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT);
+    } else { // photoTouched
+        if (indexPath.row == 0) {
+            return CGSizeMake (SCREEN_WIDTH, 164);
+        }
+        return CGSizeMake(105, 105);
+    }
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -154,8 +170,8 @@
   self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
   // [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
 
-    
-    UIImageView *petPic = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pusheen.png"]]; // todo
+    NSString *petFName = [NSString stringWithFormat:@"%@.png", [pet objectForKey:@"type"]];
+    UIImageView *petPic = [[UIImageView alloc] initWithImage:[UIImage imageNamed:petFName]]; // todo
     petPic.frame = CGRectMake(10, 10, 110, 110);
     
     [view addSubview:name];
@@ -261,7 +277,7 @@
   [self.personButton setTitle:@"Show View" forState:UIControlStateNormal];
   
   self.personButton.frame = CGRectMake(255, 130, 20.53, 28);
-  [self.personButton addTarget:self action:@selector(mapButtonTouched) forControlEvents:UIControlEventTouchUpInside];
+  [self.personButton addTarget:self action:@selector(personButtonTouched) forControlEvents:UIControlEventTouchUpInside];
   
   btnImage = [UIImage imageNamed:@"personbutton.png"];
   [self.personButton setImage:btnImage forState:UIControlStateNormal];
@@ -272,20 +288,62 @@
   self.header = view;
 }
 
-- (void)photoButtonTouched
+- (void)photoButtonTouched: (id) sender
 {
   // TODO: idk
+    NSLog(@"photo clicked");
+    if (self.mapTouched) {
+        // styling to turn off map
+    }
+    if (self.personTouched) {
+        // styling to turn off person
+    }
+    // styling to turn on photo
+    
+    // toggling values and reloading collections view
+    self.photoTouched = true;
+    self.mapTouched = false;
+    self.personTouched = false;
+    [self.collectionView reloadData];
 }
 
-- (void)personButtonTouched
+- (void)personButtonTouched: (id) sender
 {
   // TODO : Bring up people that held the pet
+    NSLog(@"person clicked");
+    if (self.mapTouched) {
+        // styling to turn off map
+    }
+    if (self.photoTouched) {
+        // styling to turn off photo
+    }
+    // styling to turn on person
+    
+    // toggling values and reloading collections view
+    self.photoTouched = false;
+    self.mapTouched = false;
+    self.personTouched = true;
+    [self.collectionView reloadData];
 
 }
 
-- (void)mapButtonTouched
+- (void)mapButtonTouched: (id) sender
 {
   // TODO: BRING UP GOOGLE MAPS
+    NSLog(@"map clicked");
+    if (self.photoTouched) {
+        // styling to turn off photo
+    }
+    if (self.personTouched) {
+        // styling to turn off person
+    }
+    // styling to turn on map
+    
+    // toggling values and reloading collections view
+    self.photoTouched = false;
+    self.mapTouched = true;
+    self.personTouched = false;
+    [self.collectionView reloadData];
 }
 
 - (void)didReceiveMemoryWarning
@@ -305,6 +363,7 @@
             PFQuery *photosquery = [PFQuery queryWithClassName:@"Photo"];
             [photosquery includeKey:@"user"];
             [photosquery whereKey:@"pet" equalTo:object];
+            [photosquery orderByDescending:@"createdAt"];
             
             [photosquery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
                 self.photos = [[NSMutableArray alloc] init];

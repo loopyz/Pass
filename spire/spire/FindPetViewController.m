@@ -86,6 +86,8 @@
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     // Custom initialization
+    // TODO: checks if user has pet
+    self.userHasPet = NO;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     UIColor *color = [UIColor colorWithRed:249/255.0f green:249/255.0f blue:249/255.0f alpha:1.0f];
     self.tableView.backgroundColor = color;
@@ -192,56 +194,134 @@
   
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
   
-  // NOT the last row - so we know 3 images per thing.
-  if (currentRow != numberOfRowsInSection - 1 || [self.pets[indexPath.section] count] % 3 == 0) {
-    // TODO: use correct values in an array
-    for (int x = 0; x < 3; x++) {
-      NSUInteger section = indexPath.section;
-      NSUInteger index = currentRow * 3 + x;
-      
-      UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
-      PFObject *pet = self.pets[section][index];
-      NSString *petType = [pet objectForKey:@"type"];
-      NSString *petLoc = [pet objectForKey:@"locName"];
-      tempView.image = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
-      [view addSubview:tempView];
-      
-      UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
-      tempLocation.textAlignment = NSTextAlignmentCenter;
-      tempLocation.text = petLoc;
-      tempLocation.numberOfLines = 0;
-      tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
-      tempLocation.textColor = descColor;
-      tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
-      
-      [view addSubview:tempLocation];
+  // NEARBY PLACES
+  if (indexPath.section == 0 && !self.userHasPet) {
+    // NOT the last row - so we know 3 images per thing.
+    if (currentRow != numberOfRowsInSection - 1 || [self.pets[indexPath.section] count] % 3 == 0) {
+      // TODO: use correct values in an array
+      for (int x = 0; x < 3; x++) {
+        NSUInteger section = indexPath.section;
+        NSUInteger index = currentRow * 3 + x;
+        
+        UIButton *tempButton = [[UIButton alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
+        PFObject *pet = self.pets[section][index];
+        NSString *petType = [pet objectForKey:@"type"];
+        NSString *petLoc = [pet objectForKey:@"locName"];
+        UIImage *btnImage = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
+        [tempButton setImage:btnImage forState:UIControlStateNormal];
+        tempButton.contentMode = UIViewContentModeScaleAspectFill;
+        [tempButton addTarget:self action:@selector(petTouched) forControlEvents:UIControlEventTouchUpInside];
+        [view addSubview:tempButton];
+        
+        UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
+        tempLocation.textAlignment = NSTextAlignmentCenter;
+        tempLocation.text = petLoc;
+        tempLocation.numberOfLines = 0;
+        tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
+        tempLocation.textColor = descColor;
+        tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
+        
+        [view addSubview:tempLocation];
+      }
+    }
+    
+    else {
+      // TODO: is the last row - check how many images are left to show lol
+      for (int x = 0; x < [self.pets[indexPath.section] count] % 3; x++) {
+        NSUInteger section = indexPath.section;
+        NSUInteger index = currentRow * 3 + x;
+        PFObject *pet = self.pets[section][index];
+        NSString *petType = [pet objectForKey:@"type"];
+        NSString *petLoc = [pet objectForKey:@"locName"];
+        
+        UIButton *tempButton = [[UIButton alloc] initWithFrame:CGRectMake(20 + 100 * x, 10, 73.5, 73.5)];
+        UIImage *btnImage = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
+        [tempButton setImage:btnImage forState:UIControlStateNormal];
+        tempButton.contentMode = UIViewContentModeScaleAspectFill;
+        [tempButton addTarget:self action:@selector(petTouched) forControlEvents:UIControlEventTouchUpInside];
+        [view addSubview:tempButton];
+        
+        UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
+        tempLocation.textAlignment = NSTextAlignmentCenter;
+        tempLocation.text = petLoc;
+        tempLocation.numberOfLines = 0;
+        tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
+        tempLocation.textColor = descColor;
+        tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
+        
+        [view addSubview:tempLocation];
+        
+      }
     }
   }
-  
+  // NOT NEARY
   else {
-    // TODO: is the last row - check how many images are left to show lol
-    for (int x = 0; x < [self.pets[indexPath.section] count] % 3; x++) {
-      NSUInteger section = indexPath.section;
-      NSUInteger index = currentRow * 3 + x;
-      PFObject *pet = self.pets[section][index];
-      NSString *petType = [pet objectForKey:@"type"];
-      NSString *petLoc = [pet objectForKey:@"locName"];
-      
-      UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 10, 73.5, 73.5)];
-      tempView.image = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
-      [view addSubview:tempView];
-      
-      UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
-      tempLocation.textAlignment = NSTextAlignmentCenter;
-      tempLocation.text = petLoc;
-      tempLocation.numberOfLines = 0;
-      tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
-      tempLocation.textColor = descColor;
-      tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
-      
-      [view addSubview:tempLocation];
-      
+    // NOT the last row - so we know 3 images per thing.
+    if (currentRow != numberOfRowsInSection - 1 || [self.pets[indexPath.section] count] % 3 == 0) {
+      // TODO: use correct values in an array
+      for (int x = 0; x < 3; x++) {
+        NSUInteger section = indexPath.section;
+        NSUInteger index = currentRow * 3 + x;
+        
+        UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
+        PFObject *pet = self.pets[section][index];
+        NSString *petType = [pet objectForKey:@"type"];
+        NSString *petLoc = [pet objectForKey:@"locName"];
+        tempView.image = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
+        [view addSubview:tempView];
+        
+        UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
+        tempLocation.textAlignment = NSTextAlignmentCenter;
+        tempLocation.text = petLoc;
+        tempLocation.numberOfLines = 0;
+        tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
+        tempLocation.textColor = descColor;
+        tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
+        
+        [view addSubview:tempLocation];
+      }
     }
+    
+    else {
+      // TODO: is the last row - check how many images are left to show lol
+      for (int x = 0; x < [self.pets[indexPath.section] count] % 3; x++) {
+        NSUInteger section = indexPath.section;
+        NSUInteger index = currentRow * 3 + x;
+        PFObject *pet = self.pets[section][index];
+        NSString *petType = [pet objectForKey:@"type"];
+        NSString *petLoc = [pet objectForKey:@"locName"];
+        
+        UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 10, 73.5, 73.5)];
+        tempView.image = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
+        [view addSubview:tempView];
+        
+        UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
+        tempLocation.textAlignment = NSTextAlignmentCenter;
+        tempLocation.text = petLoc;
+        tempLocation.numberOfLines = 0;
+        tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
+        tempLocation.textColor = descColor;
+        tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
+        
+        [view addSubview:tempLocation];
+        
+      }
+    }
+  }
+}
+
+- (void)petTouched
+{
+  UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Announcement" message: @"Are you sure you want to collect this pet?" delegate: self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes",nil];
+  [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+  if (buttonIndex == 0) {
+    NSLog(@"user pressed cancel");
+  }
+  else {
+    NSLog(@"user pressed OK");
   }
 }
 

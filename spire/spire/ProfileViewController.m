@@ -159,11 +159,22 @@
   
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView  {
+    [self.ptr viewDidScroll:scrollView];
+}
+
 - (void)viewDidLoad
 {
   [super viewDidLoad];
   UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
   self.tableView.contentInset = inset;
+    
+    self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
+    self.ptr.delegate = self;
+    [self.view addSubview:self.ptr];
+    
+    [self Refresh];
+
   // Do any additional setup after loading the view.
 }
 
@@ -191,10 +202,16 @@
     }];
 }
 
+- (void)Refresh {
+    [self refreshView];
+    // Perform here the required actions to refresh the data (call a JSON API for example).
+    // Once the data has been updated, call the method isDoneRefreshing:
+    [self.ptr isDoneRefreshing];
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [self refreshView];
 }
 
 - (void)didReceiveMemoryWarning

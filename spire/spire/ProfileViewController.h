@@ -8,6 +8,7 @@
 
 #import <FacebookSDK/FacebookSDK.h>
 
+#import "PullToRefresh.h"
 #import <UIKit/UIKit.h>
 
 @interface ProfileViewController : UITableViewController
@@ -17,6 +18,7 @@
 @property (nonatomic, strong) NSMutableArray *photos;
 @property (strong, nonatomic) UIColor *bgColor;
 @property (strong, nonatomic) UILabel *numScoresLabel;
+@property (nonatomic, strong) PullToRefresh *ptr;
 
 
 @end

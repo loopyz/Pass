@@ -88,18 +88,11 @@
     // Custom initialization
     // TODO: checks if user has pet
     self.userHasPet = NO;
-      PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
-      [query whereKey:@"currentUser" equalTo:[PFUser currentUser]];
-      [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
-          self.userHasPet = number > 0;
-      }];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     UIColor *color = [UIColor colorWithRed:249/255.0f green:249/255.0f blue:249/255.0f alpha:1.0f];
     self.tableView.backgroundColor = color;
     self.headerBig = @[@"Here", @"A walk away", @"A drive away"];
     self.headerDetail = @[@"500 feet", @"1.0 miles away", @"5.0 miles away"];
-    
-    [self findNearbyPets];
   }
   return self;
 }
@@ -119,6 +112,7 @@
     self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
     self.ptr.delegate = self;
     [self.view addSubview:self.ptr];
+    [self Refresh];
 }
 
 - (void)didReceiveMemoryWarning
@@ -394,6 +388,11 @@
 - (void)Refresh {
     // Perform here the required actions to refresh the data (call a JSON API for example).
     // Once the data has been updated, call the method isDoneRefreshing:
+    PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
+    [query whereKey:@"currentUser" equalTo:[PFUser currentUser]];
+    [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+        self.userHasPet = number > 0;
+    }];
     [self findNearbyPets];
     [self.ptr isDoneRefreshing];
 }

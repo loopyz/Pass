@@ -244,6 +244,8 @@
   if (cell == nil && indexPath.row == 0) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:@"Header"];
     cell.separatorInset = UIEdgeInsetsMake(0.f, 0.f, 0.f, cell.bounds.size.width);
+      [cell addSubview:self.imageView];
+      self.imageView.tag = 300;
   }
   else if (cell == nil && indexPath.row == 1) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:@"Caption"];
@@ -253,6 +255,8 @@
     cell.layer.shadowOpacity = 1.0;
     cell.layer.shadowRadius = 0;
     cell.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+      [cell addSubview:self.captionView];
+      self.captionView.tag = 301;
   }
   else if (cell == nil && indexPath.row == 2) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:@"Location"];
@@ -262,6 +266,27 @@
     cell.layer.shadowOpacity = 1.0;
     cell.layer.shadowRadius = 0;
     cell.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+      UILabel *city = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 300, 20)];
+      city.font = [UIFont fontWithName:@"Avenir" size:20.0f];
+      city.textColor = [UIColor colorWithRed:110/255.0f green:91/255.0f blue:214/255.0f alpha:1.0f];
+      
+      city.tag = 301;
+      [cell addSubview:city];
+      
+      UILabel *numLikes = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 300, 70)];
+      numLikes.text = @"22";
+      numLikes.font = [UIFont fontWithName:@"Avenir" size:15.0f];
+      numLikes.textColor = [UIColor colorWithRed:214/255.0f green:91/255.0f blue:144/255.0f alpha:1.0f];
+      numLikes.tag = 302;
+      [cell addSubview:numLikes];
+      
+      UILabel *likesLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, 10, 300, 70)];
+      likesLabel.text = @"likes";
+      likesLabel.font = [UIFont fontWithName:@"Avenir" size:13.0f];
+      likesLabel.textColor = [UIColor colorWithRed:186/255.0f green:186/255.0f blue:186/255.0f alpha:1.0f];
+      likesLabel.tag = 303;
+      [cell addSubview:likesLabel];
+
   }
   else if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
@@ -270,79 +295,76 @@
     cell.layer.shadowOpacity = 1.0;
     cell.layer.shadowRadius = 0;
     cell.layer.shadowOffset = CGSizeMake(0.0, 1.0);
-  }
-  
-  if (indexPath.row == 0) {
-    [cell addSubview:self.imageView];
-  }
-  else if (indexPath.row == 1) {
-    [cell addSubview:self.captionView];
-  }
-  else if (indexPath.row == 2) {
-    UILabel *city = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 300, 20)];
-    city.font = [UIFont fontWithName:@"Avenir" size:20.0f];
-    city.textColor = [UIColor colorWithRed:110/255.0f green:91/255.0f blue:214/255.0f alpha:1.0f];
-      city.text = [self.photo objectForKey:@"locName"];//@"San Francisco, CA";
-      [cell addSubview:city];
-    
-    UILabel *numLikes = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 300, 70)];
-    numLikes.text = @"22";
-    numLikes.font = [UIFont fontWithName:@"Avenir" size:15.0f];
-    numLikes.textColor = [UIColor colorWithRed:214/255.0f green:91/255.0f blue:144/255.0f alpha:1.0f];
-    [cell addSubview:numLikes];
-    
-    UILabel *likesLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, 10, 300, 70)];
-    likesLabel.text = @"likes";
-    likesLabel.font = [UIFont fontWithName:@"Avenir" size:13.0f];
-    likesLabel.textColor = [UIColor colorWithRed:186/255.0f green:186/255.0f blue:186/255.0f alpha:1.0f];
-    [cell addSubview:likesLabel];
-    
-    
-  }
-  else {
-    //PFUser *currentUser = [PFUser currentUser];
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 164)];
-    
-    self.captionView = view;
-      NSString *comment = [self randomComment];
-      NSString *username = [self randomPersonAvatar];
-    //FBProfilePictureView *fbpic = [[FBProfilePictureView alloc] init];
-    
-    //fbpic.profileID = [currentUser objectForKey:@"fbId"];
-    //setup name label
-    UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
-    UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, 300, 35)];
-    
-    
-    [name setTextColor:nameColor];
-    [name setBackgroundColor:[UIColor clearColor]];
-    [name setFont:[UIFont fontWithName:@"Avenir" size:15]];
-      name.text = username;
-    [cell addSubview:name];
+      UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 164)];
+      
+      //    self.captionView = view;
+      //      self.captionView.tag = 301;
+      
+      //FBProfilePictureView *fbpic = [[FBProfilePictureView alloc] init];
+      
+      //fbpic.profileID = [currentUser objectForKey:@"fbId"];
+      //setup name label
+      UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
+      UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, 300, 35)];
+      name.tag = 304;
+      
+      
+      [name setTextColor:nameColor];
+      [name setBackgroundColor:[UIColor clearColor]];
+      [name setFont:[UIFont fontWithName:@"Avenir" size:15]];
+      
+      [cell addSubview:name];
       
       UIImageView *fbPic = [[UIImageView alloc] initWithFrame:CGRectMake(17, 8, 40, 40)];
-      fbPic.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png", username]];
       
-    //fbpic = [self addProfile:fbpic];
-    
-    //[cell addSubview:fbpic];
+      
+      //fbpic = [self addProfile:fbpic];
+      
+      //[cell addSubview:fbpic];
       //fbPic.backgroundColor = [UIColor blackColor];
       fbPic.frame = CGRectMake(17, 8, 40, 40);
       
       //makes it into circle
       float width = fbPic.bounds.size.width;
       fbPic.layer.cornerRadius = width/2;
-    [cell addSubview:fbPic];
-    // setup description
-    UIColor *descriptionColor = [UIColor colorWithRed:137/255.0f green:137/255.0f blue:137/255.0f alpha:1.0f];
+      fbPic.tag = 305;
+      [cell addSubview:fbPic];
+      // setup description
+      UIColor *descriptionColor = [UIColor colorWithRed:137/255.0f green:137/255.0f blue:137/255.0f alpha:1.0f];
+      
+      UILabel *description = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, 300, 75)];
+      [description setTextColor:descriptionColor];
+      [description setBackgroundColor:[UIColor clearColor]];
+      [description setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
+      
+      description.tag = 306;
+      [cell addSubview:description];
+
+  }
+  
+  if (indexPath.row == 0) {
     
-    UILabel *description = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, 300, 75)];
-    [description setTextColor:descriptionColor];
-    [description setBackgroundColor:[UIColor clearColor]];
-    [description setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
+  }
+  else if (indexPath.row == 1) {
+    
+  }
+  else if (indexPath.row == 2) {
+      UILabel *city = (UILabel *)[cell viewWithTag:301];
+    city.text = [self.photo objectForKey:@"locName"];//@"San Francisco, CA";
+  }
+  else {
+      NSString *comment = [self randomComment];
+      NSString *username = [self randomPersonAvatar];
+      
+      UILabel *name = (UILabel *)[cell viewWithTag:304];
+      name.text = username;
+      
+      UIImageView *fbPic = (UIImageView *)[cell viewWithTag:305];
+      fbPic.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png", username]];
+      
+      UILabel *description = (UILabel *)[cell viewWithTag:306];
       description.text = comment;
-    
-    [cell addSubview:description];
+      
   }
   
   return cell;

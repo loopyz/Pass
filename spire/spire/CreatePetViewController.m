@@ -40,7 +40,7 @@
     UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [submitButton setTitle:@"Show View" forState:UIControlStateNormal];
     
-    submitButton.frame = CGRectMake(0, 800, 320, 47.5);
+    submitButton.frame = CGRectMake(0, SCREEN_HEIGHT - 200, 320, 47.5);
     [submitButton addTarget:self action:@selector(buttonTouched:) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage = [UIImage imageNamed:@"submitbutton.png"];
@@ -92,7 +92,7 @@
     self.scrollView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); //scroll view occupies full parent view!
     //specify CGRect bounds in place of self.view.bounds to make it as a portion of parent view!
     
-    self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 870);   //scroll view size
+    self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT);   //scroll view size
     
     self.scrollView.showsVerticalScrollIndicator = NO;    // to hide scroll indicators!
     

@@ -25,6 +25,10 @@
 @property (nonatomic, retain) UIToolbar *keyboardToolbar;
 @property (strong, nonatomic) PFObject *pet;
 
+@property (nonatomic, retain) UIButton *dropButton;
+
+@property (nonatomic) BOOL dropButtonActivated;
+
 - (IBAction)hideKeyboard:(id)sender;
 
 @end

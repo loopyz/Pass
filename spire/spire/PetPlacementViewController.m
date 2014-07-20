@@ -24,6 +24,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+      self.dropButtonActivated = NO;
     }
     return self;
 }
@@ -129,7 +130,7 @@
     self.scrollView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); //scroll view occupies full parent view!
     //specify CGRect bounds in place of self.view.bounds to make it as a portion of parent view!
     
-    self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT * 1.5);   //scroll view size
+    self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT + 140);   //scroll view size
     
     self.scrollView.showsVerticalScrollIndicator = NO;    // to hide scroll indicators!
     
@@ -232,14 +233,73 @@
     // self.textEntry.placeholder = @"Caption";
   
     self.textEntry.delegate = self;
-    
-    // TODO: HEY LUCY STYLE THIS THINGY
-    self.toggleDrop = [[UISwitch alloc] initWithFrame:CGRectMake(10, SCREEN_WIDTH + 10 + 144 + 10, SCREEN_WIDTH - 20, 44)];
-    [self.scrollView addSubview:self.toggleDrop];
-    
+  
+  // Do any additional setup after loading the view.
+  [self setupDropButton];
+  
+    // completely got rid of labels
+//  UIImageView *dropPetImage = [[UIImageView alloc] initWithFrame:CGRectMake(5, SCREEN_WIDTH + 115, 50, 53)];
+//  dropPetImage.image = [UIImage imageNamed:@"pettab.png"];
+//  [self.scrollView addSubview:dropPetImage];
+//  
+//  UILabel *dropLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, SCREEN_WIDTH + 125, 300, 30)];
+//  
+//  [dropLabel setTextColor:[UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f]];
+//  [dropLabel setBackgroundColor:[UIColor clearColor]];
+//  [dropLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:18]];
+//  
+//  dropLabel.text = @"Drop your pet?";
+//  dropLabel.lineBreakMode = NSLineBreakByWordWrapping;
+//  dropLabel.numberOfLines = 0;
+//  [self.scrollView addSubview:dropLabel];
+//  
+//    // TODO: HEY LUCY STYLE THIS THINGY
+//    self.toggleDrop = [[UISwitch alloc] initWithFrame:CGRectMake(230, SCREEN_WIDTH + 125, SCREEN_WIDTH - 20, 44)];
+//    [self.scrollView addSubview:self.toggleDrop];
+  
     // label for togglign drop, doesn't work
 //    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 50, SCREEN_WIDTH + 10 + 44 + 10 + 44, SCREEN_WIDTH - 20, 44)];
 //    [self.scrollView addSubview:label];
+}
+
+- (void)setupDropButton
+{
+  self.dropButton = [UIButton buttonWithType:UIButtonTypeCustom];
+  [self.dropButton setTitle:@"Show View" forState:UIControlStateNormal];
+  
+  self.dropButton.frame = CGRectMake(0, SCREEN_WIDTH + 130, 320, 67);
+  [self.dropButton addTarget:self action:@selector(dropPetButtonTouched) forControlEvents:UIControlEventTouchUpInside];
+  
+  UIImage *btnImage;
+  if (self.dropButtonActivated) {
+    btnImage = [UIImage imageNamed:@"keeppetbutton.png"];
+  }
+  else {
+    btnImage = [UIImage imageNamed:@"droppetbutton.png"];
+  }
+  
+  [self.dropButton setImage:btnImage forState:UIControlStateNormal];
+  self.dropButton.contentMode = UIViewContentModeScaleToFill;
+  
+  [self.scrollView addSubview:self.dropButton];
+}
+
+- (void)dropPetButtonTouched
+{
+  UIImage *btnImage;
+  
+  if (self.dropButtonActivated) {
+    self.dropButtonActivated = NO;
+    btnImage = [UIImage imageNamed:@"droppetbutton.png"];
+  }
+  else {
+    self.dropButtonActivated = YES;
+    btnImage = [UIImage imageNamed:@"keeppetbutton.png"];
+  }
+  
+  [self.dropButton setImage:btnImage forState:UIControlStateNormal];
+  
+  // TODO: BUTTON TO DO OTHER STUFF WITH PET
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
@@ -275,6 +335,20 @@
   [textView resignFirstResponder];
 }
 
+- (BOOL) textViewShouldBeginEditing:(UITextView *)textView
+{
+  self.textEntry.text = @"";
+  return YES;
+}
+
+-(void) textViewDidChange:(UITextView *)textView
+{
+  if(self.textEntry.text.length == 0){
+    self.textEntry.text = @"Comment";
+    [self.textEntry resignFirstResponder];
+  }
+}
+
 
 - (UIImage *)imageWithView:(UIView *)view
 {
@@ -300,10 +374,10 @@
   UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
   [submitButton setTitle:@"Show View" forState:UIControlStateNormal];
   
-  submitButton.frame = CGRectMake(0, SCREEN_HEIGHT, 320, 47.5);
+  submitButton.frame = CGRectMake(0, SCREEN_HEIGHT - 25, 320, 47.5);
   [submitButton addTarget:self action:@selector(buttonTouched:withEvent:) forControlEvents:UIControlEventTouchUpInside];
   
-  UIImage *btnImage = [UIImage imageNamed:@"nextbutton.png"];
+  UIImage *btnImage = [UIImage imageNamed:@"submitbutton.png"];
   [submitButton setImage:btnImage forState:UIControlStateNormal];
   submitButton.contentMode = UIViewContentModeScaleToFill;
   
@@ -397,6 +471,8 @@
                          nil];
   [self.keyboardToolbar sizeToFit];
   self.textEntry.inputAccessoryView = self.keyboardToolbar;
+  
+  self.textEntry.text = @"Add a description...";
 }
 
 - (void)didReceiveMemoryWarning

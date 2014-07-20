@@ -95,8 +95,8 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
   NSLog(@"%d", indexPath.row);
   SingleImageViewController *ppvc = [[SingleImageViewController alloc] initWithNibName:nil bundle:nil];
-  // [self presentViewController:ppvc animated:YES completion:nil];
-  [self.navigationController pushViewController:ppvc animated:YES];
+  [self presentViewController:ppvc animated:YES completion:nil];
+  // [self.navigationController pushViewController:ppvc animated:YES];
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {

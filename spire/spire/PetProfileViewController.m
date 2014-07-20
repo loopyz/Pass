@@ -78,8 +78,7 @@
     [cell addSubview:self.header];
   }
   else {
-    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pusheen.png"]];
-    cell.backgroundView.backgroundColor = [UIColor blackColor];
+    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tempsingleimage.png"]];
   }
     return cell;
 }

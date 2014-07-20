@@ -8,6 +8,7 @@
 
 #import "PetPlacementViewController.h"
 #import <Parse/Parse.h>
+#import "VenueTableViewController.h"
 
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
@@ -28,7 +29,7 @@
     return self;
 }
 
-- (void)getVenues:(NSString *)url withCallback:(void (^)(NSString *locName)) callback
+- (void)getVenues:(NSString *)url withCallback:(void (^)(NSArray *locs)) callback
 {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
     
@@ -41,9 +42,9 @@
                                json = [NSJSONSerialization JSONObjectWithData:data
                                                                       options:0
                                                                         error:nil];
-                               NSLog(@"%@", json[@"response"][@"venues"][0]);
+                               NSLog(@"%@", json[@"response"][@"venues"][0][@"name"]);
                                
-                               callback(json[@"response"][@"venues"][0][@"name"]);
+                               callback(json[@"response"][@"venues"]);
                            }];
 }
 
@@ -52,7 +53,7 @@
     // TODO: take in callback, call with lat/long/name
     NSNumber *latitude = @3.14;
     NSNumber *longitude = @2.71;
-    NSString *locName = @"Medium HQ";
+    __block NSString *locName = @"Medium HQ";
     if ([CLLocationManager locationServicesEnabled]) {
         latitude = [NSNumber numberWithFloat:self.locationManager.location.coordinate.latitude];
         longitude = [NSNumber numberWithFloat:self.locationManager.location.coordinate.longitude];
@@ -60,8 +61,27 @@
         NSString *_4squareSecret = @"XYHXKNHOVBPTX4KLXR1QID4QNA2RSMXZZQML32ANKP1H4VHJ";
         NSString *locFormat = @"https://api.foursquare.com/v2/venues/search?client_id=%@&client_secret=%@&v=20130815&ll=%@,%@";
         NSString *queryAddr = [NSString stringWithFormat:locFormat,_4squareId,_4squareSecret,latitude,longitude];
-        [self getVenues:queryAddr withCallback:^(NSString *locName) {
-            callback(latitude, longitude, locName);
+        
+        
+        [self getVenues:queryAddr withCallback:^(NSArray *locs) {
+            // get locations that have a @"name", @"distance" (meters), @"categories" key
+            if ([locs count] == 0) {
+                NSLog(@"No locations found");
+                callback(latitude, longitude, locName);
+            }
+            // push VenueViewController
+            VenueTableViewController *vtvc = [[VenueTableViewController alloc] initWithVenues:locs andCallback:^(NSDictionary *selectedVenue) {
+                // got venue selected
+                if (selectedVenue == nil) {
+                    NSLog(@"Location not chosen");
+                } else {
+                    locName = selectedVenue[@"name"];
+                }
+                callback(latitude, longitude, locName);
+            }];
+            [self presentViewController:vtvc animated:YES completion:nil];
+            
+            //callback(latitude, longitude, locName);
         }];
     } else {
         NSLog(@"Fake location used");
@@ -111,6 +131,9 @@
         [self getLocation:^(NSNumber *latitude, NSNumber *longitude, NSString *locName) {
             [self updatePet:pet withDropped:dropped withLat:latitude withLong:longitude withName:locName];
             [self addPhoto:photoData withUser:currentUser withPet:pet withLat:latitude withLong:longitude withName:locName withCaption:caption];
+            
+            // go back to home
+            [self.tabBarController setSelectedIndex:0];
         }];
     }];
 }
@@ -261,8 +284,6 @@
     // submit image to parse
     [self saveToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text withDropped:self.toggleDrop.on];
     
-    // go back to home
-    [self.tabBarController setSelectedIndex:0];
 }
 
 - (void)setupSubmitButton

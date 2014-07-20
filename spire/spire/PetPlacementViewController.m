@@ -65,7 +65,9 @@
         [pet setObject:[NSNull null] forKey:@"currentUser"];
         [pet incrementKey:@"passes"];
     }
-    // TODO: update miles
+    // TODO: actually set miles to what they should be
+    NSNumber *miles = [[NSNumber alloc] initWithInt:(arc4random() % 5)];
+    [pet incrementKey:@"miles" byAmount:miles];
     [pet saveInBackground];
 }
 

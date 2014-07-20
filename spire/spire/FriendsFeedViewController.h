@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PullToRefresh.h"
 
-@interface FriendsFeedViewController : UIViewController
+@interface FriendsFeedViewController : UITableViewController<UIScrollViewDelegate, BEMPullToRefreshDelegate>
+
+@property (nonatomic, strong) PullToRefresh *ptr;
+@property (nonatomic, strong) NSMutableArray *videos;
 
 @end

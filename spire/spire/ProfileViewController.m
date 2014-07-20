@@ -285,7 +285,7 @@
     [milesLabel setBackgroundColor:[UIColor clearColor]];
     [milesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
 
-    milesLabel.text = @"miles";
+    milesLabel.text = @"miles traveled";
     milesLabel.lineBreakMode = NSLineBreakByWordWrapping;
     milesLabel.numberOfLines = 0;
     [cell addSubview:milesLabel];

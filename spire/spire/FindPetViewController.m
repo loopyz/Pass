@@ -46,6 +46,7 @@
     [self.collectionView setDataSource:self];
     [self.collectionView setDelegate:self];
     [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"petCell"];
+    [self.collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headerView"];
     [self.collectionView setBackgroundColor:[UIColor lightGrayColor]];
     
     [self.collectionView setAllowsSelection:NO];

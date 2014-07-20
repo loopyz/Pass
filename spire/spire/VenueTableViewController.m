@@ -22,18 +22,58 @@
     return self;
 }
 
-- (id)initWithVenues:(NSArray*)venueItems andCallback:(DictCallback)callback
+
+- (void)getVenues:(NSString *)url withCallback:(void (^)(NSArray *locs)) callback
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
+    
+    [request setHTTPMethod: @"GET"];
+    
+    __block NSDictionary *json;
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                               json = [NSJSONSerialization JSONObjectWithData:data
+                                                                      options:0
+                                                                        error:nil];
+                               NSLog(@"%@", json[@"response"][@"venues"][0][@"name"]);
+                               
+                               callback(json[@"response"][@"venues"]);
+                           }];
+}
+
+
+- (id)initWithLat:(NSNumber *)latitude andLong:(NSNumber *)longitude andCallback:(DictCallback)callback
 {
     self = [super init];
     if (self) {
-        // sort venues by distance away
-        self.venues = [venueItems sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *d1, NSDictionary *d2){
-            
-            return [d1[@"location"][@"distance"] compare:d2[@"location"][@"distance"]];
-            
-        }];
+        self.venues = @[];
         self.callback = callback;
         self.navigationItem.title = @"Select location";
+        
+        NSString *_4squareId = @"02K3GC4J1Y34WDZG4XIWHBSF2WJKOHIOMSTPWTWQVMPFALL2";
+        NSString *_4squareSecret = @"XYHXKNHOVBPTX4KLXR1QID4QNA2RSMXZZQML32ANKP1H4VHJ";
+        NSString *locFormat = @"https://api.foursquare.com/v2/venues/search?client_id=%@&client_secret=%@&v=20130815&ll=%@,%@";
+        
+        NSString *queryAddr = [NSString stringWithFormat:locFormat,_4squareId,_4squareSecret,latitude,longitude];
+        
+        [self getVenues:queryAddr withCallback:^(NSArray *locs) {
+            if ([locs count] == 0) {
+                [self dismissViewControllerAnimated:YES completion:^(){
+                    NSDictionary *venue = @{@"name": @"Medium"}; // TODO: fill in fallback data
+                    self.callback(venue);
+                }];
+                return;
+            }
+            // sort venues by distance away
+            self.venues = [locs sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *d1, NSDictionary *d2){
+                
+                return [d1[@"location"][@"distance"] compare:d2[@"location"][@"distance"]];
+                
+            }];
+            [self.tableView reloadData];
+        }];
+
     }
     return self;
 }

@@ -133,6 +133,18 @@
   
 }
 
+- (FBProfilePictureView *)addProfile:(FBProfilePictureView *)fbPic
+{
+  fbPic.backgroundColor = [UIColor blackColor];
+  fbPic.frame = CGRectMake(17, 8, 40, 40);
+  
+  //makes it into circle
+  float width = self.fbProfilePic.bounds.size.width;
+  fbPic.layer.cornerRadius = width/2;
+  
+  return fbPic;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
   [self.navigationController setNavigationBarHidden:YES];
@@ -159,7 +171,8 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
   
-  NSUInteger count = 3 + 1;
+  NSUInteger extraRows = 3;
+  NSUInteger count = 3 + extraRows;
 
   return count;
 }
@@ -168,7 +181,8 @@
 {
   if (indexPath.row == 0) return 320;
   if (indexPath.row == 1) return 58;
-  return 130;
+  if (indexPath.row == 2) return 60;
+  return 65;
 }
 
 
@@ -184,6 +198,9 @@
   else if (indexPath.row == 1) {
     cell = [tableView dequeueReusableCellWithIdentifier:@"Caption"];
   }
+  else if (indexPath.row == 2) {
+    cell = [tableView dequeueReusableCellWithIdentifier:@"Location"];
+  }
   else {
     cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
   }
@@ -195,6 +212,15 @@
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:@"Caption"];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.backgroundColor = [UIColor colorWithRed:242/255.0f green:242/255.0f blue:242/255.0f alpha:1.0f];
+    cell.layer.shadowColor = [[UIColor whiteColor] CGColor];
+    cell.layer.shadowOpacity = 1.0;
+    cell.layer.shadowRadius = 0;
+    cell.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+  }
+  else if (cell == nil && indexPath.row == 2) {
+    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:@"Location"];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.backgroundColor = [UIColor colorWithRed:251/255.0f green:247/255.0f blue:247/255.0f alpha:1.0f];
     cell.layer.shadowColor = [[UIColor whiteColor] CGColor];
     cell.layer.shadowOpacity = 1.0;
     cell.layer.shadowRadius = 0;
@@ -215,67 +241,60 @@
   else if (indexPath.row == 1) {
     [cell addSubview:self.captionView];
   }
+  else if (indexPath.row == 2) {
+    UILabel *city = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 300, 20)];
+    city.text = @"San Francisco, CA";
+    city.font = [UIFont fontWithName:@"Avenir" size:20.0f];
+    city.textColor = [UIColor colorWithRed:110/255.0f green:91/255.0f blue:214/255.0f alpha:1.0f];
+    [cell addSubview:city];
+    
+    UILabel *numLikes = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 300, 70)];
+    numLikes.text = @"22";
+    numLikes.font = [UIFont fontWithName:@"Avenir" size:15.0f];
+    numLikes.textColor = [UIColor colorWithRed:214/255.0f green:91/255.0f blue:144/255.0f alpha:1.0f];
+    [cell addSubview:numLikes];
+    
+    UILabel *likesLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, 10, 300, 70)];
+    likesLabel.text = @"likes";
+    likesLabel.font = [UIFont fontWithName:@"Avenir" size:13.0f];
+    likesLabel.textColor = [UIColor colorWithRed:186/255.0f green:186/255.0f blue:186/255.0f alpha:1.0f];
+    [cell addSubview:likesLabel];
+    
+    
+  }
   else {
-    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
-    imgView.image = [UIImage imageNamed:@"fox.png"];
-    [cell addSubview:imgView];
+    PFUser *currentUser = [PFUser currentUser];
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 164)];
+    
+    self.captionView = view;
+    FBProfilePictureView *fbpic = [[FBProfilePictureView alloc] init];
+    
+    fbpic.profileID = [currentUser objectForKey:@"fbId"];
+    //setup name label
+    UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
+    UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, 300, 35)];
     
     
-    //setup Location label
-    UIColor *descColor = [UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f];
-    UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
-    [desc setTextColor:descColor];
-    [desc setBackgroundColor:[UIColor clearColor]];
-    [desc setFont:[UIFont fontWithName:@"Avenir" size:24]];
+    [name setTextColor:nameColor];
+    [name setBackgroundColor:[UIColor clearColor]];
+    [name setFont:[UIFont fontWithName:@"Avenir" size:15]];
     
-    desc.text = @"Pusheen";
-    desc.lineBreakMode = NSLineBreakByWordWrapping;
-    desc.numberOfLines = 0;
-    [cell addSubview:desc];
+    name.text = [currentUser objectForKey:@"username"]; //@"loopyz";
+    [cell addSubview:name];
+    fbpic = [self addProfile:fbpic];
     
-    // set up miles traveled
-    UILabel *numMiles = [[UILabel alloc] initWithFrame:CGRectMake(120, 40, 200, 50)];
-    [numMiles setTextColor:descColor];
-    [numMiles setBackgroundColor:[UIColor clearColor]];
-    [numMiles setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
+    [cell addSubview:fbpic];
     
-    numMiles.text = @"2187";
-    numMiles.lineBreakMode = NSLineBreakByWordWrapping;
-    numMiles.numberOfLines = 0;
-    [cell addSubview:numMiles];
+    // setup description
+    UIColor *descriptionColor = [UIColor colorWithRed:137/255.0f green:137/255.0f blue:137/255.0f alpha:1.0f];
     
-    // setup miles label
-    UILabel *milesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 40, 200, 50)];
-    [milesLabel setTextColor:descColor];
-    [milesLabel setBackgroundColor:[UIColor clearColor]];
-    [milesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
+    UILabel *description = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, 300, 75)];
+    [description setTextColor:descriptionColor];
+    [description setBackgroundColor:[UIColor clearColor]];
+    [description setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
+    description.text = [currentUser objectForKey:@"description"];//@"Oh gosh I miss my foxy.";
     
-    milesLabel.text = @"miles";
-    milesLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    milesLabel.numberOfLines = 0;
-    [cell addSubview:milesLabel];
-    
-    // set up miles traveled
-    UILabel *numPasses = [[UILabel alloc] initWithFrame:CGRectMake(120, 60, 200, 50)];
-    [numPasses setTextColor:descColor];
-    [numPasses setBackgroundColor:[UIColor clearColor]];
-    [numPasses setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
-    
-    numPasses.text = @"1322";
-    numPasses.lineBreakMode = NSLineBreakByWordWrapping;
-    numPasses.numberOfLines = 0;
-    [cell addSubview:numPasses];
-    
-    // setup miles label
-    UILabel *passesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 60, 200, 50)];
-    [passesLabel setTextColor:descColor];
-    [passesLabel setBackgroundColor:[UIColor clearColor]];
-    [passesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
-    
-    passesLabel.text = @"passes";
-    passesLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    passesLabel.numberOfLines = 0;
-    [cell addSubview:passesLabel];
+    [cell addSubview:description];
   }
   
   return cell;

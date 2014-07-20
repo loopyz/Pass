@@ -12,7 +12,7 @@
 
 typedef void(^DictCallback)(NSDictionary *selectedVenue);
 
-- (id)initWithVenues:(NSArray*)venueItems andCallback:(DictCallback)callback;
+- (id)initWithLat:(NSNumber *)latitude andLong:(NSNumber *)longitude andCallback:(DictCallback)callback;
 
 @property (strong, nonatomic) NSArray *venues;
 @property (strong, nonatomic) DictCallback callback;

@@ -29,25 +29,6 @@
     return self;
 }
 
-- (void)getVenues:(NSString *)url withCallback:(void (^)(NSArray *locs)) callback
-{
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
-    
-    [request setHTTPMethod: @"GET"];
-    
-    __block NSDictionary *json;
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                               json = [NSJSONSerialization JSONObjectWithData:data
-                                                                      options:0
-                                                                        error:nil];
-                               NSLog(@"%@", json[@"response"][@"venues"][0][@"name"]);
-                               
-                               callback(json[@"response"][@"venues"]);
-                           }];
-}
-
 - (void)getLocation:(void (^)(NSNumber *latitude, NSNumber *longitude, NSString *locName)) callback
 {
     // TODO: take in callback, call with lat/long/name
@@ -57,32 +38,18 @@
     if ([CLLocationManager locationServicesEnabled]) {
         latitude = [NSNumber numberWithFloat:self.locationManager.location.coordinate.latitude];
         longitude = [NSNumber numberWithFloat:self.locationManager.location.coordinate.longitude];
-        NSString *_4squareId = @"02K3GC4J1Y34WDZG4XIWHBSF2WJKOHIOMSTPWTWQVMPFALL2";
-        NSString *_4squareSecret = @"XYHXKNHOVBPTX4KLXR1QID4QNA2RSMXZZQML32ANKP1H4VHJ";
-        NSString *locFormat = @"https://api.foursquare.com/v2/venues/search?client_id=%@&client_secret=%@&v=20130815&ll=%@,%@";
-        NSString *queryAddr = [NSString stringWithFormat:locFormat,_4squareId,_4squareSecret,latitude,longitude];
         
-        
-        [self getVenues:queryAddr withCallback:^(NSArray *locs) {
-            // get locations that have a @"name", @"distance" (meters), @"categories" key
-            if ([locs count] == 0) {
-                NSLog(@"No locations found");
-                callback(latitude, longitude, locName);
-            }
-            // push VenueViewController
-            VenueTableViewController *vtvc = [[VenueTableViewController alloc] initWithVenues:locs andCallback:^(NSDictionary *selectedVenue) {
+        // push VenueViewController
+        VenueTableViewController *vtvc = [[VenueTableViewController alloc] initWithLat:latitude andLong:longitude andCallback:^(NSDictionary *selectedVenue) {
                 // got venue selected
-                if (selectedVenue == nil) {
-                    NSLog(@"Location not chosen");
-                } else {
-                    locName = selectedVenue[@"name"];
-                }
-                callback(latitude, longitude, locName);
-            }];
-            [self presentViewController:vtvc animated:YES completion:nil];
-            
-            //callback(latitude, longitude, locName);
+            if (selectedVenue == nil) {
+                NSLog(@"Location not chosen");
+            } else {
+                locName = selectedVenue[@"name"];
+            }
+            callback(latitude, longitude, locName);
         }];
+        [self presentViewController:vtvc animated:YES completion:nil];
     } else {
         NSLog(@"Fake location used");
         callback(latitude, longitude, locName);

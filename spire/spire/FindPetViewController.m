@@ -23,13 +23,13 @@
 
 - (void)getLocation:(void (^)(float latitude, float longitude)) callback
 {
-    float latitude = 3.14;
-    float longitude = 2.71;
-    if ([CLLocationManager locationServicesEnabled]) {
-        latitude = self.locationManager.location.coordinate.latitude;
-        longitude = self.locationManager.location.coordinate.longitude;
-        callback(latitude, longitude);
-    }
+  float latitude = 3.14;
+  float longitude = 2.71;
+  if ([CLLocationManager locationServicesEnabled]) {
+    latitude = self.locationManager.location.coordinate.latitude;
+    longitude = self.locationManager.location.coordinate.longitude;
+    callback(latitude, longitude);
+  }
 }
 
 - (void)findNearbyPets
@@ -74,7 +74,6 @@
                         return [petIds0 indexOfObject:[evaluatedObject objectId]] == NSNotFound;
                     }]];
                     [self.tableView reloadData];
-                    [self.tableView setNeedsLayout];
                 }
             }];
         }
@@ -84,18 +83,18 @@
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        UIColor *color = [UIColor colorWithRed:249/255.0f green:249/255.0f blue:249/255.0f alpha:1.0f];
-        self.tableView.backgroundColor = color;
-        self.headerBig = @[@"Here", @"A walk away", @"A drive away"];
-        self.headerDetail = @[@"500 feet", @"1.0 miles away", @"5.0 miles away"];
-        
-        [self findNearbyPets];
-    }
-    return self;
+  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+  if (self) {
+    // Custom initialization
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    UIColor *color = [UIColor colorWithRed:249/255.0f green:249/255.0f blue:249/255.0f alpha:1.0f];
+    self.tableView.backgroundColor = color;
+    self.headerBig = @[@"Here", @"A walk away", @"A drive away"];
+    self.headerDetail = @[@"500 feet", @"1.0 miles away", @"5.0 miles away"];
+    
+    [self findNearbyPets];
+  }
+  return self;
 }
 
 - (void)viewDidLoad
@@ -117,8 +116,8 @@
 
 - (void)didReceiveMemoryWarning
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+  [super didReceiveMemoryWarning];
+  // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Table view data source
@@ -197,19 +196,19 @@
   if (currentRow != numberOfRowsInSection - 1 || [self.pets[indexPath.section] count] % 3 == 0) {
     // TODO: use correct values in an array
     for (int x = 0; x < 3; x++) {
-        NSUInteger section = indexPath.section;
-        NSUInteger index = currentRow * 3 + x;
-        
+      NSUInteger section = indexPath.section;
+      NSUInteger index = currentRow * 3 + x;
+      
       UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
-        PFObject *pet = self.pets[section][index];
-        NSString *petType = [pet objectForKey:@"type"];
-        NSString *petLoc = [pet objectForKey:@"locName"];
+      PFObject *pet = self.pets[section][index];
+      NSString *petType = [pet objectForKey:@"type"];
+      NSString *petLoc = [pet objectForKey:@"locName"];
       tempView.image = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
       [view addSubview:tempView];
       
       UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
       tempLocation.textAlignment = NSTextAlignmentCenter;
-        tempLocation.text = petLoc;
+      tempLocation.text = petLoc;
       tempLocation.numberOfLines = 0;
       tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
       tempLocation.textColor = descColor;
@@ -221,27 +220,27 @@
   
   else {
     // TODO: is the last row - check how many images are left to show lol
-      for (int x = 0; x < [self.pets[indexPath.section] count] % 3; x++) {
-          NSUInteger section = indexPath.section;
-        NSUInteger index = currentRow * 3 + x;
-        PFObject *pet = self.pets[section][index];
-        NSString *petType = [pet objectForKey:@"type"];
-        NSString *petLoc = [pet objectForKey:@"locName"];
-
+    for (int x = 0; x < [self.pets[indexPath.section] count] % 3; x++) {
+      NSUInteger section = indexPath.section;
+      NSUInteger index = currentRow * 3 + x;
+      PFObject *pet = self.pets[section][index];
+      NSString *petType = [pet objectForKey:@"type"];
+      NSString *petLoc = [pet objectForKey:@"locName"];
+      
       UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 10, 73.5, 73.5)];
       tempView.image = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
       [view addSubview:tempView];
       
       UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
       tempLocation.textAlignment = NSTextAlignmentCenter;
-        tempLocation.text = petLoc;
+      tempLocation.text = petLoc;
       tempLocation.numberOfLines = 0;
       tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
       tempLocation.textColor = descColor;
       tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
       
       [view addSubview:tempLocation];
-
+      
     }
   }
 }
@@ -269,7 +268,7 @@
   //[self.player play];
   //MPMoviePlayerViewController *movie = [[MPMoviePlayerViewController alloc] initWithContentURL:fileUrl];
   //[self presentMoviePlayerViewControllerAnimated:movie];
-
+  
   
   [self setupCollection:indexPath withView:tempView];
   

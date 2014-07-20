@@ -12,10 +12,14 @@
 #import <CoreLocation/CoreLocation.h>
 #import "PullToRefresh.h"
 
-@interface FindPetViewController : UITableViewController
+@interface FindPetViewController : UITableViewController <UIAlertViewDelegate>
 
 @property (strong, nonatomic) NSMutableArray *pets;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (nonatomic, strong) PullToRefresh *ptr;
+
+@property (strong, nonatomic) UIView *popup;
+
+@property (nonatomic) BOOL userHasPet;
 
 @end

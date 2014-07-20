@@ -11,9 +11,13 @@
 
 #import <CoreLocation/CoreLocation.h>
 
-@interface FindPetViewController : UITableViewController
+@interface FindPetViewController : UITableViewController <UIAlertViewDelegate>
 
 @property (strong, nonatomic) NSMutableArray *pets;
 @property (strong, nonatomic) CLLocationManager *locationManager;
+
+@property (strong, nonatomic) UIView *popup;
+
+@property (nonatomic) BOOL userHasPet;
 
 @end

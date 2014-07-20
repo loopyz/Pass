@@ -77,6 +77,8 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        // check this shit
+        self.userHasPet = NO;
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         UIColor *color = [UIColor colorWithRed:249/255.0f green:249/255.0f blue:249/255.0f alpha:1.0f];
         self.tableView.backgroundColor = color;
@@ -100,6 +102,17 @@
     self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
     [self.locationManager startUpdatingLocation];
     
+}
+
+# pragma mark - alertview delegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+  if (buttonIndex == 0) {
+    NSLog(@"user pressed cancel");
+  }
+  else {
+    NSLog(@"user pressed Yes");
+  }
 }
 
 - (void)didReceiveMemoryWarning
@@ -173,6 +186,12 @@
   return view;
 }
 
+- (void)pickupPet
+{
+  UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Announcement" message: @"Are you sure you want to pick up this pet up?" delegate: self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes!",nil];
+  [alert show];
+}
+
 - (void)setupCollection:(NSIndexPath *)indexPath withView:(UIView *)view
 {
   NSUInteger numberOfRowsInSection = [self tableView:self.tableView numberOfRowsInSection:indexPath.section];
@@ -180,43 +199,97 @@
   
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
   
-  // NOT the last row - so we know 3 images per thing.
-  if (currentRow != numberOfRowsInSection - 1) {
-    // TODO: use correct values in an array
-    for (int x = 0; x < 3; x++) {
-      UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
-      tempView.image = [UIImage imageNamed:@"tempavatar.png"];
-      [view addSubview:tempView];
-      
-      UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
-      tempLocation.textAlignment = NSTextAlignmentCenter;
-      tempLocation.text = @"Mission Dolores Park";
-      tempLocation.numberOfLines = 0;
-      tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
-      tempLocation.textColor = descColor;
-      tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
-      
-      [view addSubview:tempLocation];
+  // only make things in section 0 clickable if user does not have a pet
+  if (indexPath.section == 0 && !self.userHasPet) {
+    // NOT the last row - so we know 3 images per thing.
+    if (currentRow != numberOfRowsInSection - 1) {
+      // TODO: use correct values in an array
+      for (int x = 0; x < 3; x++) {
+        UIButton *tempButton = [[UIButton alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
+        UIImage *btnImage = [UIImage imageNamed:@"tempavatar.png"];
+
+        [tempButton setImage:btnImage forState:UIControlStateNormal];
+        tempButton.contentMode = UIViewContentModeScaleToFill;
+        [tempButton addTarget:self action:@selector(pickupPet) forControlEvents:UIControlEventTouchUpInside];
+        [view addSubview:tempButton];
+        
+        UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
+        tempLocation.textAlignment = NSTextAlignmentCenter;
+        tempLocation.text = @"Mission Dolores Park";
+        tempLocation.numberOfLines = 0;
+        tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
+        tempLocation.textColor = descColor;
+        tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
+        
+        [view addSubview:tempLocation];
+      }
+    }
+    
+    else {
+      // TODO: is the last row - check how many images are left to show lol
+      for (int x = 0; x < 3; x++) {
+        
+        UIButton *tempButton = [[UIButton alloc] initWithFrame:CGRectMake(20 + 100 * x, 10, 73.5, 73.5)];
+        UIImage *btnImage = [UIImage imageNamed:@"tempavatar.png"];
+        
+        [tempButton setImage:btnImage forState:UIControlStateNormal];
+        tempButton.contentMode = UIViewContentModeScaleToFill;
+        [tempButton addTarget:self action:@selector(pickupPet) forControlEvents:UIControlEventTouchUpInside];
+        [view addSubview:tempButton];
+        
+        UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
+        tempLocation.textAlignment = NSTextAlignmentCenter;
+        tempLocation.text = @"Mission Dolores Park";
+        tempLocation.numberOfLines = 0;
+        tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
+        tempLocation.textColor = descColor;
+        tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
+        
+        [view addSubview:tempLocation];
+
+      }
     }
   }
-  
+  // not first section - aka NOT BUTTONS.
   else {
-    // TODO: is the last row - check how many images are left to show lol
-    for (int x = 0; x < 3; x++) {
-      UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 10, 73.5, 73.5)];
-      tempView.image = [UIImage imageNamed:@"tempavatar.png"];
-      [view addSubview:tempView];
-      
-      UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
-      tempLocation.textAlignment = NSTextAlignmentCenter;
-      tempLocation.text = @"Mission Dolores Park";
-      tempLocation.numberOfLines = 0;
-      tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
-      tempLocation.textColor = descColor;
-      tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
-      
-      [view addSubview:tempLocation];
-
+    // NOT the last row - so we know 3 images per thing.
+    if (currentRow != numberOfRowsInSection - 1) {
+      // TODO: use correct values in an array
+      for (int x = 0; x < 3; x++) {
+        UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
+        tempView.image = [UIImage imageNamed:@"tempavatar.png"];
+        [view addSubview:tempView];
+        
+        UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
+        tempLocation.textAlignment = NSTextAlignmentCenter;
+        tempLocation.text = @"Mission Dolores Park";
+        tempLocation.numberOfLines = 0;
+        tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
+        tempLocation.textColor = descColor;
+        tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
+        
+        [view addSubview:tempLocation];
+      }
+    }
+    
+    else {
+      // TODO: is the last row - check how many images are left to show lol
+      for (int x = 0; x < 3; x++) {
+        UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 10, 73.5, 73.5)];
+        tempView.image = [UIImage imageNamed:@"tempavatar.png"];
+        [view addSubview:tempView];
+        
+        UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
+        tempLocation.textAlignment = NSTextAlignmentCenter;
+        tempLocation.text = @"Mission Dolores Park";
+        tempLocation.numberOfLines = 0;
+        tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
+        tempLocation.textColor = descColor;
+        tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
+        
+        [view addSubview:tempLocation];
+        
+      }
     }
   }
 }

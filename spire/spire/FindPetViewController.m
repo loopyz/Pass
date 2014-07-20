@@ -35,36 +35,44 @@
 - (void)findNearbyPets
 {
     [self getLocation:^(float latitude, float longitude) {
-        self.pets = [[NSMutableArray alloc] initWithCapacity:3];
+        self.pets = [[NSMutableArray alloc] initWithArray:@[@[], @[], @[]]];
         
         // TODO: FIND BETTER LL OFFSETS for 500 ft, 1 mi, 5 mi away
         float offsets[] = {1, 5, 10};
         NSString *predicateStrings[3];
+        
+        __block int callbacksReceived = 0;
         
         for (int i = 0; i < 3; i++) {
             float offset = offsets[i];
             
             // First, query by offsets from latitude and longitude.
             predicateStrings[i] = [NSString stringWithFormat:@"latitude >= %f AND latitude <= %f AND longitude >= %f AND longitude <= %f", latitude-offset, latitude+offset, longitude-offset, longitude+offset];
-            /*if (i == 1) {
-                predicateStrings[i] = [predicateStrings[i] stringByAppendingString:[NSString stringWithFormat:@" AND NOT (%@)", predicateStrings[i-1]]];
-            } else if (i == 2) {
-                predicateStrings[i] = [predicateStrings[i] stringByAppendingString:[NSString stringWithFormat:@" AND NOT (%@) AND NOT (%@)", predicateStrings[i-1], predicateStrings[i-2]]];
-            }*/
             
             // Next, query by class name and other filters.
             PFQuery *query = [PFQuery queryWithClassName:@"Pet" predicate:[NSPredicate predicateWithFormat:predicateStrings[i]]];
-            query.cachePolicy = kPFCachePolicyCacheThenNetwork;
-            //[query whereKey:@"currentUser" equalTo:[NSNull null]];
-            //[query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
+            [query whereKey:@"currentUser" equalTo:[NSNull null]];
+            [query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
             query.limit = 6; // TODO: limit for now for simplicity
             
             
             [query findObjectsInBackgroundWithBlock:^(NSArray *pets, NSError *error) {
                 if (pets != nil) {
-                    [self.pets addObject:pets];
-                } else {
-                    [self.pets addObject:@[]];
+                    [self.pets replaceObjectAtIndex:i withObject:pets];
+                }
+                callbacksReceived++;
+                if (callbacksReceived == 3) {
+                    
+                    NSArray *petIds0 = [self.pets[0] valueForKey:@"objectId"];
+                    NSArray *petIds1 = [self.pets[1] valueForKey:@"objectId"];
+                    
+                    self.pets[2] = [self.pets[2] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(PFObject *evaluatedObject, NSDictionary *bindings) {
+                        NSLog(@"%@", [evaluatedObject objectId]);
+                        return [petIds1 indexOfObject:[evaluatedObject objectId]] == NSNotFound;
+                    }]];
+                    self.pets[1] = [self.pets[1] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(PFObject *evaluatedObject, NSDictionary *bindings) {
+                        return [petIds0 indexOfObject:[evaluatedObject objectId]] == NSNotFound;
+                    }]];
                 }
             }];
         }
@@ -121,7 +129,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  return 2;
+  return ([self.pets[section] count] + 2) / 3;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -181,16 +189,22 @@
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
   
   // NOT the last row - so we know 3 images per thing.
-  if (currentRow != numberOfRowsInSection - 1) {
+  if (currentRow != numberOfRowsInSection - 1 || [self.pets[indexPath.section] count] % 3 == 0) {
     // TODO: use correct values in an array
     for (int x = 0; x < 3; x++) {
+        NSUInteger section = indexPath.section;
+        NSUInteger index = currentRow * 3 + x;
+        
       UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
-      tempView.image = [UIImage imageNamed:@"tempavatar.png"];
+        PFObject *pet = self.pets[section][index];
+        NSString *petType = [pet objectForKey:@"type"];
+        NSString *petLoc = [pet objectForKey:@"locName"];
+      tempView.image = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
       [view addSubview:tempView];
       
       UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
       tempLocation.textAlignment = NSTextAlignmentCenter;
-      tempLocation.text = @"Mission Dolores Park";
+        tempLocation.text = petLoc;
       tempLocation.numberOfLines = 0;
       tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
       tempLocation.textColor = descColor;
@@ -202,14 +216,20 @@
   
   else {
     // TODO: is the last row - check how many images are left to show lol
-    for (int x = 0; x < 3; x++) {
+      for (int x = 0; x < [self.pets[indexPath.section] count] % 3; x++) {
+          NSUInteger section = indexPath.section;
+        NSUInteger index = currentRow * 3 + x;
+        PFObject *pet = self.pets[section][index];
+        NSString *petType = [pet objectForKey:@"type"];
+        NSString *petLoc = [pet objectForKey:@"locName"];
+
       UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 10, 73.5, 73.5)];
-      tempView.image = [UIImage imageNamed:@"tempavatar.png"];
+      tempView.image = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
       [view addSubview:tempView];
       
       UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
       tempLocation.textAlignment = NSTextAlignmentCenter;
-      tempLocation.text = @"Mission Dolores Park";
+        tempLocation.text = petLoc;
       tempLocation.numberOfLines = 0;
       tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
       tempLocation.textColor = descColor;

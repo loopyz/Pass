@@ -22,7 +22,7 @@
     if (self) {
         // Custom initialization
       self.tableView.separatorColor = [UIColor colorWithRed:211/255.0f green:211/255.0f blue:211/255.0f alpha:1.0f];
-      
+        
       
       
     }
@@ -36,7 +36,7 @@
         // Custom initialization
         self.tableView.separatorColor = [UIColor colorWithRed:211/255.0f green:211/255.0f blue:211/255.0f alpha:1.0f];
         self.photo = photo;
-        
+
         
     }
     return self;
@@ -183,7 +183,8 @@
     if (self.photo) {
         [self setupImage];
         [self setupCaption];
-        
+        self.comments = @[[self randomComment], [self randomComment], [self randomComment]];
+        self.usernames = @[[self randomPersonAvatar],[self randomPersonAvatar], [self randomPersonAvatar]];
         [self.tableView reloadData];
     }
 }
@@ -353,10 +354,11 @@
     city.text = [self.photo objectForKey:@"locName"];//@"San Francisco, CA";
   }
   else {
-      NSString *comment = [self randomComment];
-      NSString *username = [self randomPersonAvatar];
+      NSUInteger *map = indexPath.row % 3;
       
       UILabel *name = (UILabel *)[cell viewWithTag:304];
+      NSString *username = [self.usernames objectAtIndex:map];
+      NSString *comment = [self.comments objectAtIndex:map];
       name.text = username;
       
       UIImageView *fbPic = (UIImageView *)[cell viewWithTag:305];

@@ -53,6 +53,7 @@
   [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
     if (objects) {
       self.photos = objects;
+        
       [self.tableView reloadData];
     }
   }];
@@ -108,12 +109,19 @@
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
   
   //setup avatar
-    FBProfilePictureView *avatarView = [[FBProfilePictureView alloc] initWithFrame:CGRectMake(10, 15, 40, 40)];
-    avatarView.profileID = [[photo objectForKey:@"user"] objectForKey:@"fbId"];
+                         
+    PFImageView *avatarView = [[PFImageView alloc] initWithFrame:CGRectMake(10, 15, 40, 40)];
     
-//  UIImageView *avatarView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 15, 40, 40)];
-//  avatarView.image = [UIImage imageNamed:@"tempnewsavatar.png"];
-  [view addSubview:avatarView];
+    avatarView.image =[UIImage imageNamed:@"tempnewsavatar.png"];
+    avatarView.file = [[photo objectForKey:@"user"] objectForKey:@"fbProfilePic"];
+    [avatarView loadInBackground];
+    avatarView.layer.masksToBounds = YES;
+    float width = avatarView.bounds.size.width;
+    avatarView.layer.cornerRadius = width/2;
+    [view addSubview:avatarView];
+    
+    
+  
   
   //setup avatar name
   UILabel *avatarName = [[UILabel alloc] initWithFrame:CGRectMake(60, 0, 300, 50)];
@@ -150,54 +158,60 @@
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
   if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
+      cell.backgroundColor = [UIColor clearColor];
+      PFImageView *imageView = [[PFImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
+      imageView.image =[UIImage imageNamed:@"tempsingleimage.png"];
+      imageView.tag = 100;
+      [cell addSubview:imageView];
+      
+      UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
+      
+      // setup location icon
+      UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 345, 11, 17)];
+      locationIconView.image = locationIcon;
+      locationIconView.tag = 101;
+      [cell addSubview:locationIconView];
+      
+      // setup comment button
+      UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
+      [commentButton setTitle:@"Comment" forState:UIControlStateNormal];
+      
+      commentButton.frame = CGRectMake(self.view.frame.size.width - 90, 345, 32.5, 22);
+      [commentButton addTarget:self action:@selector(commentTouched) forControlEvents:UIControlEventTouchUpInside];
+      commentButton.tag = 102;
+      [cell addSubview:commentButton];
+      [commentButton setImage:commentButtonIcon forState:UIControlStateNormal];
+      commentButton.contentMode = UIViewContentModeScaleToFill;
+      
+      // setup heart button
+      UIButton *heartButton = [UIButton buttonWithType:UIButtonTypeCustom];
+      [commentButton setTitle:@"Heart" forState:UIControlStateNormal];
+      
+      heartButton.frame = CGRectMake(self.view.frame.size.width - 40, 345, 32.5, 22);
+      [heartButton addTarget:self action:@selector(heartTouched) forControlEvents:UIControlEventTouchUpInside];
+      heartButton.tag = 103;
+      [cell addSubview:heartButton];
+      [heartButton setImage:heartButtonIcon forState:UIControlStateNormal];
+      heartButton.contentMode = UIViewContentModeScaleToFill;
+      
+      //setup Location label
+      UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(29, 330, 200, 50)];
+      [desc setTextColor:descColor];
+      [desc setBackgroundColor:[UIColor clearColor]];
+      [desc setFont:[UIFont fontWithName:@"Avenir" size:11]];
+      desc.lineBreakMode = NSLineBreakByWordWrapping;
+      desc.numberOfLines = 0;
+      desc.tag = 104;
+      [cell addSubview:desc];
   }
-  cell.backgroundColor = [UIColor clearColor];
   
-    PFImageView *imageView = [[PFImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
-    imageView.image =[UIImage imageNamed:@"tempsingleimage.png"];
+    PFImageView *imageView = (PFImageView *)[cell viewWithTag:100];
     imageView.file = [photo objectForKey:@"image"];
     [imageView loadInBackground];
-//  UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
-//  imageView.image = [UIImage imageNamed:@"tempsingleimage.png"];
-  [cell addSubview:imageView];
-  
-  UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
-  
-  // setup location icon
-  UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 345, 11, 17)];
-  locationIconView.image = locationIcon;
-  [cell addSubview:locationIconView];
-  
-  // setup comment button
-  UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  [commentButton setTitle:@"Comment" forState:UIControlStateNormal];
-  
-  commentButton.frame = CGRectMake(self.view.frame.size.width - 90, 345, 32.5, 22);
-  [commentButton addTarget:self action:@selector(commentTouched) forControlEvents:UIControlEventTouchUpInside];
-  [cell addSubview:commentButton];
-  [commentButton setImage:commentButtonIcon forState:UIControlStateNormal];
-  commentButton.contentMode = UIViewContentModeScaleToFill;
-  
-  // setup heart button
-  UIButton *heartButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  [commentButton setTitle:@"Heart" forState:UIControlStateNormal];
-  
-  heartButton.frame = CGRectMake(self.view.frame.size.width - 40, 345, 32.5, 22);
-  [heartButton addTarget:self action:@selector(heartTouched) forControlEvents:UIControlEventTouchUpInside];
-  [cell addSubview:heartButton];
-  [heartButton setImage:heartButtonIcon forState:UIControlStateNormal];
-  heartButton.contentMode = UIViewContentModeScaleToFill;
-  
-  //setup Location label
-  UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(29, 330, 200, 50)];
-  [desc setTextColor:descColor];
-  [desc setBackgroundColor:[UIColor clearColor]];
-  [desc setFont:[UIFont fontWithName:@"Avenir" size:11]];
-  
+
+    UILabel *desc = (UILabel *)[cell viewWithTag:104];
     desc.text = [photo objectForKey:@"locName"];//@"Mountain View, CA";
-  desc.lineBreakMode = NSLineBreakByWordWrapping;
-  desc.numberOfLines = 0;
-  [cell addSubview:desc];
+
   
   return cell;
 }

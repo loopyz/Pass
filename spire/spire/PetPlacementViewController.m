@@ -32,7 +32,6 @@
 
 - (void)getLocation:(void (^)(NSNumber *latitude, NSNumber *longitude, NSString *locName)) callback
 {
-    // TODO: take in callback, call with lat/long/name
     NSNumber *latitude = @3.14;
     NSNumber *longitude = @2.71;
     __block NSString *locName = @"Medium HQ";
@@ -72,6 +71,9 @@
 
 - (void)addPhoto:(NSData *)photoData withUser:(PFUser *)user withPet:(PFObject *)pet withLat:(NSNumber *)latitude withLong:(NSNumber *)longitude withName:(NSString *)locName withCaption:(NSString *)caption
 {
+    if ([caption isEqualToString:@"Add a caption..."]) {
+        caption = locName;
+    }
     PFFile *image = [PFFile fileWithName:@"image.png" data:photoData];
     [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
@@ -400,7 +402,6 @@
     query.cachePolicy = kPFCachePolicyCacheThenNetwork;
     PFUser *currentUser = [PFUser currentUser];
     [query whereKey:@"currentUser" equalTo:currentUser];
-    //self.pet = [query getFirstObject];
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
         self.pet = pet;
     }];
@@ -439,7 +440,7 @@
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification {
-  NSString *textFromKeyboard = self.textEntry.text;
+  //NSString *textFromKeyboard = self.textEntry.text;
   [self.textEntry resignFirstResponder];
 }
 

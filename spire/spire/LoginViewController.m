@@ -64,19 +64,28 @@
             }
         } else if (user.isNew || ![user objectForKey:@"registered"]) {
             NSLog(@"User just joined the app. Successful login.");
-            if (![[PFUser currentUser] objectForKey:@"fbId"]) {
+            PFUser *currentUser = [PFUser currentUser];
+            if (![currentUser objectForKey:@"fbId"]) {
                 FBRequest *request = [FBRequest requestForMe];
                 [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
                     if (!error) {
                         NSDictionary *userData = (NSDictionary *)result;
-                        [[PFUser currentUser] setObject:userData[@"id"] forKey:@"fbId"];
-                        [[PFUser currentUser] setObject:userData[@"name"] forKey:@"fbName"];
-                        [[PFUser currentUser] saveInBackground];
+                        [currentUser setObject:userData[@"id"] forKey:@"fbId"];
+                        [currentUser setObject:userData[@"name"] forKey:@"fbName"];
+                        [currentUser saveInBackground];
+                        RegisterInformationViewController *svc = [[RegisterInformationViewController alloc] init];
+                        svc.fbId = userData[@"id"];
+                        svc.fbName = userData[@"name"];
+                        [self.navigationController pushViewController:svc animated:YES];
                     }
                 }];
+            } else {
+                RegisterInformationViewController *svc = [[RegisterInformationViewController alloc] init];
+                svc.fbId = [currentUser objectForKey:@"fbId"];
+                svc.fbName = [currentUser objectForKey:@"fbName"];
+                [self.navigationController pushViewController:svc animated:YES];
             }
-            RegisterInformationViewController *svc = [[RegisterInformationViewController alloc] init];
-            [self.navigationController pushViewController:svc animated:YES];
+            
         } else {
             NSLog(@"Successful login.");
             HomeViewController *svc = [[HomeViewController alloc] init];

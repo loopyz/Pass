@@ -136,8 +136,8 @@
     FriendsFeedViewController *ffvc = [[FriendsFeedViewController alloc] initWithNibName:nil bundle:nil];
     ffvc.tabBarItem.image = [UIImage imageNamed:@"newstab.png"];
     
-//    ProfileViewController *pvc = [[ProfileViewController alloc] initWithNibName:nil bundle:nil];
-    PetProfileViewController *pvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];
+    ProfileViewController *pvc = [[ProfileViewController alloc] initWithNibName:nil bundle:nil];
+//    PetProfileViewController *pvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];
     pvc.tabBarItem.image = [UIImage imageNamed:@"profiletab.png"];
     
     self.viewControllers=[NSArray arrayWithObjects:nvc, evc, placevc, ffvc, pvc, nil];

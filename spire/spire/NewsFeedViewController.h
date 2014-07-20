@@ -12,6 +12,6 @@
 @interface NewsFeedViewController : UITableViewController<UIScrollViewDelegate, BEMPullToRefreshDelegate>
 
 @property (nonatomic, strong) PullToRefresh *ptr;
-@property (nonatomic, strong) NSMutableArray *videos;
+@property (nonatomic, strong) NSMutableArray *photos;
 
 @end

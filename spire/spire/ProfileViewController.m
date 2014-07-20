@@ -7,6 +7,7 @@
 //
 
 #import "ProfileViewController.h"
+#import "PetProfileViewController.h"
 #import <Parse/Parse.h>
 #import <FacebookSDK/FacebookSDK.h>
 
@@ -28,7 +29,8 @@
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     // Custom initialization
-    self.bgColor = [UIColor colorWithRed:251/255.0f green:251/255.0f blue:251/255.0f alpha:1.0f];
+    self.bgColor = [UIColor colorWithRed:248/255.0f green:248/255.0f blue:248/255.0f alpha:1.0f];
+    
     self.videos = [[NSMutableArray alloc] init];
     [self setupScrollView];
     [self setupHeader];
@@ -49,6 +51,7 @@
 - (void)setupHeader
 {
   UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.videosTable.frame.size.width, 164)];
+  view.backgroundColor = [UIColor whiteColor];
   self.profileSnippetView = view;
   self.fbProfilePic = [[FBProfilePictureView alloc] init];
   FBRequest *request = [FBRequest requestForMe];
@@ -104,39 +107,39 @@
   //setup score, offers, and pending label
   UIColor *tinyLabelColor = [UIColor colorWithRed:186/255.0f green:186/255.0f blue:186/255.0f alpha:1.0f];
   
-  UILabel *score = [[UILabel alloc] initWithFrame:CGRectMake(50, 120, 150, 50)];
+  UILabel *score = [[UILabel alloc] initWithFrame:CGRectMake(40, 120, 150, 50)];
   [score setTextColor:tinyLabelColor];
   [score setBackgroundColor:[UIColor clearColor]];
   [score setFont:[UIFont fontWithName:@"Avenir" size:13]];
   score.text = @"Posts";
   
-  UILabel *offers = [[UILabel alloc] initWithFrame:CGRectMake(150, 120, 150, 50)];
+  UILabel *offers = [[UILabel alloc] initWithFrame:CGRectMake(140, 120, 150, 50)];
   [offers setTextColor:tinyLabelColor];
   [offers setBackgroundColor:[UIColor clearColor]];
   [offers setFont:[UIFont fontWithName:@"Avenir" size:13]];
   offers.text = @"Followers";
   
-  UILabel *pending = [[UILabel alloc] initWithFrame:CGRectMake(250, 120, 150, 50)];
+  UILabel *pending = [[UILabel alloc] initWithFrame:CGRectMake(240, 120, 150, 50)];
   [pending setTextColor:tinyLabelColor];
   [pending setBackgroundColor:[UIColor clearColor]];
   [pending setFont:[UIFont fontWithName:@"Avenir" size:13]];
   pending.text = @"Following";
   
-  UILabel *numScore = [[UILabel alloc] initWithFrame:CGRectMake(45, 100, 40, 50)];
+  UILabel *numScore = [[UILabel alloc] initWithFrame:CGRectMake(35, 100, 40, 50)];
   [numScore setTextColor:[UIColor colorWithRed:68/255.0f green:203/255.0f blue:154/255.0f alpha:1.0f]];
   [numScore setBackgroundColor:[UIColor clearColor]];
   numScore.textAlignment = NSTextAlignmentCenter;
   [numScore setFont:[UIFont fontWithName:@"Avenir-Book" size:22]];
   numScore.text = @"123";
   
-  UILabel *numoffers = [[UILabel alloc] initWithFrame:CGRectMake(165, 100, 25, 50)];
+  UILabel *numoffers = [[UILabel alloc] initWithFrame:CGRectMake(155, 100, 25, 50)];
   [numoffers setTextColor:[UIColor colorWithRed:105/255.0f green:32/255.0f blue:213/255.0f alpha:1.0f]];
   [numoffers setBackgroundColor:[UIColor clearColor]];
   numoffers.textAlignment = NSTextAlignmentCenter;
   [numoffers setFont:[UIFont fontWithName:@"Avenir-Book" size:22]];
   numoffers.text = @"8";
   
-  UILabel *numPending = [[UILabel alloc] initWithFrame:CGRectMake(263, 100, 32, 50)];
+  UILabel *numPending = [[UILabel alloc] initWithFrame:CGRectMake(253, 100, 32, 50)];
   [numPending setTextColor:[UIColor colorWithRed:206/255.0f green:34/255.0f blue:155/255.0f alpha:1.0f]];
   [numPending setBackgroundColor:[UIColor clearColor]];
   numPending.textAlignment = NSTextAlignmentCenter;
@@ -259,12 +262,16 @@
 //  self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 245 + (vcount * 335));
 //  return vcount;
   
-  return 20;
+  NSUInteger count = 20;
+  self.videosTable.frame = CGRectMake(0, 164, SCREEN_WIDTH, count * 335);
+  self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 144 + (count * 130) + 134);
+  
+  return count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  return 335;
+  return 130;
 }
 
 
@@ -278,50 +285,67 @@
   }
   
   cell.backgroundColor = self.bgColor;
-//  PFObject *object = self.videos[indexPath.row];
-//  PFFile *videoFile = [object objectForKey:@"file"];
-//  NSURL *fileUrl = [NSURL URLWithString:videoFile.url];
-//  self.player = [[KSVideoPlayerView alloc] initWithFrame:CGRectMake(0, 0, 320, 280) contentURL:fileUrl];
-//  [cell addSubview:self.player];
-  //[self.player play];
-  //MPMoviePlayerViewController *movie = [[MPMoviePlayerViewController alloc] initWithContentURL:fileUrl];
-  //[self presentMoviePlayerViewControllerAnimated:movie];
   
-  UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 295, 11, 17)];
-  locationIconView.image = locationIcon;
-  [cell addSubview:locationIconView];
+  UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
+  imgView.image = [UIImage imageNamed:@"fox.png"];
+  [cell addSubview:imgView];
   
-  // setup comment button
-  UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  [commentButton setTitle:@"Comment" forState:UIControlStateNormal];
-  
-  commentButton.frame = CGRectMake(self.view.frame.size.width - 90, 295, 32.5, 22);
-  [commentButton addTarget:self action:@selector(commentTouched) forControlEvents:UIControlEventTouchUpInside];
-  [cell addSubview:commentButton];
-  [commentButton setImage:commentButtonIcon forState:UIControlStateNormal];
-  commentButton.contentMode = UIViewContentModeScaleToFill;
-  
-  // setup heart button
-  UIButton *heartButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  [commentButton setTitle:@"Heart" forState:UIControlStateNormal];
-  
-  heartButton.frame = CGRectMake(self.view.frame.size.width - 40, 295, 32.5, 22);
-  [heartButton addTarget:self action:@selector(heartTouched) forControlEvents:UIControlEventTouchUpInside];
-  [cell addSubview:heartButton];
-  [heartButton setImage:heartButtonIcon forState:UIControlStateNormal];
-  heartButton.contentMode = UIViewContentModeScaleToFill;
   
   //setup Location label
-  UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
-  UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(26, 280, 200, 50)];
+  UIColor *descColor = [UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f];
+  UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
   [desc setTextColor:descColor];
   [desc setBackgroundColor:[UIColor clearColor]];
-  [desc setFont:[UIFont fontWithName:@"Avenir" size:11]];
+  [desc setFont:[UIFont fontWithName:@"Avenir" size:24]];
   
-  desc.text = @"Mountain View, CA";
+  desc.text = @"Pusheen";
   desc.lineBreakMode = NSLineBreakByWordWrapping;
   desc.numberOfLines = 0;
   [cell addSubview:desc];
+  
+  // set up miles traveled
+  UILabel *numMiles = [[UILabel alloc] initWithFrame:CGRectMake(120, 40, 200, 50)];
+  [numMiles setTextColor:descColor];
+  [numMiles setBackgroundColor:[UIColor clearColor]];
+  [numMiles setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
+  
+  numMiles.text = @"2187";
+  numMiles.lineBreakMode = NSLineBreakByWordWrapping;
+  numMiles.numberOfLines = 0;
+  [cell addSubview:numMiles];
+  
+  // setup miles label
+  UILabel *milesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 40, 200, 50)];
+  [milesLabel setTextColor:descColor];
+  [milesLabel setBackgroundColor:[UIColor clearColor]];
+  [milesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
+  
+  milesLabel.text = @"miles";
+  milesLabel.lineBreakMode = NSLineBreakByWordWrapping;
+  milesLabel.numberOfLines = 0;
+  [cell addSubview:milesLabel];
+  
+  // set up miles traveled
+  UILabel *numPasses = [[UILabel alloc] initWithFrame:CGRectMake(120, 60, 200, 50)];
+  [numPasses setTextColor:descColor];
+  [numPasses setBackgroundColor:[UIColor clearColor]];
+  [numPasses setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
+  
+  numPasses.text = @"1322";
+  numPasses.lineBreakMode = NSLineBreakByWordWrapping;
+  numPasses.numberOfLines = 0;
+  [cell addSubview:numPasses];
+  
+  // setup miles label
+  UILabel *passesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 60, 200, 50)];
+  [passesLabel setTextColor:descColor];
+  [passesLabel setBackgroundColor:[UIColor clearColor]];
+  [passesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
+  
+  passesLabel.text = @"passes";
+  passesLabel.lineBreakMode = NSLineBreakByWordWrapping;
+  passesLabel.numberOfLines = 0;
+  [cell addSubview:passesLabel];
   
   return cell;
 }
@@ -339,6 +363,9 @@
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   // blah
+  NSLog(@"why?");
+  PetProfileViewController *ppvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];
+  [self.navigationController pushViewController:ppvc animated:YES];
 }
 
 

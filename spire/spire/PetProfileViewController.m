@@ -74,8 +74,33 @@
   else {
     cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"picCell" forIndexPath:indexPath];
   }
+  
+//  dispatch_async(dispatch_get_main_queue(), ^{
+//    
+//    //  ********* Changed *******
+//    
+//    for (UIView *v in [cell.contentView subviews])
+//      [v removeFromSuperview];
+//    
+//    // ********** Changed **********
+//    if (indexPath.row == 0) {
+//      // [cell addSubview:self.header];
+//      cell.backgroundView = self.header;
+//    }
+//    else {
+//      PFFile *image = [[self.photos objectAtIndex:(indexPath.row - 1)] objectForKey:@"image"];
+//      PFImageView *photo = [[PFImageView alloc] init];
+//      photo.image = [UIImage imageNamed:@"tempsingleimage.png"];
+//      photo.file = image;
+//      [photo loadInBackground];
+//      cell.backgroundView = photo;
+//      // [cell addSubview:photo];
+//    }
+//  });
+  
+
   if (indexPath.row == 0) {
-    [cell addSubview:self.header];
+    cell.backgroundView = self.header;
   }
   else {
       PFFile *image = [[self.photos objectAtIndex:(indexPath.row - 1)] objectForKey:@"image"];
@@ -99,9 +124,13 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
   NSLog(@"%d", indexPath.row);
-  SingleImageViewController *ppvc = [[SingleImageViewController alloc] initWithNibName:nil bundle:nil];
+    if (indexPath.row != 0) {
+        PFObject *photo = self.photos[indexPath.row - 1];
+        SingleImageViewController *ppvc = [[SingleImageViewController alloc] initWithPhoto:photo];
+
   [self presentViewController:ppvc animated:YES completion:nil];
-  // [self.navigationController pushViewController:ppvc animated:YES];
+  //[self.navigationController pushViewController:ppvc animated:YES];
+    }
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -274,11 +303,13 @@
         [query includeKey:@"owner"];
         [query getObjectInBackgroundWithId:self.petId block:^(PFObject *object, NSError *error) {
             PFQuery *photosquery = [PFQuery queryWithClassName:@"Photo"];
+            [photosquery includeKey:@"user"];
             [photosquery whereKey:@"pet" equalTo:object];
             
             [photosquery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
                 self.photos = [[NSMutableArray alloc] init];
                 [self.photos addObjectsFromArray:objects];
+              
                 [self.collectionView reloadData];
             }];
             [self setupPetSnippet:object];
@@ -292,6 +323,10 @@
     }
 }
 
+- (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
+{
+  return YES;
+}
 /*
 #pragma mark - Navigation
 

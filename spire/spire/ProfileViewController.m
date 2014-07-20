@@ -225,7 +225,7 @@
 //  self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 245 + (vcount * 335));
 //  return vcount;
   
-  NSUInteger count = 20;
+  NSUInteger count = 20 + 1;
   //self.videosTable.frame = CGRectMake(0, 164, SCREEN_WIDTH, count * 335);
   //self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 144 + (count * 130) + 134);
   
@@ -249,6 +249,7 @@
   }
   else {
     cell = [tableView dequeueReusableCellWithIdentifier:@"Header"];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
   }
   if (cell == nil && indexPath.row == 0) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:@"Header"];
@@ -341,9 +342,14 @@
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   // blah
-  NSLog(@"why?");
-  PetProfileViewController *ppvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];
-  [self.navigationController pushViewController:ppvc animated:YES];
+  if (indexPath.row == 0) {
+    
+  }//do not nothing
+  else {
+    NSLog(@"why?");
+    PetProfileViewController *ppvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];
+    [self.navigationController pushViewController:ppvc animated:YES];
+  }
 }
 
 

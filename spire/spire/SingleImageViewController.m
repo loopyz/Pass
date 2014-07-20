@@ -169,6 +169,7 @@
     if (self.photo) {
         [self setupImage];
         [self setupCaption];
+        
         [self.tableView reloadData];
     }
 }
@@ -265,10 +266,10 @@
   }
   else if (indexPath.row == 2) {
     UILabel *city = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 300, 20)];
-      city.text = [self.photo objectForKey:@"locName"];//@"San Francisco, CA";
     city.font = [UIFont fontWithName:@"Avenir" size:20.0f];
     city.textColor = [UIColor colorWithRed:110/255.0f green:91/255.0f blue:214/255.0f alpha:1.0f];
-    [cell addSubview:city];
+      city.text = [self.photo objectForKey:@"locName"];//@"San Francisco, CA";
+      [cell addSubview:city];
     
     UILabel *numLikes = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 300, 70)];
     numLikes.text = @"22";

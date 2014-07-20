@@ -91,21 +91,21 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    if (![[PFUser currentUser] objectForKey:@"fbProfilePic"]) {
-        
-        NSString *url = [NSString stringWithFormat:@"http://graph.facebook.com/%@/picture?type=square", [[PFUser currentUser] objectForKey:@"fbId"]];
-        NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
-        
-        PFFile *image = [PFFile fileWithName:@"profile.png" data:imageData];
-        [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (succeeded) {
-                [[PFUser currentUser] setObject:image forKey:@"fbProfilePic"];
-                [[PFUser currentUser] saveInBackground];
-            } else {
-                NSLog(@"parse error --saving profile image%@", error);
-            }
-        }];
-    }
+//    if (![[PFUser currentUser] objectForKey:@"fbProfilePic"]) {
+//        
+//        NSString *url = [NSString stringWithFormat:@"http://graph.facebook.com/%@/picture?type=square", [[PFUser currentUser] objectForKey:@"fbId"]];
+//        NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+//        
+//        PFFile *image = [PFFile fileWithName:@"profile.png" data:imageData];
+//        [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+//            if (succeeded) {
+//                [[PFUser currentUser] setObject:image forKey:@"fbProfilePic"];
+//                [[PFUser currentUser] saveInBackground];
+//            } else {
+//                NSLog(@"parse error --saving profile image%@", error);
+//            }
+//        }];
+//    }
 }
 
 - (void)viewWillAppear:(BOOL)animated

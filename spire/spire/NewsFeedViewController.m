@@ -53,6 +53,7 @@
   [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
     if (objects) {
       self.photos = objects;
+        
       [self.tableView reloadData];
     }
   }];
@@ -108,11 +109,12 @@
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
   
   //setup avatar
-    FBProfilePictureView *avatarView = [[FBProfilePictureView alloc] initWithFrame:CGRectMake(10, 15, 40, 40)];
-    avatarView.profileID = [[photo objectForKey:@"user"] objectForKey:@"fbId"];
-    
-//  UIImageView *avatarView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 15, 40, 40)];
-//  avatarView.image = [UIImage imageNamed:@"tempnewsavatar.png"];
+                         
+    PFImageView *avatarView = [[PFImageView alloc] initWithFrame:CGRectMake(10, 15, 40, 40)];
+    avatarView.image =[UIImage imageNamed:@"tempnewsavatar.png"];
+    avatarView.file = [[photo objectForKey:@"user"] objectForKey:@"fbProfilePic"];
+    [avatarView loadInBackground];
+
   [view addSubview:avatarView];
   
   //setup avatar name

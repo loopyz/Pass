@@ -37,6 +37,22 @@
   return self;
 }
 
+- (void)updatePhotos
+{
+    PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
+    [query orderByDescending:@"createdAt"];
+    [query includeKey:@"user"];
+    
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (objects) {
+            self.photos = objects;
+            
+            [self.tableView reloadData];
+        }
+    }];
+
+}
+
 - (void)viewDidLoad
 {
   [super viewDidLoad];
@@ -46,17 +62,7 @@
   self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
   self.ptr.delegate = self;
   [self.view addSubview:self.ptr];
-  PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
-  [query orderByDescending:@"createdAt"];
-    [query includeKey:@"user"];
-    
-  [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-    if (objects) {
-      self.photos = objects;
-        
-      [self.tableView reloadData];
-    }
-  }];
+    [self updatePhotos];
   
   [self.tableView setAllowsSelection:NO];
   
@@ -67,6 +73,7 @@
 }
 
 - (void)Refresh {
+    [self updatePhotos];
   // Perform here the required actions to refresh the data (call a JSON API for example).
   // Once the data has been updated, call the method isDoneRefreshing:
   [self.ptr isDoneRefreshing];

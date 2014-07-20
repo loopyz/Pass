@@ -91,6 +91,9 @@
 {
     [super viewDidLoad];
     
+//    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+//    [currentInstallation addUniqueObject:@"PetsNearby" forKey:@"channels"];
+//    [currentInstallation saveInBackground];
     // Uncomment to add a bunch of pets!
     /*for (int i = 0; i < 10; i++) {
         PFObject *pet = [PFObject objectWithClassName:@"Pet"];

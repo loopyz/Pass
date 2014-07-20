@@ -107,6 +107,10 @@
         [self updatePet:self.pet withDropped:dropped withLat:latitude withLong:longitude withName:locName];
         [self addPhoto:photoData withUser:currentUser withPet:self.pet withLat:latitude withLong:longitude withName:locName withCaption:caption];
         
+        PFPush *push = [[PFPush alloc] init];
+        [push setChannel:@"PetsNearby"];
+        [push setMessage:[NSString stringWithFormat:@"A pet's been dropped at %@", locName]];
+        [push sendPushInBackground];
         // go back to home tab
         [self.tabBarController setSelectedIndex:0];
     }];

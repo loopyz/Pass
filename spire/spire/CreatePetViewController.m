@@ -1,23 +1,24 @@
 //
-//  RegisterInformationViewController.m
+//  CreatePetViewController.m
 //  spire
 //
-//  Created by Lucy Guo on 7/19/14.
+//  Created by Niveditha Jayasekar on 7/19/14.
 //  Copyright (c) 2014 Niveditha Jayasekar. All rights reserved.
 //
 #import <Parse/Parse.h>
 
-#import "RegisterInformationViewController.h"
 #import "CreatePetViewController.h"
+#import "HomeViewController.h"
 
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
 
-@interface RegisterInformationViewController (Private)
+@interface CreatePetViewController (Private)
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+
 @end
 
-@implementation RegisterInformationViewController
+@implementation CreatePetViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -25,7 +26,10 @@
     if (self) {
         // Custom initialization
         [self setupScrollView];
-        self.fbProfilePic = [[FBProfilePictureView alloc] init];
+        [self setupWelcome];
+        [self setupAvatar];
+        [self setupTable];
+        [self setupSubmitButton];
     }
     return self;
 }
@@ -39,7 +43,7 @@
     submitButton.frame = CGRectMake(0, 800, 320, 47.5);
     [submitButton addTarget:self action:@selector(buttonTouched:) forControlEvents:UIControlEventTouchUpInside];
     
-    UIImage *btnImage = [UIImage imageNamed:@"nextbutton.png"];
+    UIImage *btnImage = [UIImage imageNamed:@"submitbutton.png"];
     [submitButton setImage:btnImage forState:UIControlStateNormal];
     submitButton.contentMode = UIViewContentModeScaleToFill;
     
@@ -48,23 +52,28 @@
 
 - (IBAction)buttonTouched:(id)sender
 {
-    PFUser *user = [PFUser currentUser];
-    
+    PFObject *pet = [[PFObject alloc] initWithClassName:@"Pet"];
+
+    // TODO : select pet pic.
     for (NSInteger i = 0; i < [self.formTable numberOfRowsInSection:0]; ++i)
     {
         ELCTextFieldCell *cell = [self.formTable cellForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
         NSString *text = [[cell rightTextField] text];
-        [user setObject:text forKey:self.fields[i]];
+        [pet setObject:text forKey:self.fields[i]];
     }
-    [user setObject:@true forKey:@"registered"];
-    [user saveInBackground];
+    [pet setObject:[PFUser currentUser] forKey:@"owner"];
+    [pet setObject:@0 forKey:@"miles"];
+    [pet saveInBackground];
     
-    // move onto creating pet
-    CreatePetViewController *cvc = [[CreatePetViewController alloc] init];
-    [self.navigationController pushViewController:cvc animated:YES];
+    PFObject *pass = [[PFObject alloc] initWithClassName:@"Pass"];
+    [pass setObject:pet forKey:@"pet"];
+    [pass setObject:[PFUser currentUser] forKey:@"user"];
+    [pass setObject:@0 forKey:@"miles"];
+    [pass saveInBackground];
+    
     // open home view controller
-//    HomeViewController *svc = [[HomeViewController alloc] init];
-//    [self.navigationController pushViewController:svc animated:YES];
+    HomeViewController *svc = [[HomeViewController alloc] init];
+    [self.navigationController pushViewController:svc animated:YES];
 }
 
 - (void)setupTable
@@ -103,31 +112,19 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.fields = [NSMutableArray arrayWithObjects:@"username", @"description", @"website", @"hometown", nil];
-    self.labels = [NSArray arrayWithObjects:@"Username",
-                   @"Description",
-                   @"Website",
-                   @"Hometown (Optional)",
+    self.fields = [NSMutableArray arrayWithObjects:@"name", nil];
+    self.labels = [NSArray arrayWithObjects:@"Name",
                    nil];
 	
-	self.placeholders = [NSArray arrayWithObjects:@"Enter Username",
-                         @"Enter Description (Optional)",
-                         @"Enter Website (Optional)",
-                         @"Enter Hometown (Optional)",
+	self.placeholders = [NSArray arrayWithObjects:@"Enter Name",
                          nil];
-
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [self.navigationController setNavigationBarHidden:YES];
     // Do any additional setup after loading the view.
-    if (self.fbId && self.fbName) {
-        [self setupWelcome];
-        [self setupAvatar];
-        [self setupTable];
-        [self setupSubmitButton];
-    }
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -143,40 +140,17 @@
 
 - (void)setupAvatar
 {
-    self.fbProfilePic.backgroundColor = [UIColor blackColor];
-    self.fbProfilePic.frame = CGRectMake((self.view.frame.size.width - 190.5)/2 + 30, 47, 127.5, 127.5);
-    float width = self.fbProfilePic.bounds.size.width;
-    self.fbProfilePic.layer.cornerRadius = width/2;
-    self.fbProfilePic.profileID = self.fbId;
-//    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2 + 30, 47, 127.5, 127.5)];
-//    imgView.image = [UIImage imageNamed:@"tempavatar.png"];
-    [self.scrollView addSubview:self.fbProfilePic];
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2 + 30, 47, 127.5, 127.5)];
+    imgView.image = [UIImage imageNamed:@"fox.png"];
+    [self.scrollView addSubview:imgView];
 }
 
 - (void)setupWelcome
 {
     //setup welcome message
-    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2 - 10, 200, 217.5, 33.5)];
-    imgView.image = [UIImage imageNamed:@"welcome.png"];
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2 - 10, 200, 217.5, 70)];
+    imgView.image = [UIImage imageNamed:@"nameyourpet.png"];
     [self.scrollView addSubview:imgView];
-    
-    
-    //setup name label
-    UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
-    UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(0, 230, SCREEN_WIDTH, 50)];
-    
-    name.textAlignment = NSTextAlignmentCenter;
-    [name setTextColor:nameColor];
-    [name setBackgroundColor:[UIColor clearColor]];
-    [name setFont:[UIFont fontWithName:@"Avenir" size:22]];
-    name.text = self.fbName;//@"Lucy Guo";
-    [self.scrollView addSubview:name];
-    
-    //setup description
-    UIImageView *infotext = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2 - 27, 280, 248.5, 35.5)];
-    infotext.image = [UIImage imageNamed:@"informationtext.png"];
-    [self.scrollView addSubview:infotext];
-    
 }
 
 #pragma mark -

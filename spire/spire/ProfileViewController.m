@@ -180,7 +180,7 @@
     [query whereKey:@"user" equalTo:[PFUser currentUser]];
     [query whereKeyExists:@"first"]; // neccessary?
     [query whereKey:@"first" equalTo:@1];
-    [query orderByAscending:@"createdAt"];
+    [query orderByDescending:@"createdAt"];
     
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {

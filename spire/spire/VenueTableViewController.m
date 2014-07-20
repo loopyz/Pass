@@ -54,6 +54,8 @@
         NSString *_4squareId = @"02K3GC4J1Y34WDZG4XIWHBSF2WJKOHIOMSTPWTWQVMPFALL2";
         NSString *_4squareSecret = @"XYHXKNHOVBPTX4KLXR1QID4QNA2RSMXZZQML32ANKP1H4VHJ";
         NSString *locFormat = @"https://api.foursquare.com/v2/venues/search?client_id=%@&client_secret=%@&v=20130815&ll=%@,%@";
+        latitude = @37.78624333470679;
+        longitude = @(-122.40518893452861);
         
         NSString *queryAddr = [NSString stringWithFormat:locFormat,_4squareId,_4squareSecret,latitude,longitude];
         
@@ -90,6 +92,7 @@
     
     UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissMenu)];
     self.navigationItem.leftBarButtonItem = backButton;
+    [self.tableView setContentInset:UIEdgeInsetsMake(30, 0, 0, 0)];
 }
 
 - (void)didReceiveMemoryWarning

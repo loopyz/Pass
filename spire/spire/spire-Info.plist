@@ -26,7 +26,9 @@
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
+		<string>location-services</string>
 		<string>armv7</string>
+		<string>gps</string>
 	</array>
 	<key>FacebookAppID</key>
 	<string>1442305472714405</string>

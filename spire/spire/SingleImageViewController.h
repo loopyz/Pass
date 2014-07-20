@@ -7,7 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <FacebookSDK/FacebookSDK.h>
 
 @interface SingleImageViewController : UITableViewController
+
+@property (nonatomic, strong) UIView *imageView;
+@property (nonatomic, strong) UIView *captionView;
+@property (nonatomic, strong) FBProfilePictureView *fbProfilePic;
 
 @end

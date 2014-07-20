@@ -80,7 +80,7 @@
   else {
       PFFile *image = [[self.photos objectAtIndex:(indexPath.row - 1)] objectForKey:@"image"];
       PFImageView *photo = [[PFImageView alloc] init];
-      photo.image = [UIImage imageNamed:@"pusheen.png"];
+      photo.image = [UIImage imageNamed:@"tempsingleimage.png"];
       photo.file = image;
       [photo loadInBackground];
     cell.backgroundView = photo;
@@ -100,8 +100,8 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
   NSLog(@"%d", indexPath.row);
   SingleImageViewController *ppvc = [[SingleImageViewController alloc] initWithNibName:nil bundle:nil];
-  // [self presentViewController:ppvc animated:YES completion:nil];
-  [self.navigationController pushViewController:ppvc animated:YES];
+  [self presentViewController:ppvc animated:YES completion:nil];
+  // [self.navigationController pushViewController:ppvc animated:YES];
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {

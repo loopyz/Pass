@@ -164,6 +164,7 @@
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController
 {
     [self assignTabColors];
+    [viewController viewWillAppear:YES];
 }
 
 @end

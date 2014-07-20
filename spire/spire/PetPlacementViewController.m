@@ -7,7 +7,6 @@
 //
 
 #import "PetPlacementViewController.h"
-#import <Parse/Parse.h>
 #import "VenueTableViewController.h"
 
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
@@ -91,17 +90,13 @@
 
 - (void)saveToParse:(NSData *)photoData withCaption:(NSString *)caption withDropped:(BOOL) dropped
 {
-    PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
     PFUser *currentUser = [PFUser currentUser];
-    [query whereKey:@"currentUser" equalTo:currentUser];
-    [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
-        [self getLocation:^(NSNumber *latitude, NSNumber *longitude, NSString *locName) {
-            [self updatePet:pet withDropped:dropped withLat:latitude withLong:longitude withName:locName];
-            [self addPhoto:photoData withUser:currentUser withPet:pet withLat:latitude withLong:longitude withName:locName withCaption:caption];
-            
-            // go back to home
-            [self.tabBarController setSelectedIndex:0];
-        }];
+    [self getLocation:^(NSNumber *latitude, NSNumber *longitude, NSString *locName) {
+        [self updatePet:self.pet withDropped:dropped withLat:latitude withLong:longitude withName:locName];
+        [self addPhoto:photoData withUser:currentUser withPet:self.pet withLat:latitude withLong:longitude withName:locName withCaption:caption];
+        
+        // go back to home tab
+        [self.tabBarController setSelectedIndex:0];
     }];
 }
 
@@ -194,12 +189,14 @@
 
 - (void)setupPet
 {
+    NSString *petType = [self.pet objectForKey:@"type"];
+    
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.frame = CGRectMake((self.view.frame.size.width - 190.5)/2 + 30, 47, 127.5, 127.5);
     [button addTarget:self action:@selector(imageTouched:withEvent:) forControlEvents:UIControlEventTouchDown];
     [button addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
     [button addTarget:self action:@selector(imageReleased:withEvent:) forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
-    [button setImage:[UIImage imageNamed:@"tempavatar.png"] forState:UIControlStateNormal];
+    [button setImage:[UIImage imageNamed:[petType stringByAppendingString:@".png"]] forState:UIControlStateNormal];
     button.exclusiveTouch = YES;
 
     [self.container addSubview:button];
@@ -212,6 +209,12 @@
 
 - (void)setupForm
 {
+    if (self.textEntry != nil) {
+        self.textEntry.text = @"";
+        return;
+    }
+    // HEY STYLING AFTER THIS POINT OCCURS ONCE
+    
     self.textEntry = [[UITextView alloc] initWithFrame:CGRectMake(0, SCREEN_WIDTH + 20, SCREEN_WIDTH, 100)];
     self.textEntry.layer.borderWidth = 1.0;
     self.textEntry.layer.borderColor =  [[UIColor colorWithRed:228/255.0f green:228/255.0f blue:228/255.0f alpha:1.0f] CGColor];
@@ -311,10 +314,19 @@
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
     
+    PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
+    query.cachePolicy = kPFCachePolicyCacheThenNetwork;
+    PFUser *currentUser = [PFUser currentUser];
+    [query whereKey:@"currentUser" equalTo:currentUser];
+    //self.pet = [query getFirstObject];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
+        self.pet = pet;
+    }];
     
+    [self setupForm];
     YCameraViewController *camController = [[YCameraViewController alloc] initWithNibName:@"YCameraViewController" bundle:nil];
     self.cvc = camController;
-    camController.delegate=self;
+    camController.delegate = self;
   
   // setup extra keyboard done button
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -360,6 +372,11 @@
 	[self.textEntry resignFirstResponder];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -369,7 +386,6 @@
     self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
     [self.locationManager startUpdatingLocation];
     [self setupScrollView];
-    [self setupForm];
     [self setupSubmitButton];
   
   self.keyboardToolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];

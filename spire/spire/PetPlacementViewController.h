@@ -10,6 +10,7 @@
 #import "YCameraViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <CoreLocation/CoreLocation.h>
+#import <Parse/Parse.h>
 
 @interface PetPlacementViewController : UIViewController <UIScrollViewDelegate, UITextViewDelegate, YCameraViewControllerDelegate, CLLocationManagerDelegate>
 
@@ -22,6 +23,7 @@
 @property (strong, nonatomic) YCameraViewController *cvc;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (nonatomic, retain) UIToolbar *keyboardToolbar;
+@property (strong, nonatomic) PFObject *pet;
 
 - (IBAction)hideKeyboard:(id)sender;
 

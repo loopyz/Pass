@@ -140,6 +140,8 @@
 //    PetProfileViewController *pvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];
     pvc.tabBarItem.image = [UIImage imageNamed:@"profiletab.png"];
     
+    [nfvc.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"pettab-highlighted.png"] withFinishedUnselectedImage:[UIImage imageNamed:@"pettab.png"]];
+    
     self.viewControllers=[NSArray arrayWithObjects:nvc, evc, nfvc, ffvc, pvc, nil];
 }
 

@@ -8,6 +8,7 @@
 
 #import "PetPlacementViewController.h"
 #import <Parse/Parse.h>
+#import "VenueTableViewController.h"
 
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
@@ -28,41 +29,27 @@
     return self;
 }
 
-- (void)getVenues:(NSString *)url withCallback:(void (^)(NSString *locName)) callback
-{
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
-    
-    [request setHTTPMethod: @"GET"];
-    
-    __block NSDictionary *json;
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                               json = [NSJSONSerialization JSONObjectWithData:data
-                                                                      options:0
-                                                                        error:nil];
-                               NSLog(@"%@", json[@"response"][@"venues"][0]);
-                               
-                               callback(json[@"response"][@"venues"][0][@"name"]);
-                           }];
-}
-
 - (void)getLocation:(void (^)(NSNumber *latitude, NSNumber *longitude, NSString *locName)) callback
 {
     // TODO: take in callback, call with lat/long/name
     NSNumber *latitude = @3.14;
     NSNumber *longitude = @2.71;
-    NSString *locName = @"Medium HQ";
+    __block NSString *locName = @"Medium HQ";
     if ([CLLocationManager locationServicesEnabled]) {
         latitude = [NSNumber numberWithFloat:self.locationManager.location.coordinate.latitude];
         longitude = [NSNumber numberWithFloat:self.locationManager.location.coordinate.longitude];
-        NSString *_4squareId = @"02K3GC4J1Y34WDZG4XIWHBSF2WJKOHIOMSTPWTWQVMPFALL2";
-        NSString *_4squareSecret = @"XYHXKNHOVBPTX4KLXR1QID4QNA2RSMXZZQML32ANKP1H4VHJ";
-        NSString *locFormat = @"https://api.foursquare.com/v2/venues/search?client_id=%@&client_secret=%@&v=20130815&ll=%@,%@";
-        NSString *queryAddr = [NSString stringWithFormat:locFormat,_4squareId,_4squareSecret,latitude,longitude];
-        [self getVenues:queryAddr withCallback:^(NSString *locName) {
+        
+        // push VenueViewController
+        VenueTableViewController *vtvc = [[VenueTableViewController alloc] initWithLat:latitude andLong:longitude andCallback:^(NSDictionary *selectedVenue) {
+                // got venue selected
+            if (selectedVenue == nil) {
+                NSLog(@"Location not chosen");
+            } else {
+                locName = selectedVenue[@"name"];
+            }
             callback(latitude, longitude, locName);
         }];
+        [self presentViewController:vtvc animated:YES completion:nil];
     } else {
         NSLog(@"Fake location used");
         callback(latitude, longitude, locName);
@@ -111,6 +98,9 @@
         [self getLocation:^(NSNumber *latitude, NSNumber *longitude, NSString *locName) {
             [self updatePet:pet withDropped:dropped withLat:latitude withLong:longitude withName:locName];
             [self addPhoto:photoData withUser:currentUser withPet:pet withLat:latitude withLong:longitude withName:locName withCaption:caption];
+            
+            // go back to home
+            [self.tabBarController setSelectedIndex:0];
         }];
     }];
 }
@@ -222,16 +212,26 @@
 
 - (void)setupForm
 {
-    self.textEntry = [[UITextField alloc] initWithFrame:CGRectMake(10, SCREEN_WIDTH + 10, SCREEN_WIDTH - 20, 44)];
-    //self.textEntry.layer.borderWidth = 1.0;
-    //self.textEntry.layer.borderColor = [[UIColor grayColor] CGColor];
+    self.textEntry = [[UITextView alloc] initWithFrame:CGRectMake(0, SCREEN_WIDTH + 20, SCREEN_WIDTH, 100)];
+    self.textEntry.layer.borderWidth = 1.0;
+    self.textEntry.layer.borderColor =  [[UIColor colorWithRed:228/255.0f green:228/255.0f blue:228/255.0f alpha:1.0f] CGColor];
+  
+    self.textEntry.layer.shadowColor = [[UIColor whiteColor] CGColor];
+    self.textEntry.layer.shadowOpacity = 1.0;
+    self.textEntry.layer.shadowRadius = 0;
+    self.textEntry.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+  
+  self.textEntry.textColor = [UIColor colorWithRed:137/255.0f green:137/255.0f blue:137/255.0f alpha:1.0f];
+  self.textEntry.font = [UIFont fontWithName:@"Avenir" size:15.0f];
+  
     [self.scrollView addSubview:self.textEntry];
-    self.textEntry.placeholder = @"Caption";
-    
+    self.textEntry.editable = YES;
+    // self.textEntry.placeholder = @"Caption";
+  
     self.textEntry.delegate = self;
     
     // TODO: HEY LUCY STYLE THIS THINGY
-    self.toggleDrop = [[UISwitch alloc] initWithFrame:CGRectMake(10, SCREEN_WIDTH + 10 + 44 + 10, SCREEN_WIDTH - 20, 44)];
+    self.toggleDrop = [[UISwitch alloc] initWithFrame:CGRectMake(10, SCREEN_WIDTH + 10 + 144 + 10, SCREEN_WIDTH - 20, 44)];
     [self.scrollView addSubview:self.toggleDrop];
     
     // label for togglign drop, doesn't work
@@ -244,8 +244,50 @@
     [self.scrollView setContentOffset:CGPointMake(0, textField.frame.origin.y) animated:YES];
 }
 
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+  [self.scrollView setContentOffset:CGPointZero animated:YES];
+}
 
-- (UIImage *) imageWithView:(UIView *)view
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+  [textField resignFirstResponder];
+  return NO;
+}
+
+- (void)textViewDidBeginEditing:(UITextView *)textView
+{
+  [self.scrollView setContentOffset:CGPointMake(0, textView.frame.origin.y) animated:YES];
+  if ([textView.text isEqualToString:@"placeholder text here..."]) {
+    textView.text = @"";
+    textView.textColor = [UIColor blackColor]; //optional
+  }
+  [textView becomeFirstResponder];
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView
+{
+  if ([textView.text isEqualToString:@""]) {
+    textView.text = @"placeholder text here...";
+    textView.textColor = [UIColor lightGrayColor]; //optional
+  }
+  [textView resignFirstResponder];
+}
+
+- (BOOL) textViewShouldBeginEditing:(UITextView *)textView
+{
+  self.textEntry.text = @"";
+  return YES;
+}
+
+-(void) textViewDidChange:(UITextView *)textView
+{
+  if(self.textEntry.text.length == 0){
+    self.textEntry.text = @"Comment";
+    [self.textEntry resignFirstResponder];
+  }
+}
+
+
+- (UIImage *)imageWithView:(UIView *)view
 {
     UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, [[UIScreen mainScreen] scale]);
     [view.layer renderInContext:UIGraphicsGetCurrentContext()];
@@ -261,22 +303,22 @@
     // submit image to parse
     [self saveToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text withDropped:self.toggleDrop.on];
     
-    // go back to home
-    [self.tabBarController setSelectedIndex:0];
 }
 
 - (void)setupSubmitButton
 {
-    self.submitButton = [[UIButton alloc] initWithFrame:CGRectMake(10, SCREEN_HEIGHT - 100, SCREEN_WIDTH - 20, 44)];
-    [self.submitButton setTitle:@"Submit" forState:UIControlStateNormal];
-    [self.submitButton setTitleColor:[UIColor blueColor]
-                            forState:UIControlStateNormal];
-    self.submitButton.layer.borderWidth = 1.0;
-    self.submitButton.layer.borderColor = [[UIColor grayColor] CGColor];
-    
-    [self.submitButton addTarget:self action:@selector(buttonTouched:withEvent:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.scrollView addSubview:self.submitButton];
+  // Do any additional setup after loading the view.
+  UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
+  [submitButton setTitle:@"Show View" forState:UIControlStateNormal];
+  
+  submitButton.frame = CGRectMake(0, SCREEN_HEIGHT, 320, 47.5);
+  [submitButton addTarget:self action:@selector(buttonTouched:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+  
+  UIImage *btnImage = [UIImage imageNamed:@"nextbutton.png"];
+  [submitButton setImage:btnImage forState:UIControlStateNormal];
+  submitButton.contentMode = UIViewContentModeScaleToFill;
+  
+  [self.scrollView addSubview:submitButton];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -287,11 +329,49 @@
     YCameraViewController *camController = [[YCameraViewController alloc] initWithNibName:@"YCameraViewController" bundle:nil];
     self.cvc = camController;
     camController.delegate=self;
-    
+  
+  // setup extra keyboard done button
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+  
     [self presentViewController:camController animated:NO completion:^{
         // completion code
     }];
     
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+  [super viewWillDisappear:animated];
+  
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification {
+  [UIView beginAnimations:nil context:NULL];
+  [UIView setAnimationDuration:0.3];
+  
+  CGRect frame = self.keyboardToolbar.frame;
+  frame.origin.y = self.view.frame.size.height - 260.0;
+  self.keyboardToolbar.frame = frame;
+  
+  [UIView commitAnimations];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+  NSString *textFromKeyboard = self.textEntry.text;
+  [self.textEntry resignFirstResponder];
+}
+
+-(void)clearText{
+  [self.textEntry resignFirstResponder];
+  self.textEntry.text = @"";
+}
+
+#pragma mark IBActions
+
+- (IBAction)hideKeyboard:(id)sender {
+	[self.textEntry resignFirstResponder];
 }
 
 - (void)viewDidLoad
@@ -305,6 +385,18 @@
     [self setupScrollView];
     [self setupForm];
     [self setupSubmitButton];
+  
+  self.keyboardToolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+  self.keyboardToolbar.barStyle = UIBarStyleBlackTranslucent;
+  self.keyboardToolbar.items = [NSArray arrayWithObjects:
+                         [[UIBarButtonItem alloc]initWithTitle:@"Clear" style:UIBarButtonItemStyleBordered target:self action:@selector(clearNumberPad)],
+                         [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
+                         [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(keyboardWillHide:)],
+                         nil];
+  [self.keyboardToolbar sizeToFit];
+  self.textEntry.inputAccessoryView = self.keyboardToolbar;
+  
+  self.textEntry.text = @"Add a description...";
 }
 
 - (void)didReceiveMemoryWarning
@@ -312,6 +404,7 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 
 /*
 #pragma mark - Navigation

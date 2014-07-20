@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PetProfileViewController : UIViewController<UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+@interface PetProfileViewController : UICollectionViewController
 
-@property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UICollectionView *collectionView;
+@property (nonatomic, strong) UIView *header;
 @end

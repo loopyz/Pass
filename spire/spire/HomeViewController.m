@@ -77,7 +77,9 @@
     
     rbb.tintColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
     self.navigationItem.rightBarButtonItem = rbb;
-    
+  
+  [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+  
 }
 
 - (void)settingsTouched

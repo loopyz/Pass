@@ -24,21 +24,11 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        [self setupScrollView];
-        
+      [self setupPictureCollection];
+      [self setupPetSnippet];
+      
     }
     return self;
-}
-
-- (void) setupScrollView
-{
-    self.scrollView = [[UIScrollView alloc] init];
-    self.scrollView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 870);
-    self.scrollView.showsVerticalScrollIndicator = NO;
-    self.scrollView.showsHorizontalScrollIndicator = NO;
-    self.scrollView.scrollEnabled = YES;
-    [self.view addSubview:self.scrollView];
 }
 
 - (void)viewDidLoad
@@ -61,7 +51,6 @@
     [self.collectionView setDelegate:self];
     [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"picCell"];
     [self.collectionView setBackgroundColor:[UIColor whiteColor]];
-    [self.scrollView addSubview:self.collectionView];
 }
 
 - (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -77,15 +66,38 @@
 
 - (UICollectionViewCell *) collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"picCell" forIndexPath:indexPath];
+  UICollectionViewCell *cell;
+  if (indexPath.row != 0) {
+    cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"picCell" forIndexPath:indexPath];
+  }
+  else {
+    cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"picCell" forIndexPath:indexPath];
+  }
+  if (indexPath.row == 0) {
+    [cell addSubview:self.header];
+  }
+  else {
     cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pusheen.png"]];
     cell.backgroundView.backgroundColor = [UIColor blackColor];
+  }
     return cell;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake(100, 100);
+  if (indexPath.row == 0) {
+    return CGSizeMake (SCREEN_WIDTH, 144);
+  }
+    return CGSizeMake(105, 105);
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+  NSLog(@"%d", indexPath.row);
+}
+
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+  if (indexPath.row == 0) return NO;
+  return YES;
 }
 
 - (void) setupPetSnippet
@@ -100,14 +112,14 @@
     name.text = @"FoxyFace";
     
     UIImageView *petPic = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pusheen.png"]];
-    petPic.frame = CGRectMake(17, 23, 71, 71);
+    petPic.frame = CGRectMake(17, 23, 93, 93);
     
     [view addSubview:name];
     [view addSubview:petPic];
     
     view.backgroundColor = [UIColor whiteColor];
 
-    [self.scrollView addSubview:view];
+    self.header = view;
 }
 
 - (void)didReceiveMemoryWarning

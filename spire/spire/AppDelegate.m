@@ -23,7 +23,7 @@
                   clientKey:@"OxsqVethSVtjArsp2OPWN85RnAsLXQxKS7jbdwJv"];
     [PFFacebookUtils initializeFacebook];
     // tmp logout
-    [PFUser logOut];
+    //[PFUser logOut];
     //login
     LoginViewController *loginViewController = [[LoginViewController alloc] init];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:loginViewController];

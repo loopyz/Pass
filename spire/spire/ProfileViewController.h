@@ -14,8 +14,9 @@
 
 @property (nonatomic, strong) UIView *profileSnippetView;
 @property (nonatomic, strong) FBProfilePictureView *fbProfilePic;
-@property (nonatomic, strong) NSMutableArray *videos;
+@property (nonatomic, strong) NSMutableArray *photos;
 @property (strong, nonatomic) UIColor *bgColor;
+@property (strong, nonatomic) UILabel *numScoresLabel;
 
 
 @end

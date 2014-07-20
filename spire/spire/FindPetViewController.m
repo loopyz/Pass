@@ -52,8 +52,8 @@
             // Next, query by class name and other filters.
             PFQuery *query = [PFQuery queryWithClassName:@"Pet" predicate:[NSPredicate predicateWithFormat:predicateStrings[i]]];
             [query whereKey:@"currentUser" equalTo:[NSNull null]];
-            [query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
-            query.limit = 6; // TODO: limit for now for simplicity
+            //[query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
+            query.limit = 15;
             
             
             [query findObjectsInBackgroundWithBlock:^(NSArray *pets, NSError *error) {
@@ -73,6 +73,8 @@
                     self.pets[1] = [self.pets[1] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(PFObject *evaluatedObject, NSDictionary *bindings) {
                         return [petIds0 indexOfObject:[evaluatedObject objectId]] == NSNotFound;
                     }]];
+                    [self.tableView reloadData];
+                    [self.tableView setNeedsLayout];
                 }
             }];
         }
@@ -108,6 +110,9 @@
     self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
     [self.locationManager startUpdatingLocation];
     
+    self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
+    self.ptr.delegate = self;
+    [self.view addSubview:self.ptr];
 }
 
 - (void)didReceiveMemoryWarning
@@ -272,6 +277,17 @@
   
   
   return cell;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView  {
+    [self.ptr viewDidScroll:scrollView];
+}
+
+- (void)Refresh {
+    // Perform here the required actions to refresh the data (call a JSON API for example).
+    // Once the data has been updated, call the method isDoneRefreshing:
+    [self findNearbyPets];
+    [self.ptr isDoneRefreshing];
 }
 
 

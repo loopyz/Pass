@@ -10,10 +10,12 @@
 #import <Parse/Parse.h>
 
 #import <CoreLocation/CoreLocation.h>
+#import "PullToRefresh.h"
 
 @interface FindPetViewController : UITableViewController
 
 @property (strong, nonatomic) NSMutableArray *pets;
 @property (strong, nonatomic) CLLocationManager *locationManager;
+@property (nonatomic, strong) PullToRefresh *ptr;
 
 @end

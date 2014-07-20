@@ -101,7 +101,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  return 375;
+  return 415;
 }
 
 
@@ -125,15 +125,19 @@
   //MPMoviePlayerViewController *movie = [[MPMoviePlayerViewController alloc] initWithContentURL:fileUrl];
   //[self presentMoviePlayerViewControllerAnimated:movie];
   
+  UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
+  imageView.image = [UIImage imageNamed:@"tempsingleimage.png"];
+  [cell addSubview:imageView];
+  
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
   
   //setup avatar
-  UIImageView *avatarView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 295, 40, 40)];
+  UIImageView *avatarView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 335, 40, 40)];
   avatarView.image = [UIImage imageNamed:@"tempnewsavatar.png"];
   [cell addSubview:avatarView];
   
   //setup avatar name
-  UILabel *avatarName = [[UILabel alloc] initWithFrame:CGRectMake(60, 278, 300, 50)];
+  UILabel *avatarName = [[UILabel alloc] initWithFrame:CGRectMake(60, 318, 300, 50)];
   [avatarName setTextColor:descColor];
   [avatarName setBackgroundColor:[UIColor clearColor]];
   [avatarName setFont:[UIFont fontWithName:@"Avenir" size:16]];
@@ -144,18 +148,18 @@
   [cell addSubview:avatarName];
   
   // setup tags
-  UILabel *tags = [[UILabel alloc] initWithFrame:CGRectMake(60, 298, 300, 50)];
+  UILabel *tags = [[UILabel alloc] initWithFrame:CGRectMake(60, 338, 300, 50)];
   [tags setTextColor:descColor];
   [tags setBackgroundColor:[UIColor clearColor]];
   [tags setFont:[UIFont fontWithName:@"Avenir-Light" size:10]];
   
-  tags.text = @"#pizza #pizzahut #puns";
+  tags.text = @"I love Foxy hehe.";
   tags.lineBreakMode = NSLineBreakByWordWrapping;
   tags.numberOfLines = 0;
   [cell addSubview:tags];
   
   // setup location icon
-  UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 345, 11, 17)];
+  UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 385, 11, 17)];
   locationIconView.image = locationIcon;
   [cell addSubview:locationIconView];
   
@@ -163,7 +167,7 @@
   UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
   [commentButton setTitle:@"Comment" forState:UIControlStateNormal];
   
-  commentButton.frame = CGRectMake(self.view.frame.size.width - 90, 345, 32.5, 22);
+  commentButton.frame = CGRectMake(self.view.frame.size.width - 90, 385, 32.5, 22);
   [commentButton addTarget:self action:@selector(commentTouched) forControlEvents:UIControlEventTouchUpInside];
   [cell addSubview:commentButton];
   [commentButton setImage:commentButtonIcon forState:UIControlStateNormal];
@@ -173,14 +177,14 @@
   UIButton *heartButton = [UIButton buttonWithType:UIButtonTypeCustom];
   [commentButton setTitle:@"Heart" forState:UIControlStateNormal];
   
-  heartButton.frame = CGRectMake(self.view.frame.size.width - 40, 345, 32.5, 22);
+  heartButton.frame = CGRectMake(self.view.frame.size.width - 40, 385, 32.5, 22);
   [heartButton addTarget:self action:@selector(heartTouched) forControlEvents:UIControlEventTouchUpInside];
   [cell addSubview:heartButton];
   [heartButton setImage:heartButtonIcon forState:UIControlStateNormal];
   heartButton.contentMode = UIViewContentModeScaleToFill;
   
   //setup Location label
-  UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(29, 330, 200, 50)];
+  UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(29, 370, 200, 50)];
   [desc setTextColor:descColor];
   [desc setBackgroundColor:[UIColor clearColor]];
   [desc setFont:[UIFont fontWithName:@"Avenir" size:11]];

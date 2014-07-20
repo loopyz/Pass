@@ -336,7 +336,9 @@
       [query whereKey:@"objectId" equalTo:self.selectedPetId];
       [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
           [pet setObject:[PFUser currentUser] forKey:@"currentUser"];
-          [pet saveInBackground];
+          [pet saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+              [self Refresh];
+          }];
           self.selectedPetId = nil;
       }];
   }
@@ -348,11 +350,11 @@
   static NSString *MyIdentifier = @"Cell";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
   UIView *tempView;
-  if (cell == nil) {
+  //if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
     tempView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, self.tableView.frame.size.height)];
     
-  }
+  //}
   
   cell.backgroundColor = [UIColor clearColor];
   

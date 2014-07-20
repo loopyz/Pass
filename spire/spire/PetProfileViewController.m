@@ -80,7 +80,7 @@
   }
   else {
     cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"picCell" forIndexPath:indexPath];
-    [cell.contentView addSubview:self.mapButton];
+//    [cell.contentView addSubview:self.mapButton];
   }
   
 //  dispatch_async(dispatch_get_main_queue(), ^{
@@ -266,7 +266,7 @@
   [self.mapButton setImage:btnImage forState:UIControlStateNormal];
   self.mapButton.contentMode = UIViewContentModeScaleToFill;
 
-  //[view addSubview:self.mapButton];
+  [view addSubview:self.mapButton];
 
   self.personButton = [UIButton buttonWithType:UIButtonTypeCustom];
   [self.personButton setTitle:@"Show View" forState:UIControlStateNormal];

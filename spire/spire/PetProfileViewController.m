@@ -86,7 +86,7 @@
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
   if (indexPath.row == 0) {
-    return CGSizeMake (SCREEN_WIDTH, 144);
+    return CGSizeMake (SCREEN_WIDTH, 164);
   }
     return CGSizeMake(105, 105);
 }
@@ -118,8 +118,65 @@
     [view addSubview:petPic];
     
     view.backgroundColor = [UIColor whiteColor];
+  
+    UIImageView *bottomBar = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bottombar.png"]];
+    bottomBar.frame = CGRectMake(0, 164-39.5, SCREEN_WIDTH, 41.5);
+    [view addSubview: bottomBar];
+  
+    // setup buttons
+    self.photoButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.photoButton setTitle:@"Show View" forState:UIControlStateNormal];
+
+    self.photoButton.frame = CGRectMake(40, 130, 28, 28);
+    [self.photoButton addTarget:self action:@selector(photoButtonTouched) forControlEvents:UIControlEventTouchUpInside];
+
+    UIImage *btnImage = [UIImage imageNamed:@"photobutton-pressed.png"];
+    [self.photoButton setImage:btnImage forState:UIControlStateNormal];
+    self.photoButton.contentMode = UIViewContentModeScaleToFill;
+
+    [view addSubview:self.photoButton];
+  
+    self.mapButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.mapButton setTitle:@"Show View" forState:UIControlStateNormal];
+
+    self.mapButton.frame = CGRectMake(145, 130, 28, 28);
+    [self.mapButton addTarget:self action:@selector(mapButtonTouched) forControlEvents:UIControlEventTouchUpInside];
+
+    btnImage = [UIImage imageNamed:@"mapbutton.png"];
+    [self.mapButton setImage:btnImage forState:UIControlStateNormal];
+    self.mapButton.contentMode = UIViewContentModeScaleToFill;
+
+    [view addSubview:self.mapButton];
+  
+    self.personButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.personButton setTitle:@"Show View" forState:UIControlStateNormal];
+    
+    self.personButton.frame = CGRectMake(255, 130, 20.53, 28);
+    [self.personButton addTarget:self action:@selector(mapButtonTouched) forControlEvents:UIControlEventTouchUpInside];
+    
+    btnImage = [UIImage imageNamed:@"personbutton.png"];
+    [self.personButton setImage:btnImage forState:UIControlStateNormal];
+    self.personButton.contentMode = UIViewContentModeScaleToFill;
+    
+    [view addSubview:self.personButton];
 
     self.header = view;
+}
+
+- (void)photoButtonTouched
+{
+  // TODO: idk
+}
+
+- (void)personButtonTouched
+{
+  // TODO : Bring up people that held the pet
+
+}
+
+- (void)mapButtonTouched
+{
+  // TODO: BRING UP GOOGLE MAPS
 }
 
 - (void)didReceiveMemoryWarning

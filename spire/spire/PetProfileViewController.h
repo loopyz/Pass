@@ -12,4 +12,12 @@
 
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) UIView *header;
+@property (nonatomic, strong) UIButton *mapButton;
+@property (nonatomic, strong) UIButton *photoButton;
+@property (nonatomic, strong) UIButton *personButton;
+
+@property (nonatomic) BOOL mapTouched;
+@property (nonatomic) BOOL photoTouched;
+@property (nonatomic) BOOL personTouched;
+
 @end

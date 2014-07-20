@@ -62,14 +62,9 @@
         [pet setObject:text forKey:self.fields[i]];
     }
     [pet setObject:[PFUser currentUser] forKey:@"owner"];
+    [pet setObject:[PFUser currentUser] forKey:@"currentUser"];
     [pet setObject:@0 forKey:@"miles"];
     [pet saveInBackground];
-    
-    PFObject *pass = [[PFObject alloc] initWithClassName:@"Pass"];
-    [pass setObject:pet forKey:@"pet"];
-    [pass setObject:[PFUser currentUser] forKey:@"user"];
-    [pass setObject:@0 forKey:@"miles"];
-    [pass saveInBackground];
     
     // open home view controller
     HomeViewController *svc = [[HomeViewController alloc] init];

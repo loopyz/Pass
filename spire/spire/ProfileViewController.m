@@ -38,43 +38,34 @@
     heartButtonIcon = [UIImage imageNamed:@"heartbutton.png"];
     commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
     
+    self.tableView.separatorColor = [UIColor colorWithRed:211/255.0f green:211/255.0f blue:211/255.0f alpha:1.0f];
   }
   return self;
 }
 
 - (void)setupHeader
 {
+    PFUser *currentUser = [PFUser currentUser];
   UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 164)];
   view.backgroundColor = [UIColor whiteColor];
   self.profileSnippetView = view;
   self.fbProfilePic = [[FBProfilePictureView alloc] init];
-  FBRequest *request = [FBRequest requestForMe];
-  [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-    if (!error) {
-      NSDictionary *userData = (NSDictionary *)result;
+
       
-      if (![[PFUser currentUser] objectForKey:@"fbId"]) {
-        [[PFUser currentUser] setObject:userData[@"id"] forKey:@"fbId"];
-        [[PFUser currentUser] save];
-      }
-      self.userid = userData[@"id"];
-      NSString *username = userData[@"name"];
-      
-      self.fbProfilePic.profileID = self.userid;
-      //setup name label
-      UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
-      UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(108, 10, 300, 50)];
+    self.fbProfilePic.profileID = [currentUser objectForKey:@"fbId"];
+    //setup name label
+    UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
+    UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(108, 10, 300, 50)];
       
       
-      [name setTextColor:nameColor];
-      [name setBackgroundColor:[UIColor clearColor]];
-      [name setFont:[UIFont fontWithName:@"Avenir" size:22]];
+    [name setTextColor:nameColor];
+    [name setBackgroundColor:[UIColor clearColor]];
+    [name setFont:[UIFont fontWithName:@"Avenir" size:22]];
       
-      name.text = username; //@"loopyz";
-      [self.profileSnippetView addSubview:name];
-      [self addProfile];
-    }
-  }];
+    name.text = [currentUser objectForKey:@"username"]; //@"loopyz";
+    [self.profileSnippetView addSubview:name];
+    [self addProfile];
+
   
   // setup description
   UIColor *descriptionColor = [UIColor colorWithRed:137/255.0f green:137/255.0f blue:137/255.0f alpha:1.0f];
@@ -83,7 +74,7 @@
   [description setTextColor:descriptionColor];
   [description setBackgroundColor:[UIColor clearColor]];
   [description setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:14]];
-  description.text = @"I really like pizza. And travel.";
+    description.text = [currentUser objectForKey:@"description"];//@"I really like pizza. And travel.";
   
   [self.profileSnippetView addSubview:description];
   
@@ -93,7 +84,7 @@
   [website setTextColor:websiteColor];
   [website setBackgroundColor:[UIColor clearColor]];
   [website setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
-  website.text = @"http://www.lucy.ws";
+    website.text = [currentUser objectForKey:@"website"]; //@"http://www.lucy.ws";
   
   [self.profileSnippetView addSubview:website];
   
@@ -257,6 +248,11 @@
   else if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
   }
+  
+  cell.layer.shadowColor = [[UIColor whiteColor] CGColor];
+  cell.layer.shadowOpacity = 1.0;
+  cell.layer.shadowRadius = 0;
+  cell.layer.shadowOffset = CGSizeMake(0.0, 1.0);
   
   if (indexPath.row == 0) {
     cell.backgroundColor = [UIColor whiteColor];

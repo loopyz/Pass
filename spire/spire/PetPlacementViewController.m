@@ -272,6 +272,20 @@
   [textView resignFirstResponder];
 }
 
+- (BOOL) textViewShouldBeginEditing:(UITextView *)textView
+{
+  self.textEntry.text = @"";
+  return YES;
+}
+
+-(void) textViewDidChange:(UITextView *)textView
+{
+  if(self.textEntry.text.length == 0){
+    self.textEntry.text = @"Comment";
+    [self.textEntry resignFirstResponder];
+  }
+}
+
 
 - (UIImage *)imageWithView:(UIView *)view
 {
@@ -381,6 +395,8 @@
                          nil];
   [self.keyboardToolbar sizeToFit];
   self.textEntry.inputAccessoryView = self.keyboardToolbar;
+  
+  self.textEntry.text = @"Add a description...";
 }
 
 - (void)didReceiveMemoryWarning

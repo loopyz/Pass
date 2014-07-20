@@ -119,6 +119,12 @@
     [name setBackgroundColor:[UIColor clearColor]];
     [name setFont:[UIFont fontWithName:@"Avenir" size:25]];
     name.text = [pet objectForKey:@"name"];//@"Foxy";
+  
+    //sets up on nav bar also
+    self.navigationController.navigationBar.topItem.title = name.text;
+  self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
+  // [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
+
     
     UIImageView *petPic = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pusheen.png"]]; // todo
     petPic.frame = CGRectMake(10, 10, 110, 110);

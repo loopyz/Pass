@@ -65,7 +65,9 @@
         [pet setObject:[NSNull null] forKey:@"currentUser"];
         [pet incrementKey:@"passes"];
     }
-    // TODO: update miles
+    // TODO: actually set miles to what they should be
+    NSNumber *miles = [[NSNumber alloc] initWithInt:(arc4random() % 5)];
+    [pet incrementKey:@"miles" byAmount:miles];
     [pet saveInBackground];
 }
 
@@ -85,9 +87,15 @@
             [photo setObject:latitude forKey:@"latitude"];
             [photo setObject:longitude forKey:@"longitude"];
             [photo setObject:locName forKey:@"locName"];
-            [photo setObject:@1 forKey:@"first"];
-            // TODO: set first only if first taken by that (user, pet)
-            [photo saveInBackground];
+            
+            PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
+            [query whereKey:@"user" equalTo:user];
+            [query whereKey:@"pet" equalTo:pet];
+            [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+                NSNumber *first = number > 0 ? @0 : @1;
+                [photo setObject:first forKey:@"first"];
+                [photo saveInBackground];
+            }];
         }
     }];
 }

@@ -271,6 +271,7 @@
             [photosquery whereKey:@"pet" equalTo:object];
             
             [photosquery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                self.photos = [[NSMutableArray alloc] init];
                 [self.photos addObjectsFromArray:objects];
                 [self.collectionView reloadData];
             }];

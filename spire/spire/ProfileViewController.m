@@ -184,6 +184,7 @@
     
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
+            self.photos = [[NSMutableArray alloc] init];
             [self.photos addObjectsFromArray:objects];
             [self.tableView reloadData];
         }

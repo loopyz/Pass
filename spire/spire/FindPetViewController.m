@@ -204,6 +204,10 @@
         NSUInteger index = currentRow * 3 + x;
         
         UIButton *tempButton = [[UIButton alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
+          if (section >= [self.pets count] || index >= [self.pets[section] count]) {
+              NSLog(@"Section or index out of bounds :(");
+              return;
+          }
         PFObject *pet = self.pets[section][index];
         NSString *petType = [pet objectForKey:@"type"];
         NSString *petLoc = [pet objectForKey:@"locName"];
@@ -232,6 +236,10 @@
       for (int x = 0; x < [self.pets[indexPath.section] count] % 3; x++) {
         NSUInteger section = indexPath.section;
         NSUInteger index = currentRow * 3 + x;
+          if (section >= [self.pets count] || index >= [self.pets[section] count]) {
+              NSLog(@"Section or index out of bounds :(");
+              return;
+          }
         PFObject *pet = self.pets[section][index];
         NSString *petType = [pet objectForKey:@"type"];
         NSString *petLoc = [pet objectForKey:@"locName"];
@@ -268,6 +276,10 @@
         NSUInteger index = currentRow * 3 + x;
         
         UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
+          if (section >= [self.pets count] || index >= [self.pets[section] count]) {
+              NSLog(@"Section or index out of bounds :(");
+              return;
+          }
         PFObject *pet = self.pets[section][index];
         NSString *petType = [pet objectForKey:@"type"];
         NSString *petLoc = [pet objectForKey:@"locName"];
@@ -291,6 +303,10 @@
       for (int x = 0; x < [self.pets[indexPath.section] count] % 3; x++) {
         NSUInteger section = indexPath.section;
         NSUInteger index = currentRow * 3 + x;
+          if (section >= [self.pets count] || index >= [self.pets[section] count]) {
+              NSLog(@"Section or index out of bounds :(");
+              return;
+          }
         PFObject *pet = self.pets[section][index];
         NSString *petType = [pet objectForKey:@"type"];
         NSString *petLoc = [pet objectForKey:@"locName"];

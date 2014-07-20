@@ -19,16 +19,71 @@
 @end
 
 @implementation FindPetViewController
+
+
+- (void)getLocation:(void (^)(float latitude, float longitude)) callback
+{
+    float latitude = 3.14;
+    float longitude = 2.71;
+    if ([CLLocationManager locationServicesEnabled]) {
+        latitude = self.locationManager.location.coordinate.latitude;
+        longitude = self.locationManager.location.coordinate.longitude;
+        callback(latitude, longitude);
+    }
+}
+
+- (void)findNearbyPets
+{
+    [self getLocation:^(float latitude, float longitude) {
+        self.pets = [[NSMutableArray alloc] initWithCapacity:3];
+        
+        // TODO: FIND BETTER LL OFFSETS for 500 ft, 1 mi, 5 mi away
+        float offsets[] = {1, 5, 10};
+        NSString *predicateStrings[3];
+        
+        for (int i = 0; i < 3; i++) {
+            float offset = offsets[i];
+            
+            // First, query by offsets from latitude and longitude.
+            predicateStrings[i] = [NSString stringWithFormat:@"latitude >= %f AND latitude <= %f AND longitude >= %f AND longitude <= %f", latitude-offset, latitude+offset, longitude-offset, longitude+offset];
+            /*if (i == 1) {
+                predicateStrings[i] = [predicateStrings[i] stringByAppendingString:[NSString stringWithFormat:@" AND NOT (%@)", predicateStrings[i-1]]];
+            } else if (i == 2) {
+                predicateStrings[i] = [predicateStrings[i] stringByAppendingString:[NSString stringWithFormat:@" AND NOT (%@) AND NOT (%@)", predicateStrings[i-1], predicateStrings[i-2]]];
+            }*/
+            
+            // Next, query by class name and other filters.
+            PFQuery *query = [PFQuery queryWithClassName:@"Pet" predicate:[NSPredicate predicateWithFormat:predicateStrings[i]]];
+            query.cachePolicy = kPFCachePolicyCacheThenNetwork;
+            //[query whereKey:@"currentUser" equalTo:[NSNull null]];
+            //[query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
+            query.limit = 6; // TODO: limit for now for simplicity
+            
+            
+            [query findObjectsInBackgroundWithBlock:^(NSArray *pets, NSError *error) {
+                if (pets != nil) {
+                    [self.pets addObject:pets];
+                } else {
+                    [self.pets addObject:@[]];
+                }
+            }];
+        }
+    }];
+}
+
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-      UIColor * color = [UIColor colorWithRed:249/255.0f green:249/255.0f blue:249/255.0f alpha:1.0f];
-      self.tableView.backgroundColor = color;
-      self.headerBig = @[@"Here", @"A walk away", @"A drive away"];
-      self.headerDetail = @[@"500 feet", @"1.0 miles away", @"5.0 miles away"];
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        UIColor *color = [UIColor colorWithRed:249/255.0f green:249/255.0f blue:249/255.0f alpha:1.0f];
+        self.tableView.backgroundColor = color;
+        self.headerBig = @[@"Here", @"A walk away", @"A drive away"];
+        self.headerDetail = @[@"500 feet", @"1.0 miles away", @"5.0 miles away"];
+        
+        [self findNearbyPets];
     }
     return self;
 }
@@ -36,9 +91,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-  UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
-  self.tableView.contentInset = inset;
-  [self.tableView setAllowsSelection:NO];
+    UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
+    self.tableView.contentInset = inset;
+    [self.tableView setAllowsSelection:NO];
+    
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.distanceFilter = kCLDistanceFilterNone;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+    [self.locationManager startUpdatingLocation];
     
 }
 

@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
+
+#import <CoreLocation/CoreLocation.h>
 
 @interface FindPetViewController : UITableViewController
+
+@property (strong, nonatomic) NSMutableArray *pets;
+@property (strong, nonatomic) CLLocationManager *locationManager;
 
 @end

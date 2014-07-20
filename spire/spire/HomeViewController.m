@@ -90,6 +90,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // Uncomment to add a bunch of pets!
+    /*for (int i = 0; i < 10; i++) {
+        PFObject *pet = [PFObject objectWithClassName:@"Pet"];
+        pet[@"currentUser"] = [PFUser currentUser];
+        pet[@"owner"] = [PFUser currentUser];
+        pet[@"name"] = [NSString stringWithFormat:@"Pet%d", i];
+        pet[@"miles"] = @0;
+        pet[@"passes"] = @0;
+        pet[@"type"] = @"pandacat";
+        [pet saveInBackground];
+    }*/
+    
     // Do any additional setup after loading the view.
     if (![[PFUser currentUser] objectForKey:@"fbProfilePic"]) {
         

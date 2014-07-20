@@ -319,7 +319,7 @@
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
   [self.scrollView setContentOffset:CGPointMake(0, textView.frame.origin.y) animated:YES];
-  if ([textView.text isEqualToString:@"placeholder text here..."]) {
+  if ([textView.text isEqualToString:@"Caption"]) {
     textView.text = @"";
     textView.textColor = [UIColor blackColor]; //optional
   }
@@ -329,7 +329,7 @@
 - (void)textViewDidEndEditing:(UITextView *)textView
 {
   if ([textView.text isEqualToString:@""]) {
-    textView.text = @"placeholder text here...";
+    textView.text = @"Caption";
     textView.textColor = [UIColor lightGrayColor]; //optional
   }
   [textView resignFirstResponder];
@@ -451,6 +451,10 @@
     [super viewDidAppear:animated];
 }
 
+-(void)dismissKeyboard {
+    [self.textEntry resignFirstResponder];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -461,6 +465,12 @@
     [self.locationManager startUpdatingLocation];
     [self setupScrollView];
     [self setupSubmitButton];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
+                                   initWithTarget:self
+                                   action:@selector(dismissKeyboard)];
+    
+    [self.view addGestureRecognizer:tap];
   
   self.keyboardToolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
   self.keyboardToolbar.barStyle = UIBarStyleBlackTranslucent;

@@ -46,27 +46,16 @@
   self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
   self.ptr.delegate = self;
   [self.view addSubview:self.ptr];
-  PFQuery *query = [PFQuery queryWithClassName:@"Video"];
+  PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
   [query orderByDescending:@"createdAt"];
+    [query includeKey:@"user"];
+    
   [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
     if (objects) {
-      self.videos = objects;
+      self.photos = objects;
       [self.tableView reloadData];
     }
   }];
-  // Do any additional setup after loading the view.
-  //    PFQuery *query = [PFQuery queryWithClassName:@"Video"];
-  //    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-  //        if (object) {
-  //            PFFile *videoFile = [object objectForKey:@"file"];
-  //            NSURL *fileUrl = [NSURL URLWithString:videoFile.url];
-  //            self.player = [[KSVideoPlayerView alloc] initWithFrame:CGRectMake(0, 0, 320, 280) contentURL:fileUrl];
-  //            [self.view addSubview:self.player];
-  //            [self.player play];
-  //            //MPMoviePlayerViewController *movie = [[MPMoviePlayerViewController alloc] initWithContentURL:fileUrl];
-  //            //[self presentMoviePlayerViewControllerAnimated:movie];
-  //        }
-  //    }];
   
   [self.tableView setAllowsSelection:NO];
   
@@ -93,7 +82,7 @@
 
 // Table View Delegate Methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-  return 20; //number of items
+  return [self.photos count]; //number of items
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -113,13 +102,17 @@
 //for each header
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
+    PFObject *photo = [self.photos objectAtIndex:section];
   UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 400)];
   
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
   
   //setup avatar
-  UIImageView *avatarView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 15, 40, 40)];
-  avatarView.image = [UIImage imageNamed:@"tempnewsavatar.png"];
+    FBProfilePictureView *avatarView = [[FBProfilePictureView alloc] initWithFrame:CGRectMake(10, 15, 40, 40)];
+    avatarView.profileID = [[photo objectForKey:@"user"] objectForKey:@"fbId"];
+    
+//  UIImageView *avatarView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 15, 40, 40)];
+//  avatarView.image = [UIImage imageNamed:@"tempnewsavatar.png"];
   [view addSubview:avatarView];
   
   //setup avatar name
@@ -128,7 +121,7 @@
   [avatarName setBackgroundColor:[UIColor clearColor]];
   [avatarName setFont:[UIFont fontWithName:@"Avenir" size:16]];
   
-  avatarName.text = @"startstar";
+    avatarName.text = [[photo objectForKey:@"user"] objectForKey:@"fbName"];//@"startstar";
   avatarName.lineBreakMode = NSLineBreakByWordWrapping;
   avatarName.numberOfLines = 0;
   [view addSubview:avatarName];
@@ -139,7 +132,7 @@
   [tags setBackgroundColor:[UIColor clearColor]];
   [tags setFont:[UIFont fontWithName:@"Avenir-Light" size:10]];
   
-  tags.text = @"I love Foxy hehe.";
+    tags.text = [photo objectForKey:@"caption"];//@"I love Foxy hehe.";
   tags.lineBreakMode = NSLineBreakByWordWrapping;
   tags.numberOfLines = 0;
   [view addSubview:tags];
@@ -152,7 +145,7 @@
 
 //for each cell in table
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-  
+  PFObject *photo = [self.photos objectAtIndex:indexPath.section];
   static NSString *MyIdentifier = @"Cell";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
   if (cell == nil) {
@@ -160,18 +153,12 @@
   }
   cell.backgroundColor = [UIColor clearColor];
   
-  
-//  PFObject *object = self.videos[indexPath.row];
-//  PFFile *videoFile = [object objectForKey:@"file"];
-//  NSURL *fileUrl = [NSURL URLWithString:videoFile.url];
-//  self.player = [[KSVideoPlayerView alloc] initWithFrame:CGRectMake(0, 0, 320, 280) contentURL:fileUrl];
-//  [cell addSubview:self.player];
-  //[self.player play];
-  //MPMoviePlayerViewController *movie = [[MPMoviePlayerViewController alloc] initWithContentURL:fileUrl];
-  //[self presentMoviePlayerViewControllerAnimated:movie];
-  
-  UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
-  imageView.image = [UIImage imageNamed:@"tempsingleimage.png"];
+    PFImageView *imageView = [[PFImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
+    imageView.image =[UIImage imageNamed:@"tempsingleimage.png"];
+    imageView.file = [photo objectForKey:@"image"];
+    [imageView loadInBackground];
+//  UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
+//  imageView.image = [UIImage imageNamed:@"tempsingleimage.png"];
   [cell addSubview:imageView];
   
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
@@ -207,7 +194,7 @@
   [desc setBackgroundColor:[UIColor clearColor]];
   [desc setFont:[UIFont fontWithName:@"Avenir" size:11]];
   
-  desc.text = @"Mountain View, CA";
+    desc.text = [photo objectForKey:@"locName"];//@"Mountain View, CA";
   desc.lineBreakMode = NSLineBreakByWordWrapping;
   desc.numberOfLines = 0;
   [cell addSubview:desc];

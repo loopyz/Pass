@@ -32,25 +32,19 @@
     self.bgColor = [UIColor colorWithRed:248/255.0f green:248/255.0f blue:248/255.0f alpha:1.0f];
     
     self.videos = [[NSMutableArray alloc] init];
-    [self setupScrollView];
     [self setupHeader];
-    [self setupTable];
     
     locationIcon = [UIImage imageNamed:@"locationicon.png"];
     heartButtonIcon = [UIImage imageNamed:@"heartbutton.png"];
     commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
     
-    UIBarButtonItem *rbb = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settingsicon.png"]
-                                                            style:UIBarButtonItemStylePlain
-                                                           target:self
-                                                           action:@selector(refreshView)];
   }
   return self;
 }
 
 - (void)setupHeader
 {
-  UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.videosTable.frame.size.width, 164)];
+  UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 164)];
   view.backgroundColor = [UIColor whiteColor];
   self.profileSnippetView = view;
   self.fbProfilePic = [[FBProfilePictureView alloc] init];
@@ -91,7 +85,7 @@
   [description setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:14]];
   description.text = @"I really like pizza. And travel.";
   
-  [self.scrollView addSubview:description];
+  [self.profileSnippetView addSubview:description];
   
   // setup website
   UIColor *websiteColor = [UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f];
@@ -101,7 +95,7 @@
   [website setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
   website.text = @"http://www.lucy.ws";
   
-  [self.scrollView addSubview:website];
+  [self.profileSnippetView addSubview:website];
   
   
   //setup score, offers, and pending label
@@ -146,19 +140,18 @@
   [numPending setFont:[UIFont fontWithName:@"Avenir-Book" size:22]];
   numPending.text = @"2";
   
-  [view addSubview:score];
-  [view addSubview:offers];
-  [view addSubview:pending];
+  [self.profileSnippetView addSubview:score];
+  [self.profileSnippetView addSubview:offers];
+  [self.profileSnippetView addSubview:pending];
   
-  [view addSubview:numScore];
-  [view addSubview:numoffers];
-  [view addSubview:numPending];
+  [self.profileSnippetView addSubview:numScore];
+  [self.profileSnippetView addSubview:numoffers];
+  [self.profileSnippetView addSubview:numPending];
   
   
   
-  view.backgroundColor = [UIColor whiteColor];
-  
-  [self.scrollView addSubview:view];
+  self.profileSnippetView.backgroundColor = [UIColor whiteColor];
+
 }
 
 - (void)addProfile
@@ -170,45 +163,15 @@
   //makes it into circle
   float width = self.fbProfilePic.bounds.size.width;
   self.fbProfilePic.layer.cornerRadius = width/2;
-  
   [self.profileSnippetView addSubview:self.fbProfilePic];
   
-}
-
-- (void)setupTable
-{
-  CGRect tableViewRect = CGRectMake(0, 164, SCREEN_WIDTH, 540);
-  
-  self.videosTable = [[UITableView alloc] initWithFrame:tableViewRect style:UITableViewStylePlain];
-  self.videosTable.delegate = self;
-  self.videosTable.dataSource = self;
-  self.videosTable.backgroundColor = [UIColor clearColor];
-  [self.videosTable setAllowsSelection:NO];
-  [self.scrollView addSubview:self.videosTable];
-}
-
-
-- (void)setupScrollView
-{
-  self.scrollView = [[UIScrollView alloc] init];
-  self.scrollView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); //scroll view occupies full parent view!
-  //specify CGRect bounds in place of self.view.bounds to make it as a portion of parent view!
-  
-  self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 870);   //scroll view size
-  
-  self.scrollView.showsVerticalScrollIndicator = NO;    // to hide scroll indicators!
-  
-  self.scrollView.showsHorizontalScrollIndicator = YES; //by default, it shows!
-  
-  self.scrollView.scrollEnabled = YES;                 //say "NO" to disable scroll
-  
-  
-  [self.view addSubview:self.scrollView];               //adding to parent view!
 }
 
 - (void)viewDidLoad
 {
   [super viewDidLoad];
+  UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
+  self.tableView.contentInset = inset;
 
   
   //    // Do any additional setup after loading the view.
@@ -234,7 +197,7 @@
   [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
     if (objects) {
       self.videos = objects;
-      [self.videosTable reloadData];
+      [self.tableView reloadData];
     }
   }];
 }
@@ -263,14 +226,15 @@
 //  return vcount;
   
   NSUInteger count = 20;
-  self.videosTable.frame = CGRectMake(0, 164, SCREEN_WIDTH, count * 335);
-  self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 144 + (count * 130) + 134);
+  //self.videosTable.frame = CGRectMake(0, 164, SCREEN_WIDTH, count * 335);
+  //self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 144 + (count * 130) + 134);
   
   return count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+  if (indexPath.row == 0) return 164;
   return 130;
 }
 
@@ -279,73 +243,87 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   
   static NSString *MyIdentifier = @"Cell";
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
-  if (cell == nil) {
+  UITableViewCell *cell;
+  if (indexPath.row != 0) {
+    cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+  }
+  else {
+    cell = [tableView dequeueReusableCellWithIdentifier:@"Header"];
+  }
+  if (cell == nil && indexPath.row == 0) {
+    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:@"Header"];
+  }
+  else if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
   }
   
-  cell.backgroundColor = self.bgColor;
-  
-  UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
-  imgView.image = [UIImage imageNamed:@"fox.png"];
-  [cell addSubview:imgView];
-  
-  
-  //setup Location label
-  UIColor *descColor = [UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f];
-  UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
-  [desc setTextColor:descColor];
-  [desc setBackgroundColor:[UIColor clearColor]];
-  [desc setFont:[UIFont fontWithName:@"Avenir" size:24]];
-  
-  desc.text = @"Pusheen";
-  desc.lineBreakMode = NSLineBreakByWordWrapping;
-  desc.numberOfLines = 0;
-  [cell addSubview:desc];
-  
-  // set up miles traveled
-  UILabel *numMiles = [[UILabel alloc] initWithFrame:CGRectMake(120, 40, 200, 50)];
-  [numMiles setTextColor:descColor];
-  [numMiles setBackgroundColor:[UIColor clearColor]];
-  [numMiles setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
-  
-  numMiles.text = @"2187";
-  numMiles.lineBreakMode = NSLineBreakByWordWrapping;
-  numMiles.numberOfLines = 0;
-  [cell addSubview:numMiles];
-  
-  // setup miles label
-  UILabel *milesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 40, 200, 50)];
-  [milesLabel setTextColor:descColor];
-  [milesLabel setBackgroundColor:[UIColor clearColor]];
-  [milesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
-  
-  milesLabel.text = @"miles";
-  milesLabel.lineBreakMode = NSLineBreakByWordWrapping;
-  milesLabel.numberOfLines = 0;
-  [cell addSubview:milesLabel];
-  
-  // set up miles traveled
-  UILabel *numPasses = [[UILabel alloc] initWithFrame:CGRectMake(120, 60, 200, 50)];
-  [numPasses setTextColor:descColor];
-  [numPasses setBackgroundColor:[UIColor clearColor]];
-  [numPasses setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
-  
-  numPasses.text = @"1322";
-  numPasses.lineBreakMode = NSLineBreakByWordWrapping;
-  numPasses.numberOfLines = 0;
-  [cell addSubview:numPasses];
-  
-  // setup miles label
-  UILabel *passesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 60, 200, 50)];
-  [passesLabel setTextColor:descColor];
-  [passesLabel setBackgroundColor:[UIColor clearColor]];
-  [passesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
-  
-  passesLabel.text = @"passes";
-  passesLabel.lineBreakMode = NSLineBreakByWordWrapping;
-  passesLabel.numberOfLines = 0;
-  [cell addSubview:passesLabel];
+  if (indexPath.row == 0) {
+    cell.backgroundColor = [UIColor whiteColor];
+    [cell addSubview:self.profileSnippetView];
+  }
+  else {
+    cell.backgroundColor = self.bgColor;
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
+    imgView.image = [UIImage imageNamed:@"fox.png"];
+    [cell addSubview:imgView];
+
+
+    //setup Location label
+    UIColor *descColor = [UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f];
+    UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
+    [desc setTextColor:descColor];
+    [desc setBackgroundColor:[UIColor clearColor]];
+    [desc setFont:[UIFont fontWithName:@"Avenir" size:24]];
+
+    desc.text = @"Pusheen";
+    desc.lineBreakMode = NSLineBreakByWordWrapping;
+    desc.numberOfLines = 0;
+    [cell addSubview:desc];
+
+    // set up miles traveled
+    UILabel *numMiles = [[UILabel alloc] initWithFrame:CGRectMake(120, 40, 200, 50)];
+    [numMiles setTextColor:descColor];
+    [numMiles setBackgroundColor:[UIColor clearColor]];
+    [numMiles setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
+
+    numMiles.text = @"2187";
+    numMiles.lineBreakMode = NSLineBreakByWordWrapping;
+    numMiles.numberOfLines = 0;
+    [cell addSubview:numMiles];
+
+    // setup miles label
+    UILabel *milesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 40, 200, 50)];
+    [milesLabel setTextColor:descColor];
+    [milesLabel setBackgroundColor:[UIColor clearColor]];
+    [milesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
+
+    milesLabel.text = @"miles";
+    milesLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    milesLabel.numberOfLines = 0;
+    [cell addSubview:milesLabel];
+
+    // set up miles traveled
+    UILabel *numPasses = [[UILabel alloc] initWithFrame:CGRectMake(120, 60, 200, 50)];
+    [numPasses setTextColor:descColor];
+    [numPasses setBackgroundColor:[UIColor clearColor]];
+    [numPasses setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
+
+    numPasses.text = @"1322";
+    numPasses.lineBreakMode = NSLineBreakByWordWrapping;
+    numPasses.numberOfLines = 0;
+    [cell addSubview:numPasses];
+
+    // setup miles label
+    UILabel *passesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 60, 200, 50)];
+    [passesLabel setTextColor:descColor];
+    [passesLabel setBackgroundColor:[UIColor clearColor]];
+    [passesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
+
+    passesLabel.text = @"passes";
+    passesLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    passesLabel.numberOfLines = 0;
+    [cell addSubview:passesLabel];
+  }
   
   return cell;
 }

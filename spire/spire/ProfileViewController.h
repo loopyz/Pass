@@ -10,10 +10,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ProfileViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
+@interface ProfileViewController : UITableViewController
 
-@property (nonatomic, strong) UIScrollView *scrollView;
-@property (nonatomic, strong) UITableView *videosTable;
 @property (nonatomic, strong) UIView *profileSnippetView;
 @property (nonatomic, strong) FBProfilePictureView *fbProfilePic;
 @property (nonatomic, strong) NSString *userid;

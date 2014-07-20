@@ -314,10 +314,10 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
   if (buttonIndex == 0) {
-    NSLog(@"user pressed OK");
+    NSLog(@"user pressed cancel");
   }
   else {
-    NSLog(@"user pressed Cancel");
+    NSLog(@"user pressed OK");
   }
 }
 

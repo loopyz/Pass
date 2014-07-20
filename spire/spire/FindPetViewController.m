@@ -9,19 +9,89 @@
 #import "FindPetViewController.h"
 
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
-#define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
+#define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainSreen] bounds].size.width)
 
 @interface FindPetViewController ()
+
+@property (strong, nonatomic) NSArray *headerBig;
+@property (strong, nonatomic) NSArray *headerDetail;
 
 @end
 
 @implementation FindPetViewController
+
+
+- (void)getLocation:(void (^)(float latitude, float longitude)) callback
+{
+    float latitude = 3.14;
+    float longitude = 2.71;
+    if ([CLLocationManager locationServicesEnabled]) {
+        latitude = self.locationManager.location.coordinate.latitude;
+        longitude = self.locationManager.location.coordinate.longitude;
+        callback(latitude, longitude);
+    }
+}
+
+- (void)findNearbyPets
+{
+    [self getLocation:^(float latitude, float longitude) {
+        self.pets = [[NSMutableArray alloc] initWithArray:@[@[], @[], @[]]];
+        
+        // TODO: FIND BETTER LL OFFSETS for 500 ft, 1 mi, 5 mi away
+        float offsets[] = {1, 5, 10};
+        NSString *predicateStrings[3];
+        
+        __block int callbacksReceived = 0;
+        
+        for (int i = 0; i < 3; i++) {
+            float offset = offsets[i];
+            
+            // First, query by offsets from latitude and longitude.
+            predicateStrings[i] = [NSString stringWithFormat:@"latitude >= %f AND latitude <= %f AND longitude >= %f AND longitude <= %f", latitude-offset, latitude+offset, longitude-offset, longitude+offset];
+            
+            // Next, query by class name and other filters.
+            PFQuery *query = [PFQuery queryWithClassName:@"Pet" predicate:[NSPredicate predicateWithFormat:predicateStrings[i]]];
+            [query whereKey:@"currentUser" equalTo:[NSNull null]];
+            [query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
+            query.limit = 6; // TODO: limit for now for simplicity
+            
+            
+            [query findObjectsInBackgroundWithBlock:^(NSArray *pets, NSError *error) {
+                if (pets != nil) {
+                    [self.pets replaceObjectAtIndex:i withObject:pets];
+                }
+                callbacksReceived++;
+                if (callbacksReceived == 3) {
+                    
+                    NSArray *petIds0 = [self.pets[0] valueForKey:@"objectId"];
+                    NSArray *petIds1 = [self.pets[1] valueForKey:@"objectId"];
+                    
+                    self.pets[2] = [self.pets[2] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(PFObject *evaluatedObject, NSDictionary *bindings) {
+                        NSLog(@"%@", [evaluatedObject objectId]);
+                        return [petIds1 indexOfObject:[evaluatedObject objectId]] == NSNotFound;
+                    }]];
+                    self.pets[1] = [self.pets[1] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(PFObject *evaluatedObject, NSDictionary *bindings) {
+                        return [petIds0 indexOfObject:[evaluatedObject objectId]] == NSNotFound;
+                    }]];
+                }
+            }];
+        }
+    }];
+}
+
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        [self setupPetCollection];
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        UIColor *color = [UIColor colorWithRed:249/255.0f green:249/255.0f blue:249/255.0f alpha:1.0f];
+        self.tableView.backgroundColor = color;
+        self.headerBig = @[@"Here", @"A walk away", @"A drive away"];
+        self.headerDetail = @[@"500 feet", @"1.0 miles away", @"5.0 miles away"];
+        
+        [self findNearbyPets];
     }
     return self;
 }
@@ -29,95 +99,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
+    self.tableView.contentInset = inset;
+    [self.tableView setAllowsSelection:NO];
     
-}
-
-- (void) setupPetCollection
-{
-    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
-    layout.minimumInteritemSpacing = 2;
-    layout.minimumLineSpacing = 2;
-    layout.sectionInset = UIEdgeInsetsMake(20, 0, 20, 0);
-    layout.scrollDirection = UICollectionViewScrollDirectionVertical;
-    layout.headerReferenceSize = CGSizeMake(SCREEN_WIDTH, 50);
-
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.distanceFilter = kCLDistanceFilterNone;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+    [self.locationManager startUpdatingLocation];
     
-    self.collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0,0, SCREEN_WIDTH, 750) collectionViewLayout:layout];
-    [self.collectionView setDataSource:self];
-    [self.collectionView setDelegate:self];
-    [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"petCell"];
-    [self.collectionView setBackgroundColor:[UIColor lightGrayColor]];
-    
-    [self.collectionView setAllowsSelection:NO];
-}
-
-- (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView
-{
-    return 3;
-}
-
-- (NSInteger) collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
-{
-    return 6;
-}
-
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return CGSizeMake(80, 100);
-}
-
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    UICollectionViewCell *cell;
-    cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"petCell" forIndexPath:indexPath];
-
-    cell.backgroundColor = [UIColor clearColor];
-    
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 70, 70)];
-    
-    imageView.image = [UIImage imageNamed:@"bunny.png"];
-    float width = imageView.bounds.size.width;
-    imageView.layer.cornerRadius = width/2;
-    [cell addSubview:imageView];
-    
-    UIColor *descColor = [UIColor blackColor];
-    
-    //setup Location label
-    UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(0, 70, 70, 50)];
-    [desc setTextColor:descColor];
-    [desc setBackgroundColor:[UIColor clearColor]];
-    [desc setFont:[UIFont fontWithName:@"Avenir" size:11]];
-    
-    desc.text = @"Mountain View, CA";
-    desc.lineBreakMode = NSLineBreakByWordWrapping;
-    desc.numberOfLines = 0;
-    [cell addSubview:desc];
-    
-    return cell;
-}
-
-- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
-{
-    UICollectionReusableView *reusableView = nil;
-    
-    if (kind == UICollectionElementKindSectionHeader) {
-        reusableView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"headerView" forIndexPath:indexPath];
-        UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-        
-        if (indexPath.section == 0) {
-            textLabel.text = @"Here - 500 feet";
-        } else if (indexPath.section == 1) {
-            textLabel.text = @"A Walk Away - 1.0 miles";
-        } else {
-            textLabel.text = @"A Drive Away - 10.0 miles";
-        }
-        [reusableView addSubview:textLabel];
-    }
-    if (kind == UICollectionElementKindSectionFooter) {
-        reusableView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:@"footerView" forIndexPath:indexPath];
-    }
-    
-    return reusableView;
 }
 
 - (void)didReceiveMemoryWarning
@@ -126,15 +116,163 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
+#pragma mark - Table view data source
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+// Table View Delegate Methods
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+  return 3; //number of items
 }
-*/
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+  return 40;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+  return ([self.pets[section] count] + 2) / 3;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+  return 130;
+}
+
+//for each header
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+  UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 400)];
+  
+  UIColor *color = [UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f];
+  
+  // setup tags
+  UILabel *tags = [[UILabel alloc] initWithFrame:CGRectMake(5, 5, 150, 30)];
+  [tags setTextColor:color];
+  [tags setBackgroundColor:[UIColor clearColor]];
+  [tags setFont:[UIFont fontWithName:@"Avenir-Bold" size:13]];
+  
+  tags.text = self.headerBig[section];
+  tags.lineBreakMode = NSLineBreakByWordWrapping;
+  tags.numberOfLines = 0;
+  [view addSubview:tags];
+  
+  UILabel *distance;
+  
+  if (section == 0) {
+    distance = [[UILabel alloc] initWithFrame:CGRectMake(55, 5, 150, 30)];
+  }
+  else if (section == 1) {
+    distance = [[UILabel alloc] initWithFrame:CGRectMake(115, 5, 150, 30)];
+  }
+  else {
+    distance = [[UILabel alloc] initWithFrame:CGRectMake(115, 5, 150, 30)];
+  }
+  [distance setTextColor:color];
+  [distance setBackgroundColor:[UIColor clearColor]];
+  [distance setFont:[UIFont fontWithName:@"Avenir" size:12]];
+  
+  distance.text = self.headerDetail[section];
+  distance.lineBreakMode = NSLineBreakByWordWrapping;
+  distance.numberOfLines = 0;
+  [view addSubview:distance];
+  
+  view.backgroundColor = [UIColor whiteColor];
+  view.alpha = .94f;
+  
+  return view;
+}
+
+- (void)setupCollection:(NSIndexPath *)indexPath withView:(UIView *)view
+{
+  NSUInteger numberOfRowsInSection = [self tableView:self.tableView numberOfRowsInSection:indexPath.section];
+  NSUInteger currentRow = indexPath.row;
+  
+  UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
+  
+  // NOT the last row - so we know 3 images per thing.
+  if (currentRow != numberOfRowsInSection - 1 || [self.pets[indexPath.section] count] % 3 == 0) {
+    // TODO: use correct values in an array
+    for (int x = 0; x < 3; x++) {
+        NSUInteger section = indexPath.section;
+        NSUInteger index = currentRow * 3 + x;
+        
+      UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
+        PFObject *pet = self.pets[section][index];
+        NSString *petType = [pet objectForKey:@"type"];
+        NSString *petLoc = [pet objectForKey:@"locName"];
+      tempView.image = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
+      [view addSubview:tempView];
+      
+      UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
+      tempLocation.textAlignment = NSTextAlignmentCenter;
+        tempLocation.text = petLoc;
+      tempLocation.numberOfLines = 0;
+      tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
+      tempLocation.textColor = descColor;
+      tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
+      
+      [view addSubview:tempLocation];
+    }
+  }
+  
+  else {
+    // TODO: is the last row - check how many images are left to show lol
+      for (int x = 0; x < [self.pets[indexPath.section] count] % 3; x++) {
+          NSUInteger section = indexPath.section;
+        NSUInteger index = currentRow * 3 + x;
+        PFObject *pet = self.pets[section][index];
+        NSString *petType = [pet objectForKey:@"type"];
+        NSString *petLoc = [pet objectForKey:@"locName"];
+
+      UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 10, 73.5, 73.5)];
+      tempView.image = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
+      [view addSubview:tempView];
+      
+      UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
+      tempLocation.textAlignment = NSTextAlignmentCenter;
+        tempLocation.text = petLoc;
+      tempLocation.numberOfLines = 0;
+      tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
+      tempLocation.textColor = descColor;
+      tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
+      
+      [view addSubview:tempLocation];
+
+    }
+  }
+}
+
+//for each cell in table
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+  
+  static NSString *MyIdentifier = @"Cell";
+  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+  UIView *tempView;
+  if (cell == nil) {
+    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
+    tempView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, self.tableView.frame.size.height)];
+    
+  }
+  
+  cell.backgroundColor = [UIColor clearColor];
+  
+  
+  //  PFObject *object = self.videos[indexPath.row];
+  //  PFFile *videoFile = [object objectForKey:@"file"];
+  //  NSURL *fileUrl = [NSURL URLWithString:videoFile.url];
+  //  self.player = [[KSVideoPlayerView alloc] initWithFrame:CGRectMake(0, 0, 320, 280) contentURL:fileUrl];
+  //  [cell addSubview:self.player];
+  //[self.player play];
+  //MPMoviePlayerViewController *movie = [[MPMoviePlayerViewController alloc] initWithContentURL:fileUrl];
+  //[self presentMoviePlayerViewControllerAnimated:movie];
+
+  
+  [self setupCollection:indexPath withView:tempView];
+  
+  [cell addSubview:tempView];
+  
+  
+  return cell;
+}
+
 
 @end

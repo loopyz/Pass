@@ -7,8 +7,8 @@
 //
 
 #import "PetPlacementViewController.h"
-#import <Parse/Parse.h>
 #import "VenueTableViewController.h"
+#import "NoPetsErrorView.h"
 
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
@@ -32,7 +32,6 @@
 
 - (void)getLocation:(void (^)(NSNumber *latitude, NSNumber *longitude, NSString *locName)) callback
 {
-    // TODO: take in callback, call with lat/long/name
     NSNumber *latitude = @3.14;
     NSNumber *longitude = @2.71;
     __block NSString *locName = @"Medium HQ";
@@ -72,6 +71,9 @@
 
 - (void)addPhoto:(NSData *)photoData withUser:(PFUser *)user withPet:(PFObject *)pet withLat:(NSNumber *)latitude withLong:(NSNumber *)longitude withName:(NSString *)locName withCaption:(NSString *)caption
 {
+    if ([caption isEqualToString:@"Add a caption..."]) {
+        caption = locName;
+    }
     PFFile *image = [PFFile fileWithName:@"image.png" data:photoData];
     [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
@@ -83,26 +85,28 @@
             [photo setObject:latitude forKey:@"latitude"];
             [photo setObject:longitude forKey:@"longitude"];
             [photo setObject:locName forKey:@"locName"];
-            [photo setObject:@1 forKey:@"first"];
-            // TODO: set first only if first taken by that (user, pet)
-            [photo saveInBackground];
+            
+            PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
+            [query whereKey:@"user" equalTo:user];
+            [query whereKey:@"pet" equalTo:pet];
+            [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+                NSNumber *first = number > 0 ? @0 : @1;
+                [photo setObject:first forKey:@"first"];
+                [photo saveInBackground];
+            }];
         }
     }];
 }
 
 - (void)saveToParse:(NSData *)photoData withCaption:(NSString *)caption withDropped:(BOOL) dropped
 {
-    PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
     PFUser *currentUser = [PFUser currentUser];
-    [query whereKey:@"currentUser" equalTo:currentUser];
-    [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
-        [self getLocation:^(NSNumber *latitude, NSNumber *longitude, NSString *locName) {
-            [self updatePet:pet withDropped:dropped withLat:latitude withLong:longitude withName:locName];
-            [self addPhoto:photoData withUser:currentUser withPet:pet withLat:latitude withLong:longitude withName:locName withCaption:caption];
-            
-            // go back to home
-            [self.tabBarController setSelectedIndex:0];
-        }];
+    [self getLocation:^(NSNumber *latitude, NSNumber *longitude, NSString *locName) {
+        [self updatePet:self.pet withDropped:dropped withLat:latitude withLong:longitude withName:locName];
+        [self addPhoto:photoData withUser:currentUser withPet:self.pet withLat:latitude withLong:longitude withName:locName withCaption:caption];
+        
+        // go back to home tab
+        [self.tabBarController setSelectedIndex:0];
     }];
 }
 
@@ -195,12 +199,14 @@
 
 - (void)setupPet
 {
+    NSString *petType = [self.pet objectForKey:@"type"];
+    
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.frame = CGRectMake((self.view.frame.size.width - 190.5)/2 + 30, 47, 127.5, 127.5);
     [button addTarget:self action:@selector(imageTouched:withEvent:) forControlEvents:UIControlEventTouchDown];
     [button addTarget:self action:@selector(imageMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
     [button addTarget:self action:@selector(imageReleased:withEvent:) forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
-    [button setImage:[UIImage imageNamed:@"tempavatar.png"] forState:UIControlStateNormal];
+    [button setImage:[UIImage imageNamed:[petType stringByAppendingString:@".png"]] forState:UIControlStateNormal];
     button.exclusiveTouch = YES;
 
     [self.container addSubview:button];
@@ -211,8 +217,15 @@
      */
 }
 
+
 - (void)setupForm
 {
+    if (self.textEntry != nil) {
+        self.textEntry.text = @"Add a caption...";
+        return;
+    }
+    // HEY STYLING AFTER THIS POINT OCCURS ONCE
+    
     self.textEntry = [[UITextView alloc] initWithFrame:CGRectMake(0, SCREEN_WIDTH + 20, SCREEN_WIDTH, 100)];
     self.textEntry.layer.borderWidth = 1.0;
     self.textEntry.layer.borderColor =  [[UIColor colorWithRed:228/255.0f green:228/255.0f blue:228/255.0f alpha:1.0f] CGColor];
@@ -224,10 +237,16 @@
   
   self.textEntry.textColor = [UIColor colorWithRed:137/255.0f green:137/255.0f blue:137/255.0f alpha:1.0f];
   self.textEntry.font = [UIFont fontWithName:@"Avenir" size:15.0f];
+    
+    self.textEntry.inputAccessoryView = self.keyboardToolbar;
+    // setup extra keyboard done button
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
   
     [self.scrollView addSubview:self.textEntry];
     self.textEntry.editable = YES;
-    // self.textEntry.placeholder = @"Caption";
+     //self.textEntry.placeholder = @"Insert Caption";
   
     self.textEntry.delegate = self;
   
@@ -316,7 +335,7 @@
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
   [self.scrollView setContentOffset:CGPointMake(0, textView.frame.origin.y) animated:YES];
-  if ([textView.text isEqualToString:@"placeholder text here..."]) {
+  if ([textView.text isEqualToString:@"Add a caption..."]) {
     textView.text = @"";
     textView.textColor = [UIColor blackColor]; //optional
   }
@@ -326,7 +345,7 @@
 - (void)textViewDidEndEditing:(UITextView *)textView
 {
   if ([textView.text isEqualToString:@""]) {
-    textView.text = @"placeholder text here...";
+    textView.text = @"Add a caption...";
     textView.textColor = [UIColor lightGrayColor]; //optional
   }
   [textView resignFirstResponder];
@@ -385,10 +404,18 @@
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
     
+    PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
+    query.cachePolicy = kPFCachePolicyCacheThenNetwork;
+    PFUser *currentUser = [PFUser currentUser];
+    [query whereKey:@"currentUser" equalTo:currentUser];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
+        self.pet = pet;
+    }];
     
+    [self setupForm];
     YCameraViewController *camController = [[YCameraViewController alloc] initWithNibName:@"YCameraViewController" bundle:nil];
     self.cvc = camController;
-    camController.delegate=self;
+    camController.delegate = self;
   
   // setup extra keyboard done button
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -419,7 +446,7 @@
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification {
-  NSString *textFromKeyboard = self.textEntry.text;
+  //NSString *textFromKeyboard = self.textEntry.text;
   [self.textEntry resignFirstResponder];
 }
 
@@ -434,6 +461,15 @@
 	[self.textEntry resignFirstResponder];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+}
+
+-(void)dismissKeyboard {
+    [self.textEntry resignFirstResponder];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -443,8 +479,13 @@
     self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
     [self.locationManager startUpdatingLocation];
     [self setupScrollView];
-    [self setupForm];
     [self setupSubmitButton];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
+                                   initWithTarget:self
+                                   action:@selector(dismissKeyboard)];
+    
+    [self.view addGestureRecognizer:tap];
   
   self.keyboardToolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
   self.keyboardToolbar.barStyle = UIBarStyleBlackTranslucent;
@@ -454,9 +495,6 @@
                          [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(keyboardWillHide:)],
                          nil];
   [self.keyboardToolbar sizeToFit];
-  self.textEntry.inputAccessoryView = self.keyboardToolbar;
-  
-  self.textEntry.text = @"Add a description...";
 }
 
 - (void)didReceiveMemoryWarning

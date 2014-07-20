@@ -7,10 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
 
-@interface FindPetViewController : UICollectionViewController<UIScrollViewDelegate>
+#import <CoreLocation/CoreLocation.h>
 
-@property (nonatomic, strong) UICollectionView *collectionView;
-@property (nonatomic, strong) UIView *banner;
+@interface FindPetViewController : UITableViewController
+
+@property (strong, nonatomic) NSMutableArray *pets;
+@property (strong, nonatomic) CLLocationManager *locationManager;
 
 @end

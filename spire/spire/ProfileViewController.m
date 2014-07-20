@@ -232,88 +232,102 @@
     cell = [tableView dequeueReusableCellWithIdentifier:@"Header"];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
   }
-  if (cell == nil && indexPath.row == 0) {
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:@"Header"];
-  }
-  else if (cell == nil) {
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
-  }
+    
+    if (cell == nil) {
+        if (indexPath.row == 0) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:@"Header"];
+        }
+        else {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier];
+        }
+        
+        cell.layer.shadowColor = [[UIColor whiteColor] CGColor];
+        cell.layer.shadowOpacity = 1.0;
+        cell.layer.shadowRadius = 0;
+        cell.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+        if (indexPath.row == 0) {
+            cell.backgroundColor = [UIColor whiteColor];
+            [cell addSubview:self.profileSnippetView];
+        }
+        else {
+            cell.backgroundColor = self.bgColor;
+            UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
+            imgView.image = [UIImage imageNamed:@"fox.png"];
+            imgView.tag = 200;
+            [cell addSubview:imgView];
+            
+            //setup Location label
+            UIColor *descColor = [UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f];
+            UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
+            [desc setTextColor:descColor];
+            [desc setBackgroundColor:[UIColor clearColor]];
+            [desc setFont:[UIFont fontWithName:@"Avenir" size:24]];
+            desc.lineBreakMode = NSLineBreakByWordWrapping;
+            desc.numberOfLines = 0;
+            desc.tag = 201;
+            [cell addSubview:desc];
+            
+            // set up miles traveled
+            UILabel *numMiles = [[UILabel alloc] initWithFrame:CGRectMake(120, 40, 200, 50)];
+            [numMiles setTextColor:descColor];
+            [numMiles setBackgroundColor:[UIColor clearColor]];
+            [numMiles setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
+            numMiles.lineBreakMode = NSLineBreakByWordWrapping;
+            numMiles.numberOfLines = 0;
+            numMiles.tag = 202;
+            [cell addSubview:numMiles];
+            
+            // setup miles label
+            UILabel *milesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 40, 200, 50)];
+            [milesLabel setTextColor:descColor];
+            [milesLabel setBackgroundColor:[UIColor clearColor]];
+            [milesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
+            
+            milesLabel.text = @"miles traveled";
+            milesLabel.lineBreakMode = NSLineBreakByWordWrapping;
+            milesLabel.numberOfLines = 0;
+            milesLabel.tag = 203;
+            [cell addSubview:milesLabel];
+            
+            // set up miles traveled
+            UILabel *numPasses = [[UILabel alloc] initWithFrame:CGRectMake(120, 60, 200, 50)];
+            [numPasses setTextColor:descColor];
+            [numPasses setBackgroundColor:[UIColor clearColor]];
+            [numPasses setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
+            numPasses.lineBreakMode = NSLineBreakByWordWrapping;
+            numPasses.numberOfLines = 0;
+            numPasses.tag = 204;
+            [cell addSubview:numPasses];
+            
+            // setup miles label
+            UILabel *passesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 60, 200, 50)];
+            [passesLabel setTextColor:descColor];
+            [passesLabel setBackgroundColor:[UIColor clearColor]];
+            [passesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
+            
+            passesLabel.text = @"passes";
+            passesLabel.lineBreakMode = NSLineBreakByWordWrapping;
+            passesLabel.numberOfLines = 0;
+            passesLabel.tag = 205;
+            [cell addSubview:passesLabel];
+        }
+    }
   
-  cell.layer.shadowColor = [[UIColor whiteColor] CGColor];
-  cell.layer.shadowOpacity = 1.0;
-  cell.layer.shadowRadius = 0;
-  cell.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+    if (indexPath.row != 0) {
+        PFObject *pet = [[self.photos objectAtIndex:(indexPath.row-1)] objectForKey:@"pet"];
+    
+        UILabel *desc = (UILabel *)[cell viewWithTag:201];
+        desc.text = [pet objectForKey:@"name"];//@"Pusheen";
+    
+
+        UILabel *numMiles = (UILabel *)[cell viewWithTag:202];
+        numMiles.text = [[pet objectForKey:@"miles"] stringValue];//@"2187";
+    
+        UILabel *numPasses = (UILabel *)[cell viewWithTag:203];
+        numPasses.text = [[pet objectForKey:@"passes"] stringValue];//@"1322";
+    }
   
-  if (indexPath.row == 0) {
-    cell.backgroundColor = [UIColor whiteColor];
-    [cell addSubview:self.profileSnippetView];
-  }
-  else {
-    PFObject *pet = [[self.photos objectAtIndex:(indexPath.row-1)] objectForKey:@"pet"];
-    cell.backgroundColor = self.bgColor;
-    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
-    imgView.image = [UIImage imageNamed:@"fox.png"];
-    [cell addSubview:imgView];
-
-
-    //setup Location label
-    UIColor *descColor = [UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f];
-    UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
-    [desc setTextColor:descColor];
-    [desc setBackgroundColor:[UIColor clearColor]];
-    [desc setFont:[UIFont fontWithName:@"Avenir" size:24]];
-
-      desc.text = [pet objectForKey:@"name"];//@"Pusheen";
-    desc.lineBreakMode = NSLineBreakByWordWrapping;
-    desc.numberOfLines = 0;
-    [cell addSubview:desc];
-
-    // set up miles traveled
-    UILabel *numMiles = [[UILabel alloc] initWithFrame:CGRectMake(120, 40, 200, 50)];
-    [numMiles setTextColor:descColor];
-    [numMiles setBackgroundColor:[UIColor clearColor]];
-    [numMiles setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
-
-      numMiles.text = [[pet objectForKey:@"miles"] stringValue];//@"2187";
-    numMiles.lineBreakMode = NSLineBreakByWordWrapping;
-    numMiles.numberOfLines = 0;
-    [cell addSubview:numMiles];
-
-    // setup miles label
-    UILabel *milesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 40, 200, 50)];
-    [milesLabel setTextColor:descColor];
-    [milesLabel setBackgroundColor:[UIColor clearColor]];
-    [milesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
-
-    milesLabel.text = @"miles traveled";
-    milesLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    milesLabel.numberOfLines = 0;
-    [cell addSubview:milesLabel];
-
-    // set up miles traveled
-    UILabel *numPasses = [[UILabel alloc] initWithFrame:CGRectMake(120, 60, 200, 50)];
-    [numPasses setTextColor:descColor];
-    [numPasses setBackgroundColor:[UIColor clearColor]];
-    [numPasses setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
-
-      numPasses.text = [[pet objectForKey:@"passes"] stringValue];//@"1322";
-    numPasses.lineBreakMode = NSLineBreakByWordWrapping;
-    numPasses.numberOfLines = 0;
-    [cell addSubview:numPasses];
-
-    // setup miles label
-    UILabel *passesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 60, 200, 50)];
-    [passesLabel setTextColor:descColor];
-    [passesLabel setBackgroundColor:[UIColor clearColor]];
-    [passesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
-
-    passesLabel.text = @"passes";
-    passesLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    passesLabel.numberOfLines = 0;
-    [cell addSubview:passesLabel];
-  }
-  
-  return cell;
+    return cell;
 }
 
 - (void)commentTouched

@@ -23,8 +23,21 @@
         // Custom initialization
       self.tableView.separatorColor = [UIColor colorWithRed:211/255.0f green:211/255.0f blue:211/255.0f alpha:1.0f];
       
-      [self setupCaption];
-      [self setupImage];
+      
+      
+    }
+    return self;
+}
+
+- (id)initWithPhoto:(PFObject *)photo
+{
+    self = [super initWithNibName:nil bundle:nil];
+    if (self) {
+        // Custom initialization
+        self.tableView.separatorColor = [UIColor colorWithRed:211/255.0f green:211/255.0f blue:211/255.0f alpha:1.0f];
+        self.photo = photo;
+        
+        
     }
     return self;
 }
@@ -37,10 +50,14 @@
   
   self.imageView = view;
   
-  UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
-  imgView.image = [UIImage imageNamed:@"tempsingleimage.png"];
-  
-  [view addSubview:imgView];
+    PFImageView *imgView = [[PFImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
+    imgView.image = [UIImage imageNamed:@"tempsingleimage.png"];
+    imgView.file = [self.photo objectForKey:@"image"];
+    [imgView loadInBackground];
+    //  UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
+    //  imgView.image = [UIImage imageNamed:@"tempsingleimage.png"];
+    
+    [self.imageView addSubview:imgView];
   
   // setup buttons
   // Do any additional setup after loading the view.
@@ -86,13 +103,13 @@
 }
 - (void)setupCaption
 {
-  PFUser *currentUser = [PFUser currentUser];
+  PFUser *user = [self.photo objectForKey:@"user"];
   UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 164)];
   
   self.captionView = view;
   self.fbProfilePic = [[FBProfilePictureView alloc] init];
   
-  self.fbProfilePic.profileID = [currentUser objectForKey:@"fbId"];
+  self.fbProfilePic.profileID = [user objectForKey:@"fbId"];
   //setup name label
   UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
   UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, 300, 35)];
@@ -102,7 +119,7 @@
   [name setBackgroundColor:[UIColor clearColor]];
   [name setFont:[UIFont fontWithName:@"Avenir" size:15]];
   
-  name.text = [currentUser objectForKey:@"username"]; //@"loopyz";
+  name.text = [user objectForKey:@"username"]; //@"loopyz";
   [self.captionView addSubview:name];
   [self addProfile];
   
@@ -114,7 +131,7 @@
   [description setTextColor:descriptionColor];
   [description setBackgroundColor:[UIColor clearColor]];
   [description setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
-  description.text = [currentUser objectForKey:@"description"];//@"I really like pizza. And travel.";
+    description.text = [self.photo objectForKey:@"caption"];//@"I really like pizza. And travel.";
   
   [self.captionView addSubview:description];
   
@@ -149,6 +166,12 @@
 {
   [self.navigationController setNavigationBarHidden:YES];
   // Do any additional setup after loading the view.
+    if (self.photo) {
+        [self setupImage];
+        [self setupCaption];
+        
+        [self.tableView reloadData];
+    }
 }
 
 - (void)viewDidLoad
@@ -243,10 +266,10 @@
   }
   else if (indexPath.row == 2) {
     UILabel *city = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 300, 20)];
-    city.text = @"San Francisco, CA";
     city.font = [UIFont fontWithName:@"Avenir" size:20.0f];
     city.textColor = [UIColor colorWithRed:110/255.0f green:91/255.0f blue:214/255.0f alpha:1.0f];
-    [cell addSubview:city];
+      city.text = [self.photo objectForKey:@"locName"];//@"San Francisco, CA";
+      [cell addSubview:city];
     
     UILabel *numLikes = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 300, 70)];
     numLikes.text = @"22";
@@ -279,7 +302,13 @@
     [name setBackgroundColor:[UIColor clearColor]];
     [name setFont:[UIFont fontWithName:@"Avenir" size:15]];
     
-    name.text = [currentUser objectForKey:@"username"]; //@"loopyz";
+      if ((indexPath.row % 2) == 0) {
+          name.text = [[self.photo objectForKey:@"user"] objectForKey:@"username"];
+      } else {
+          
+          name.text = @"loopyz";
+      }
+    
     [cell addSubview:name];
     fbpic = [self addProfile:fbpic];
     
@@ -292,7 +321,11 @@
     [description setTextColor:descriptionColor];
     [description setBackgroundColor:[UIColor clearColor]];
     [description setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
-    description.text = [currentUser objectForKey:@"description"];//@"Oh gosh I miss my foxy.";
+      if ((indexPath.row % 2) == 0) {
+          description.text = @"Oh gosh I miss my baby.";
+      } else {
+          description.text = @"Can't wait to see you travel around the world!";
+      }
     
     [cell addSubview:description];
   }

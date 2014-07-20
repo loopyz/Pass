@@ -8,11 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import <FacebookSDK/FacebookSDK.h>
+#import <Parse/Parse.h>
 
 @interface SingleImageViewController : UITableViewController
 
 @property (nonatomic, strong) UIView *imageView;
 @property (nonatomic, strong) UIView *captionView;
 @property (nonatomic, strong) FBProfilePictureView *fbProfilePic;
+@property (nonatomic, strong) PFObject *photo;
 
+- (id)initWithPhoto: (PFObject *)photo;
 @end

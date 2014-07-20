@@ -23,102 +23,97 @@
 
 - (void)getLocation:(void (^)(float latitude, float longitude)) callback
 {
-    float latitude = 3.14;
-    float longitude = 2.71;
-    if ([CLLocationManager locationServicesEnabled]) {
-        latitude = self.locationManager.location.coordinate.latitude;
-        longitude = self.locationManager.location.coordinate.longitude;
-        callback(latitude, longitude);
-    }
+  float latitude = 3.14;
+  float longitude = 2.71;
+  if ([CLLocationManager locationServicesEnabled]) {
+    latitude = self.locationManager.location.coordinate.latitude;
+    longitude = self.locationManager.location.coordinate.longitude;
+    callback(latitude, longitude);
+  }
 }
 
 - (void)findNearbyPets
 {
-    [self getLocation:^(float latitude, float longitude) {
-        self.pets = [[NSMutableArray alloc] initWithCapacity:3];
-        
-        // TODO: FIND BETTER LL OFFSETS for 500 ft, 1 mi, 5 mi away
-        float offsets[] = {1, 5, 10};
-        NSString *predicateStrings[3];
-        
-        for (int i = 0; i < 3; i++) {
-            float offset = offsets[i];
-            
-            // First, query by offsets from latitude and longitude.
-            predicateStrings[i] = [NSString stringWithFormat:@"latitude >= %f AND latitude <= %f AND longitude >= %f AND longitude <= %f", latitude-offset, latitude+offset, longitude-offset, longitude+offset];
-            /*if (i == 1) {
-                predicateStrings[i] = [predicateStrings[i] stringByAppendingString:[NSString stringWithFormat:@" AND NOT (%@)", predicateStrings[i-1]]];
-            } else if (i == 2) {
-                predicateStrings[i] = [predicateStrings[i] stringByAppendingString:[NSString stringWithFormat:@" AND NOT (%@) AND NOT (%@)", predicateStrings[i-1], predicateStrings[i-2]]];
-            }*/
-            
-            // Next, query by class name and other filters.
-            PFQuery *query = [PFQuery queryWithClassName:@"Pet" predicate:[NSPredicate predicateWithFormat:predicateStrings[i]]];
-            query.cachePolicy = kPFCachePolicyCacheThenNetwork;
-            //[query whereKey:@"currentUser" equalTo:[NSNull null]];
-            //[query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
-            query.limit = 6; // TODO: limit for now for simplicity
-            
-            
-            [query findObjectsInBackgroundWithBlock:^(NSArray *pets, NSError *error) {
-                if (pets != nil) {
-                    [self.pets addObject:pets];
-                } else {
-                    [self.pets addObject:@[]];
-                }
-            }];
+  [self getLocation:^(float latitude, float longitude) {
+    self.pets = [[NSMutableArray alloc] initWithArray:@[@[], @[], @[]]];
+    
+    // TODO: FIND BETTER LL OFFSETS for 500 ft, 1 mi, 5 mi away
+    float offsets[] = {1, 5, 10};
+    NSString *predicateStrings[3];
+    
+    __block int callbacksReceived = 0;
+    
+    for (int i = 0; i < 3; i++) {
+      float offset = offsets[i];
+      
+      // First, query by offsets from latitude and longitude.
+      predicateStrings[i] = [NSString stringWithFormat:@"latitude >= %f AND latitude <= %f AND longitude >= %f AND longitude <= %f", latitude-offset, latitude+offset, longitude-offset, longitude+offset];
+      
+      // Next, query by class name and other filters.
+      PFQuery *query = [PFQuery queryWithClassName:@"Pet" predicate:[NSPredicate predicateWithFormat:predicateStrings[i]]];
+      [query whereKey:@"currentUser" equalTo:[NSNull null]];
+      [query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
+      query.limit = 6; // TODO: limit for now for simplicity
+      
+      
+      [query findObjectsInBackgroundWithBlock:^(NSArray *pets, NSError *error) {
+        if (pets != nil) {
+          [self.pets replaceObjectAtIndex:i withObject:pets];
         }
-    }];
+        callbacksReceived++;
+        if (callbacksReceived == 3) {
+          
+          NSArray *petIds0 = [self.pets[0] valueForKey:@"objectId"];
+          NSArray *petIds1 = [self.pets[1] valueForKey:@"objectId"];
+          
+          self.pets[2] = [self.pets[2] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(PFObject *evaluatedObject, NSDictionary *bindings) {
+            NSLog(@"%@", [evaluatedObject objectId]);
+            return [petIds1 indexOfObject:[evaluatedObject objectId]] == NSNotFound;
+          }]];
+          self.pets[1] = [self.pets[1] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(PFObject *evaluatedObject, NSDictionary *bindings) {
+            return [petIds0 indexOfObject:[evaluatedObject objectId]] == NSNotFound;
+          }]];
+        }
+      }];
+    }
+  }];
 }
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-        // check this shit
-        self.userHasPet = NO;
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        UIColor *color = [UIColor colorWithRed:249/255.0f green:249/255.0f blue:249/255.0f alpha:1.0f];
-        self.tableView.backgroundColor = color;
-        self.headerBig = @[@"Here", @"A walk away", @"A drive away"];
-        self.headerDetail = @[@"500 feet", @"1.0 miles away", @"5.0 miles away"];
-        
-        [self findNearbyPets];
-    }
-    return self;
+  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+  if (self) {
+    // Custom initialization
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    UIColor *color = [UIColor colorWithRed:249/255.0f green:249/255.0f blue:249/255.0f alpha:1.0f];
+    self.tableView.backgroundColor = color;
+    self.headerBig = @[@"Here", @"A walk away", @"A drive away"];
+    self.headerDetail = @[@"500 feet", @"1.0 miles away", @"5.0 miles away"];
+    
+    [self findNearbyPets];
+  }
+  return self;
 }
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-    UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
-    self.tableView.contentInset = inset;
-    [self.tableView setAllowsSelection:NO];
-    
-    self.locationManager = [[CLLocationManager alloc] init];
-    self.locationManager.distanceFilter = kCLDistanceFilterNone;
-    self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-    [self.locationManager startUpdatingLocation];
-    
-}
-
-# pragma mark - alertview delegate
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-  if (buttonIndex == 0) {
-    NSLog(@"user pressed cancel");
-  }
-  else {
-    NSLog(@"user pressed Yes");
-  }
+  [super viewDidLoad];
+  UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
+  self.tableView.contentInset = inset;
+  [self.tableView setAllowsSelection:NO];
+  
+  self.locationManager = [[CLLocationManager alloc] init];
+  self.locationManager.distanceFilter = kCLDistanceFilterNone;
+  self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+  [self.locationManager startUpdatingLocation];
+  
 }
 
 - (void)didReceiveMemoryWarning
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+  [super didReceiveMemoryWarning];
+  // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Table view data source
@@ -134,7 +129,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  return 2;
+  return ([self.pets[section] count] + 2) / 3;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -186,12 +181,6 @@
   return view;
 }
 
-- (void)pickupPet
-{
-  UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Announcement" message: @"Are you sure you want to pick up this pet up?" delegate: self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes!",nil];
-  [alert show];
-}
-
 - (void)setupCollection:(NSIndexPath *)indexPath withView:(UIView *)view
 {
   NSUInteger numberOfRowsInSection = [self tableView:self.tableView numberOfRowsInSection:indexPath.section];
@@ -199,97 +188,55 @@
   
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
   
-  // only make things in section 0 clickable if user does not have a pet
-  if (indexPath.section == 0 && !self.userHasPet) {
-    // NOT the last row - so we know 3 images per thing.
-    if (currentRow != numberOfRowsInSection - 1) {
-      // TODO: use correct values in an array
-      for (int x = 0; x < 3; x++) {
-        UIButton *tempButton = [[UIButton alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
-        UIImage *btnImage = [UIImage imageNamed:@"tempavatar.png"];
-
-        [tempButton setImage:btnImage forState:UIControlStateNormal];
-        tempButton.contentMode = UIViewContentModeScaleToFill;
-        [tempButton addTarget:self action:@selector(pickupPet) forControlEvents:UIControlEventTouchUpInside];
-        [view addSubview:tempButton];
-        
-        UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
-        tempLocation.textAlignment = NSTextAlignmentCenter;
-        tempLocation.text = @"Mission Dolores Park";
-        tempLocation.numberOfLines = 0;
-        tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
-        tempLocation.textColor = descColor;
-        tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
-        
-        [view addSubview:tempLocation];
-      }
-    }
-    
-    else {
-      // TODO: is the last row - check how many images are left to show lol
-      for (int x = 0; x < 3; x++) {
-        
-        UIButton *tempButton = [[UIButton alloc] initWithFrame:CGRectMake(20 + 100 * x, 10, 73.5, 73.5)];
-        UIImage *btnImage = [UIImage imageNamed:@"tempavatar.png"];
-        
-        [tempButton setImage:btnImage forState:UIControlStateNormal];
-        tempButton.contentMode = UIViewContentModeScaleToFill;
-        [tempButton addTarget:self action:@selector(pickupPet) forControlEvents:UIControlEventTouchUpInside];
-        [view addSubview:tempButton];
-        
-        UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
-        tempLocation.textAlignment = NSTextAlignmentCenter;
-        tempLocation.text = @"Mission Dolores Park";
-        tempLocation.numberOfLines = 0;
-        tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
-        tempLocation.textColor = descColor;
-        tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
-        
-        [view addSubview:tempLocation];
-
-      }
+  // NOT the last row - so we know 3 images per thing.
+  if (currentRow != numberOfRowsInSection - 1 || [self.pets[indexPath.section] count] % 3 == 0) {
+    // TODO: use correct values in an array
+    for (int x = 0; x < 3; x++) {
+      NSUInteger section = indexPath.section;
+      NSUInteger index = currentRow * 3 + x;
+      
+      UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
+      PFObject *pet = self.pets[section][index];
+      NSString *petType = [pet objectForKey:@"type"];
+      NSString *petLoc = [pet objectForKey:@"locName"];
+      tempView.image = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
+      [view addSubview:tempView];
+      
+      UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
+      tempLocation.textAlignment = NSTextAlignmentCenter;
+      tempLocation.text = petLoc;
+      tempLocation.numberOfLines = 0;
+      tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
+      tempLocation.textColor = descColor;
+      tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
+      
+      [view addSubview:tempLocation];
     }
   }
-  // not first section - aka NOT BUTTONS.
+  
   else {
-    // NOT the last row - so we know 3 images per thing.
-    if (currentRow != numberOfRowsInSection - 1) {
-      // TODO: use correct values in an array
-      for (int x = 0; x < 3; x++) {
-        UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
-        tempView.image = [UIImage imageNamed:@"tempavatar.png"];
-        [view addSubview:tempView];
-        
-        UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
-        tempLocation.textAlignment = NSTextAlignmentCenter;
-        tempLocation.text = @"Mission Dolores Park";
-        tempLocation.numberOfLines = 0;
-        tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
-        tempLocation.textColor = descColor;
-        tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
-        
-        [view addSubview:tempLocation];
-      }
-    }
-    
-    else {
-      // TODO: is the last row - check how many images are left to show lol
-      for (int x = 0; x < 3; x++) {
-        UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 10, 73.5, 73.5)];
-        tempView.image = [UIImage imageNamed:@"tempavatar.png"];
-        [view addSubview:tempView];
-        
-        UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
-        tempLocation.textAlignment = NSTextAlignmentCenter;
-        tempLocation.text = @"Mission Dolores Park";
-        tempLocation.numberOfLines = 0;
-        tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
-        tempLocation.textColor = descColor;
-        tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
-        
-        [view addSubview:tempLocation];
-        
-      }
+    // TODO: is the last row - check how many images are left to show lol
+    for (int x = 0; x < [self.pets[indexPath.section] count] % 3; x++) {
+      NSUInteger section = indexPath.section;
+      NSUInteger index = currentRow * 3 + x;
+      PFObject *pet = self.pets[section][index];
+      NSString *petType = [pet objectForKey:@"type"];
+      NSString *petLoc = [pet objectForKey:@"locName"];
+      
+      UIImageView *tempView = [[UIImageView alloc] initWithFrame:CGRectMake(20 + 100 * x, 10, 73.5, 73.5)];
+      tempView.image = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
+      [view addSubview:tempView];
+      
+      UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
+      tempLocation.textAlignment = NSTextAlignmentCenter;
+      tempLocation.text = petLoc;
+      tempLocation.numberOfLines = 0;
+      tempLocation.lineBreakMode = NSLineBreakByWordWrapping;
+      tempLocation.textColor = descColor;
+      tempLocation.font = [UIFont fontWithName:@"Avenir" size:11.0f];
+      
+      [view addSubview:tempLocation];
+      
     }
   }
 }
@@ -317,7 +264,7 @@
   //[self.player play];
   //MPMoviePlayerViewController *movie = [[MPMoviePlayerViewController alloc] initWithContentURL:fileUrl];
   //[self presentMoviePlayerViewControllerAnimated:movie];
-
+  
   
   [self setupCollection:indexPath withView:tempView];
   

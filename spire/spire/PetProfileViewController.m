@@ -66,11 +66,10 @@
 - (NSInteger) collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     // TODO with real data
-    if (self.mapTouched) {
-        return 1;
-    } else { // photoTouched
+
+// photoTouched
         return [self.photos count] + 1;
-    }
+
 }
 
 - (UICollectionViewCell *) collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -81,6 +80,7 @@
   }
   else {
     cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"picCell" forIndexPath:indexPath];
+    [cell.contentView addSubview:self.mapButton];
   }
   
 //  dispatch_async(dispatch_get_main_queue(), ^{
@@ -106,10 +106,7 @@
 //    }
 //  });
   
-    if (self.mapTouched) {
-        cell.backgroundView = self.mapView;
-        
-    } else { // photoTouched
+ // photoTouched
         if (indexPath.row == 0) {
             cell.backgroundView = self.header;
         }
@@ -122,20 +119,18 @@
             cell.backgroundView = photo;
             cell.backgroundView.backgroundColor = [UIColor blackColor];
         }
-    }
+
     return cell;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.mapTouched) {
-        return CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT);
-    } else { // photoTouched
+// photoTouched
         if (indexPath.row == 0) {
             return CGSizeMake (SCREEN_WIDTH, 164);
         }
         return CGSizeMake(105, 105);
-    }
+
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -172,7 +167,7 @@
 
     NSString *petFName = [NSString stringWithFormat:@"%@.png", [pet objectForKey:@"type"]];
     UIImageView *petPic = [[UIImageView alloc] initWithImage:[UIImage imageNamed:petFName]]; // todo
-    petPic.frame = CGRectMake(10, 10, 110, 110);
+    petPic.frame = CGRectMake(10, 10, 100, 100);
     
     [view addSubview:name];
     [view addSubview:petPic];
@@ -271,7 +266,7 @@
   [self.mapButton setImage:btnImage forState:UIControlStateNormal];
   self.mapButton.contentMode = UIViewContentModeScaleToFill;
 
-  [view addSubview:self.mapButton];
+  //[view addSubview:self.mapButton];
 
   self.personButton = [UIButton buttonWithType:UIButtonTypeCustom];
   [self.personButton setTitle:@"Show View" forState:UIControlStateNormal];
@@ -288,7 +283,7 @@
   self.header = view;
 }
 
-- (void)photoButtonTouched: (id) sender
+- (void)photoButtonTouched
 {
   // TODO: idk
     NSLog(@"photo clicked");
@@ -307,7 +302,7 @@
     [self.collectionView reloadData];
 }
 
-- (void)personButtonTouched: (id) sender
+- (void)personButtonTouched
 {
   // TODO : Bring up people that held the pet
     NSLog(@"person clicked");
@@ -327,7 +322,7 @@
 
 }
 
-- (void)mapButtonTouched: (id) sender
+- (void)mapButtonTouched
 {
   // TODO: BRING UP GOOGLE MAPS
     NSLog(@"map clicked");

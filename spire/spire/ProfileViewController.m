@@ -38,6 +38,7 @@
     heartButtonIcon = [UIImage imageNamed:@"heartbutton.png"];
     commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
     
+    self.tableView.separatorColor = [UIColor colorWithRed:211/255.0f green:211/255.0f blue:211/255.0f alpha:1.0f];
   }
   return self;
 }
@@ -235,6 +236,11 @@
   else if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
   }
+  
+  cell.layer.shadowColor = [[UIColor whiteColor] CGColor];
+  cell.layer.shadowOpacity = 1.0;
+  cell.layer.shadowRadius = 0;
+  cell.layer.shadowOffset = CGSizeMake(0.0, 1.0);
   
   if (indexPath.row == 0) {
     cell.backgroundColor = [UIColor whiteColor];

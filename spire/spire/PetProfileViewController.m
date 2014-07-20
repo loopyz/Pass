@@ -10,6 +10,7 @@
 #import <FacebookSDK/FacebookSDK.h>
 
 #import "PetProfileViewController.h"
+#import "SingleImageViewController.h"
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
 
@@ -93,6 +94,9 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
   NSLog(@"%d", indexPath.row);
+  SingleImageViewController *ppvc = [[SingleImageViewController alloc] initWithNibName:nil bundle:nil];
+  // [self presentViewController:ppvc animated:YES completion:nil];
+  [self.navigationController pushViewController:ppvc animated:YES];
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -248,6 +252,12 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+  [self.navigationController setNavigationBarHidden:NO];
+  // Do any additional setup after loading the view.
 }
 
 /*

@@ -88,6 +88,11 @@
     // Custom initialization
     // TODO: checks if user has pet
     self.userHasPet = NO;
+      PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
+      [query whereKey:@"currentUser" equalTo:[PFUser currentUser]];
+      [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+          self.userHasPet = number > 0;
+      }];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     UIColor *color = [UIColor colorWithRed:249/255.0f green:249/255.0f blue:249/255.0f alpha:1.0f];
     self.tableView.backgroundColor = color;

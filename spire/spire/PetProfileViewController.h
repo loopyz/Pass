@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) UIView *header;
+@property (nonatomic, strong) UIView *mapView;
 @property (nonatomic, strong) UIButton *mapButton;
 @property (nonatomic, strong) UIButton *photoButton;
 @property (nonatomic, strong) UIButton *personButton;

@@ -323,7 +323,7 @@
         UILabel *numMiles = (UILabel *)[cell viewWithTag:202];
         numMiles.text = [[pet objectForKey:@"miles"] stringValue];//@"2187";
     
-        UILabel *numPasses = (UILabel *)[cell viewWithTag:203];
+        UILabel *numPasses = (UILabel *)[cell viewWithTag:204];
         numPasses.text = [[pet objectForKey:@"passes"] stringValue];//@"1322";
     }
   

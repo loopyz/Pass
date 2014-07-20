@@ -210,7 +210,9 @@
         UIImage *btnImage = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
         [tempButton setImage:btnImage forState:UIControlStateNormal];
         tempButton.contentMode = UIViewContentModeScaleAspectFill;
-        [tempButton addTarget:self action:@selector(petTouched) forControlEvents:UIControlEventTouchUpInside];
+          tempButton.titleLabel.text = [pet objectId];
+          tempButton.titleLabel.hidden = YES;
+          [tempButton addTarget:self action:@selector(petTouched:) forControlEvents:UIControlEventTouchUpInside];
         [view addSubview:tempButton];
         
         UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 55, 100, 120)];
@@ -238,7 +240,9 @@
         UIImage *btnImage = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
         [tempButton setImage:btnImage forState:UIControlStateNormal];
         tempButton.contentMode = UIViewContentModeScaleAspectFill;
-        [tempButton addTarget:self action:@selector(petTouched) forControlEvents:UIControlEventTouchUpInside];
+          tempButton.titleLabel.text = [pet objectId];
+          tempButton.titleLabel.hidden = YES;
+          [tempButton addTarget:self action:@selector(petTouched:) forControlEvents:UIControlEventTouchUpInside];
         [view addSubview:tempButton];
         
         UILabel *tempLocation = [[UILabel alloc] initWithFrame:CGRectMake(7 + (100 * x), 45, 100, 120)];
@@ -310,18 +314,33 @@
   }
 }
 
-- (void)petTouched
+- (void)petTouched:(id) sender
 {
+  UIButton *clicked = (UIButton *) sender;
+    self.selectedPetId = clicked.titleLabel.text;
   UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Announcement" message: @"Are you sure you want to collect this pet?" delegate: self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes",nil];
   [alert show];
 }
 
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
   if (buttonIndex == 0) {
-    NSLog(@"user pressed cancel");
+      NSLog(@"user pressed cancel");
+      self.selectedPetId = nil;
   }
   else {
-    NSLog(@"user pressed OK");
+    NSLog(@"user pressed OK: %@", self.selectedPetId);
+    
+    // Pick up pet!
+      PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
+      [query whereKey:@"objectId" equalTo:self.selectedPetId];
+      [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
+          [pet setObject:[PFUser currentUser] forKey:@"currentUser"];
+          [pet saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+              [self Refresh];
+          }];
+          self.selectedPetId = nil;
+      }];
   }
 }
 
@@ -331,11 +350,11 @@
   static NSString *MyIdentifier = @"Cell";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
   UIView *tempView;
-  if (cell == nil) {
+  //if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
     tempView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, self.tableView.frame.size.height)];
     
-  }
+  //}
   
   cell.backgroundColor = [UIColor clearColor];
   

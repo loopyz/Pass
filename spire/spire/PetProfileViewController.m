@@ -104,15 +104,15 @@
 {
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 115)];
     //setup name label
-    UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
-    UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(98, 10, 300, 50)];
+    UIColor *nameColor = [UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f];
+    UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 300, 50)];
     [name setTextColor:nameColor];
     [name setBackgroundColor:[UIColor clearColor]];
-    [name setFont:[UIFont fontWithName:@"Avenir" size:22]];
-    name.text = @"FoxyFace";
+    [name setFont:[UIFont fontWithName:@"Avenir" size:25]];
+    name.text = @"Foxy";
     
     UIImageView *petPic = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pusheen.png"]];
-    petPic.frame = CGRectMake(17, 23, 93, 93);
+    petPic.frame = CGRectMake(10, 10, 110, 110);
     
     [view addSubview:name];
     [view addSubview:petPic];
@@ -123,44 +123,109 @@
     bottomBar.frame = CGRectMake(0, 164-39.5, SCREEN_WIDTH, 41.5);
     [view addSubview: bottomBar];
   
-    // setup buttons
-    self.photoButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.photoButton setTitle:@"Show View" forState:UIControlStateNormal];
-
-    self.photoButton.frame = CGRectMake(40, 130, 28, 28);
-    [self.photoButton addTarget:self action:@selector(photoButtonTouched) forControlEvents:UIControlEventTouchUpInside];
-
-    UIImage *btnImage = [UIImage imageNamed:@"photobutton-pressed.png"];
-    [self.photoButton setImage:btnImage forState:UIControlStateNormal];
-    self.photoButton.contentMode = UIViewContentModeScaleToFill;
-
-    [view addSubview:self.photoButton];
+  // set up miles traveled
+  UILabel *numMiles = [[UILabel alloc] initWithFrame:CGRectMake(120, 40, 200, 50)];
+  [numMiles setTextColor:nameColor];
+  [numMiles setBackgroundColor:[UIColor clearColor]];
+  [numMiles setFont:[UIFont fontWithName:@"HelveticaNeue" size:15]];
   
-    self.mapButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.mapButton setTitle:@"Show View" forState:UIControlStateNormal];
-
-    self.mapButton.frame = CGRectMake(145, 130, 28, 28);
-    [self.mapButton addTarget:self action:@selector(mapButtonTouched) forControlEvents:UIControlEventTouchUpInside];
-
-    btnImage = [UIImage imageNamed:@"mapbutton.png"];
-    [self.mapButton setImage:btnImage forState:UIControlStateNormal];
-    self.mapButton.contentMode = UIViewContentModeScaleToFill;
-
-    [view addSubview:self.mapButton];
+  numMiles.text = @"2187";
+  numMiles.lineBreakMode = NSLineBreakByWordWrapping;
+  numMiles.numberOfLines = 0;
+  [view addSubview:numMiles];
   
-    self.personButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.personButton setTitle:@"Show View" forState:UIControlStateNormal];
-    
-    self.personButton.frame = CGRectMake(255, 130, 20.53, 28);
-    [self.personButton addTarget:self action:@selector(mapButtonTouched) forControlEvents:UIControlEventTouchUpInside];
-    
-    btnImage = [UIImage imageNamed:@"personbutton.png"];
-    [self.personButton setImage:btnImage forState:UIControlStateNormal];
-    self.personButton.contentMode = UIViewContentModeScaleToFill;
-    
-    [view addSubview:self.personButton];
+  // setup miles label
+  UILabel *milesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 40, 200, 50)];
+  [milesLabel setTextColor:nameColor];
+  [milesLabel setBackgroundColor:[UIColor clearColor]];
+  [milesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
+  
+  milesLabel.text = @"miles traveled";
+  milesLabel.lineBreakMode = NSLineBreakByWordWrapping;
+  milesLabel.numberOfLines = 0;
+  [view addSubview:milesLabel];
+  
+  // set up miles traveled
+  UILabel *numPasses = [[UILabel alloc] initWithFrame:CGRectMake(120, 60, 200, 50)];
+  [numPasses setTextColor:nameColor];
+  [numPasses setBackgroundColor:[UIColor clearColor]];
+  [numPasses setFont:[UIFont fontWithName:@"HelveticaNeue" size:15]];
+  
+  numPasses.text = @"1322";
+  numPasses.lineBreakMode = NSLineBreakByWordWrapping;
+  numPasses.numberOfLines = 0;
+  [view addSubview:numPasses];
+  
+  // setup miles label
+  UILabel *passesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 60, 200, 50)];
+  [passesLabel setTextColor:nameColor];
+  [passesLabel setBackgroundColor:[UIColor clearColor]];
+  [passesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
+  
+  passesLabel.text = @"passes";
+  passesLabel.lineBreakMode = NSLineBreakByWordWrapping;
+  passesLabel.numberOfLines = 0;
+  [view addSubview:passesLabel];
+  
+  // setup original owner
+  UILabel *originalOwnerLabel = [[UILabel alloc] initWithFrame:CGRectMake(120, 79, 200, 50)];
+  [originalOwnerLabel setTextColor:nameColor];
+  [originalOwnerLabel setBackgroundColor:[UIColor clearColor]];
+  [originalOwnerLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
+  
+  originalOwnerLabel.text = @"Original Owner:";
+  originalOwnerLabel.lineBreakMode = NSLineBreakByWordWrapping;
+  originalOwnerLabel.numberOfLines = 0;
+  [view addSubview:originalOwnerLabel];
+  
+  
+  UIColor *ownerColor = [UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f];
+  UILabel *ownerLabel = [[UILabel alloc] initWithFrame:CGRectMake(204, 79, 150, 50)];
+  [ownerLabel setTextColor:ownerColor];
+  [ownerLabel setBackgroundColor:[UIColor clearColor]];
+  [ownerLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
+  ownerLabel.text = @"poopypants";
+  
+  [view addSubview:ownerLabel];
+  
+  // setup buttons
+  self.photoButton = [UIButton buttonWithType:UIButtonTypeCustom];
+  [self.photoButton setTitle:@"Show View" forState:UIControlStateNormal];
 
-    self.header = view;
+  self.photoButton.frame = CGRectMake(40, 130, 28, 28);
+  [self.photoButton addTarget:self action:@selector(photoButtonTouched) forControlEvents:UIControlEventTouchUpInside];
+
+  UIImage *btnImage = [UIImage imageNamed:@"photobutton-pressed.png"];
+  [self.photoButton setImage:btnImage forState:UIControlStateNormal];
+  self.photoButton.contentMode = UIViewContentModeScaleToFill;
+
+  [view addSubview:self.photoButton];
+
+  self.mapButton = [UIButton buttonWithType:UIButtonTypeCustom];
+  [self.mapButton setTitle:@"Show View" forState:UIControlStateNormal];
+
+  self.mapButton.frame = CGRectMake(145, 130, 28, 28);
+  [self.mapButton addTarget:self action:@selector(mapButtonTouched) forControlEvents:UIControlEventTouchUpInside];
+
+  btnImage = [UIImage imageNamed:@"mapbutton.png"];
+  [self.mapButton setImage:btnImage forState:UIControlStateNormal];
+  self.mapButton.contentMode = UIViewContentModeScaleToFill;
+
+  [view addSubview:self.mapButton];
+
+  self.personButton = [UIButton buttonWithType:UIButtonTypeCustom];
+  [self.personButton setTitle:@"Show View" forState:UIControlStateNormal];
+  
+  self.personButton.frame = CGRectMake(255, 130, 20.53, 28);
+  [self.personButton addTarget:self action:@selector(mapButtonTouched) forControlEvents:UIControlEventTouchUpInside];
+  
+  btnImage = [UIImage imageNamed:@"personbutton.png"];
+  [self.personButton setImage:btnImage forState:UIControlStateNormal];
+  self.personButton.contentMode = UIViewContentModeScaleToFill;
+  
+  [view addSubview:self.personButton];
+
+  self.header = view;
 }
 
 - (void)photoButtonTouched

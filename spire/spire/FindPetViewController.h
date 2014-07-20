@@ -8,9 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FindPetViewController : UICollectionViewController<UIScrollViewDelegate>
-
-@property (nonatomic, strong) UICollectionView *collectionView;
-@property (nonatomic, strong) UIView *banner;
+@interface FindPetViewController : UITableViewController
 
 @end

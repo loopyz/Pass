@@ -25,9 +25,10 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        self.photos = [[NSMutableArray alloc] init];
+//      [self setupPictureCollection];
+//      [self setupPetSnippet];
       [self setupPictureCollection];
-      [self setupPetSnippet];
-      
     }
     return self;
 }
@@ -36,8 +37,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [self setupPetSnippet];
-    [self setupPictureCollection];
+
 }
 
 - (void) setupPictureCollection
@@ -62,7 +62,7 @@
 - (NSInteger) collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     // TODO with real data
-    return 15;
+    return [self.photos count] + 1;
 }
 
 - (UICollectionViewCell *) collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -78,7 +78,12 @@
     [cell addSubview:self.header];
   }
   else {
-    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pusheen.png"]];
+      PFFile *image = [[self.photos objectAtIndex:(indexPath.row - 1)] objectForKey:@"image"];
+      PFImageView *photo = [[PFImageView alloc] init];
+      photo.image = [UIImage imageNamed:@"pusheen.png"];
+      photo.file = image;
+      [photo loadInBackground];
+    cell.backgroundView = photo;
     cell.backgroundView.backgroundColor = [UIColor blackColor];
   }
     return cell;
@@ -104,7 +109,7 @@
   return YES;
 }
 
-- (void) setupPetSnippet
+- (void) setupPetSnippet:(PFObject *)pet
 {
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 115)];
     //setup name label
@@ -113,9 +118,9 @@
     [name setTextColor:nameColor];
     [name setBackgroundColor:[UIColor clearColor]];
     [name setFont:[UIFont fontWithName:@"Avenir" size:25]];
-    name.text = @"Foxy";
+    name.text = [pet objectForKey:@"name"];//@"Foxy";
     
-    UIImageView *petPic = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pusheen.png"]];
+    UIImageView *petPic = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pusheen.png"]]; // todo
     petPic.frame = CGRectMake(10, 10, 110, 110);
     
     [view addSubview:name];
@@ -133,7 +138,7 @@
   [numMiles setBackgroundColor:[UIColor clearColor]];
   [numMiles setFont:[UIFont fontWithName:@"HelveticaNeue" size:15]];
   
-  numMiles.text = @"2187";
+    numMiles.text = [[pet objectForKey:@"miles"] stringValue];//@"2187";
   numMiles.lineBreakMode = NSLineBreakByWordWrapping;
   numMiles.numberOfLines = 0;
   [view addSubview:numMiles];
@@ -155,7 +160,7 @@
   [numPasses setBackgroundColor:[UIColor clearColor]];
   [numPasses setFont:[UIFont fontWithName:@"HelveticaNeue" size:15]];
   
-  numPasses.text = @"1322";
+    numPasses.text = [[pet objectForKey:@"passes"] stringValue];//@"1322";
   numPasses.lineBreakMode = NSLineBreakByWordWrapping;
   numPasses.numberOfLines = 0;
   [view addSubview:numPasses];
@@ -188,7 +193,7 @@
   [ownerLabel setTextColor:ownerColor];
   [ownerLabel setBackgroundColor:[UIColor clearColor]];
   [ownerLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
-  ownerLabel.text = @"poopypants";
+    ownerLabel.text = [[pet objectForKey:@"owner"] objectForKey:@"username"];//@"poopypants";
   
   [view addSubview:ownerLabel];
   
@@ -258,6 +263,26 @@
 {
   [self.navigationController setNavigationBarHidden:NO];
   // Do any additional setup after loading the view.
+    if (self.petId) {
+        PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
+        [query includeKey:@"owner"];
+        [query getObjectInBackgroundWithId:self.petId block:^(PFObject *object, NSError *error) {
+            PFQuery *photosquery = [PFQuery queryWithClassName:@"Photo"];
+            [photosquery whereKey:@"pet" equalTo:object];
+            
+            [photosquery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                [self.photos addObjectsFromArray:objects];
+                [self.collectionView reloadData];
+            }];
+            [self setupPetSnippet:object];
+        }];
+        
+        
+        
+        
+    } else {
+        NSLog(@"error. can't call pet profile ctrl without petId.");
+    }
 }
 
 /*

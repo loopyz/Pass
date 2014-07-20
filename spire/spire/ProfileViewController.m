@@ -331,8 +331,10 @@
     
   }//do not nothing
   else {
-    NSLog(@"why?");
+    NSLog(@"opening pet profile");
+    PFObject *pet = [[self.photos objectAtIndex:(indexPath.row-1)] objectForKey:@"pet"];
     PetProfileViewController *ppvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];
+      ppvc.petId = [pet objectId];
     [self.navigationController pushViewController:ppvc animated:YES];
   }
 }

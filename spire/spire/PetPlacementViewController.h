@@ -11,15 +11,22 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <CoreLocation/CoreLocation.h>
 
-@interface PetPlacementViewController : UIViewController <UIScrollViewDelegate, UITextFieldDelegate, YCameraViewControllerDelegate, CLLocationManagerDelegate>
+@interface PetPlacementViewController : UIViewController <UIScrollViewDelegate, UITextViewDelegate, YCameraViewControllerDelegate, CLLocationManagerDelegate>
 
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (strong, nonatomic) UIView *container;
-@property (strong, nonatomic) UITextField *textEntry;
+@property (strong, nonatomic) UITextView *textEntry;
 @property (strong, nonatomic) UIButton *submitButton;
 @property (strong, nonatomic) UISwitch *toggleDrop;
 @property (strong, nonatomic) YCameraViewController *cvc;
 @property (strong, nonatomic) CLLocationManager *locationManager;
+@property (nonatomic, retain) UIToolbar *keyboardToolbar;
+
+@property (nonatomic, retain) UIButton *dropButton;
+
+@property (nonatomic) BOOL dropButtonActivated;
+
+- (IBAction)hideKeyboard:(id)sender;
 
 @end

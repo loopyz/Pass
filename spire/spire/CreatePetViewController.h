@@ -21,5 +21,6 @@
 @property (nonatomic, strong) NSArray *placeholders;
 @property (nonatomic, strong) NSMutableArray *fields;
 @property (nonatomic, strong) UITableView *formTable;
+@property (nonatomic, strong) NSString *type;
 
 @end

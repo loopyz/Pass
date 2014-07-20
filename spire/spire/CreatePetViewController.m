@@ -64,6 +64,7 @@
     [pet setObject:[PFUser currentUser] forKey:@"owner"];
     [pet setObject:[PFUser currentUser] forKey:@"currentUser"];
     [pet setObject:@0 forKey:@"miles"];
+    [pet setObject:self.type forKey:@"type"];
     [pet saveInBackground];
     
     // open home view controller
@@ -133,10 +134,18 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (NSString *)randomPetType
+{
+    NSArray* types = @[@"bunny", @"coolpusheen", @"cutebeast", @"duckdm", @"fatlion", @"fox", @"golfdm", @"happybeast", @"happyblob", @"happydino", @"happydog", @"hawaiiandm", @"heartpug", @"hellopusheen", @"hungrybeast", @"lamb", @"lamb2", @"lamb3", @"maiddm", @"mehblob", @"monkey", @"monster", @"musicdino", @"ninjabunny", @"ninjarabbit", @"pandacat", @"pandadog", @"pusheen", @"pusheen2", @"rainbowpusheen", @"rockstardog", @"sillyblob", @"sillydm", @"superdino", @"supermanbunny"];
+    
+    return types[arc4random() % [types count]];
+}
+
 - (void)setupAvatar
 {
     UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2 + 30, 47, 127.5, 127.5)];
-    imgView.image = [UIImage imageNamed:@"fox.png"];
+    self.type = [self randomPetType];
+    imgView.image = [UIImage imageNamed:[self.type stringByAppendingString:@".png"]];
     [self.scrollView addSubview:imgView];
 }
 

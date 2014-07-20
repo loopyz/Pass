@@ -252,7 +252,7 @@
         else {
             cell.backgroundColor = self.bgColor;
             UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
-            imgView.image = [UIImage imageNamed:@"fox.png"];
+            
             imgView.tag = 200;
             [cell addSubview:imgView];
             
@@ -316,6 +316,8 @@
     if (indexPath.row != 0) {
         PFObject *pet = [[self.photos objectAtIndex:(indexPath.row-1)] objectForKey:@"pet"];
     
+        UIImageView *imgView = (UIImageView *)[cell viewWithTag:200];
+        imgView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[pet objectForKey:@"type"]]];
         UILabel *desc = (UILabel *)[cell viewWithTag:201];
         desc.text = [pet objectForKey:@"name"];//@"Pusheen";
     

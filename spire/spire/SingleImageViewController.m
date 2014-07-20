@@ -95,6 +95,20 @@
   [view addSubview:likeButton];
 }
 
+- (NSString *)randomPersonAvatar
+{
+    NSArray* types = @[@"andrewhuang", @"charlotte", @"keithmiller", @"lucyguo", @"nivejayasekar", @"vivianma"];
+    
+    return types[arc4random() % [types count]];
+}
+
+- (NSString *)randomComment
+{
+    NSArray* types = @[@"Oh gosh I miss my baby.", @"So jealous that you travel more than me.", @"You're so cute!", @"Love that pose!", @"Awesome!", @"I'm gonna get another pet just like you"];
+    
+    return types[arc4random() % [types count]];
+}
+
 - (void)backButtonTouched
 {
   // TODO: BACK BUTTON TOUCHED
@@ -286,13 +300,15 @@
     
   }
   else {
-    PFUser *currentUser = [PFUser currentUser];
+    //PFUser *currentUser = [PFUser currentUser];
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 164)];
     
     self.captionView = view;
-    FBProfilePictureView *fbpic = [[FBProfilePictureView alloc] init];
+      NSString *comment = [self randomComment];
+      NSString *username = [self randomPersonAvatar];
+    //FBProfilePictureView *fbpic = [[FBProfilePictureView alloc] init];
     
-    fbpic.profileID = [currentUser objectForKey:@"fbId"];
+    //fbpic.profileID = [currentUser objectForKey:@"fbId"];
     //setup name label
     UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
     UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, 300, 35)];
@@ -301,19 +317,22 @@
     [name setTextColor:nameColor];
     [name setBackgroundColor:[UIColor clearColor]];
     [name setFont:[UIFont fontWithName:@"Avenir" size:15]];
-    
-      if ((indexPath.row % 2) == 0) {
-          name.text = [[self.photo objectForKey:@"user"] objectForKey:@"username"];
-      } else {
-          
-          name.text = @"loopyz";
-      }
-    
+      name.text = username;
     [cell addSubview:name];
-    fbpic = [self addProfile:fbpic];
+      
+      UIImageView *fbPic = [[UIImageView alloc] initWithFrame:CGRectMake(17, 8, 40, 40)];
+      fbPic.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png", username]];
+      
+    //fbpic = [self addProfile:fbpic];
     
-    [cell addSubview:fbpic];
-    
+    //[cell addSubview:fbpic];
+      //fbPic.backgroundColor = [UIColor blackColor];
+      fbPic.frame = CGRectMake(17, 8, 40, 40);
+      
+      //makes it into circle
+      float width = fbPic.bounds.size.width;
+      fbPic.layer.cornerRadius = width/2;
+    [cell addSubview:fbPic];
     // setup description
     UIColor *descriptionColor = [UIColor colorWithRed:137/255.0f green:137/255.0f blue:137/255.0f alpha:1.0f];
     
@@ -321,11 +340,7 @@
     [description setTextColor:descriptionColor];
     [description setBackgroundColor:[UIColor clearColor]];
     [description setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
-      if ((indexPath.row % 2) == 0) {
-          description.text = @"Oh gosh I miss my baby.";
-      } else {
-          description.text = @"Can't wait to see you travel around the world!";
-      }
+      description.text = comment;
     
     [cell addSubview:description];
   }

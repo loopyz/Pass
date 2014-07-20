@@ -8,6 +8,7 @@
 
 #import "PetPlacementViewController.h"
 #import "VenueTableViewController.h"
+#import "NoPetsErrorView.h"
 
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
@@ -208,10 +209,11 @@
      */
 }
 
+
 - (void)setupForm
 {
     if (self.textEntry != nil) {
-        self.textEntry.text = @"";
+        self.textEntry.text = @"Add a caption...";
         return;
     }
     // HEY STYLING AFTER THIS POINT OCCURS ONCE
@@ -227,10 +229,16 @@
   
   self.textEntry.textColor = [UIColor colorWithRed:137/255.0f green:137/255.0f blue:137/255.0f alpha:1.0f];
   self.textEntry.font = [UIFont fontWithName:@"Avenir" size:15.0f];
+    
+    self.textEntry.inputAccessoryView = self.keyboardToolbar;
+    // setup extra keyboard done button
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
   
     [self.scrollView addSubview:self.textEntry];
     self.textEntry.editable = YES;
-    // self.textEntry.placeholder = @"Caption";
+     //self.textEntry.placeholder = @"Insert Caption";
   
     self.textEntry.delegate = self;
   
@@ -319,7 +327,7 @@
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
   [self.scrollView setContentOffset:CGPointMake(0, textView.frame.origin.y) animated:YES];
-  if ([textView.text isEqualToString:@"Caption"]) {
+  if ([textView.text isEqualToString:@"Add a caption..."]) {
     textView.text = @"";
     textView.textColor = [UIColor blackColor]; //optional
   }
@@ -329,7 +337,7 @@
 - (void)textViewDidEndEditing:(UITextView *)textView
 {
   if ([textView.text isEqualToString:@""]) {
-    textView.text = @"Caption";
+    textView.text = @"Add a caption...";
     textView.textColor = [UIColor lightGrayColor]; //optional
   }
   [textView resignFirstResponder];
@@ -480,9 +488,6 @@
                          [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(keyboardWillHide:)],
                          nil];
   [self.keyboardToolbar sizeToFit];
-  self.textEntry.inputAccessoryView = self.keyboardToolbar;
-  
-  self.textEntry.text = @"Add a description...";
 }
 
 - (void)didReceiveMemoryWarning

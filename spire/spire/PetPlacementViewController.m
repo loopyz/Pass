@@ -7,6 +7,7 @@
 //
 
 #import "PetPlacementViewController.h"
+#import <Parse/Parse.h>
 
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
@@ -25,6 +26,34 @@
         // Custom initialization
     }
     return self;
+}
+
+
+- (void)saveImageToParse:(NSData *)data withCaption:(NSString *)caption {
+    PFQuery *query = [PFQuery queryWithClassName:@"Pass"];
+    PFUser *currentUser = [PFUser currentUser];
+    [query whereKey:@"user" equalTo:currentUser];
+    [query whereKeyDoesNotExist:@"complete"];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        PFFile *image = [PFFile fileWithName:@"image.png" data:data];
+        [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                PFObject *photo = [PFObject objectWithClassName:@"Photo"];
+                [photo setObject:image forKey:@"image"];
+                [photo setObject:caption forKey:@"caption"];
+                [photo saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                    if (succeeded) {
+                        [object addObject:image forKey:@"photos"];
+                        [object saveInBackground];
+                    } else {
+                        NSLog(@"photo failed to save to parse: %@", error);
+                    }
+                }];
+            } else {
+                NSLog(@"image failed to save to parse: %@", error);
+            }
+        }];
+    }];
 }
 
 - (void)yCameraControllerDidCancel {
@@ -162,10 +191,10 @@
 {
     UIImage *image = [self imageWithView:self.container];
     NSLog(@"%f, %f", image.size.height, image.size.width);
+    // submit image to parse
+    [self saveImageToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text];
     
-    // TODO: submit image to parse
-    // TODO: process image/pass
-    
+    // go back to home
     [self.tabBarController setSelectedIndex:0];
 }
 

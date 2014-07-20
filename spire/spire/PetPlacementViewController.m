@@ -28,13 +28,45 @@
     return self;
 }
 
+- (void)getVenues:(NSString *)url withCallback:(void (^)(NSString *locName)) callback
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
+    
+    [request setHTTPMethod: @"GET"];
+    
+    __block NSDictionary *json;
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                               json = [NSJSONSerialization JSONObjectWithData:data
+                                                                      options:0
+                                                                        error:nil];
+                               NSLog(@"%@", json[@"response"][@"venues"][0]);
+                               
+                               callback(json[@"response"][@"venues"][0][@"name"]);
+                           }];
+}
+
 - (void)getLocation:(void (^)(NSNumber *latitude, NSNumber *longitude, NSString *locName)) callback
 {
     // TODO: take in callback, call with lat/long/name
     NSNumber *latitude = @3.14;
     NSNumber *longitude = @2.71;
     NSString *locName = @"Medium HQ";
-    callback(latitude, longitude, locName);
+    if ([CLLocationManager locationServicesEnabled]) {
+        latitude = [NSNumber numberWithFloat:self.locationManager.location.coordinate.latitude];
+        longitude = [NSNumber numberWithFloat:self.locationManager.location.coordinate.longitude];
+        NSString *_4squareId = @"02K3GC4J1Y34WDZG4XIWHBSF2WJKOHIOMSTPWTWQVMPFALL2";
+        NSString *_4squareSecret = @"XYHXKNHOVBPTX4KLXR1QID4QNA2RSMXZZQML32ANKP1H4VHJ";
+        NSString *locFormat = @"https://api.foursquare.com/v2/venues/search?client_id=%@&client_secret=%@&v=20130815&ll=%@,%@";
+        NSString *queryAddr = [NSString stringWithFormat:locFormat,_4squareId,_4squareSecret,latitude,longitude];
+        [self getVenues:queryAddr withCallback:^(NSString *locName) {
+            callback(latitude, longitude, locName);
+        }];
+    } else {
+        NSLog(@"Fake location used");
+        callback(latitude, longitude, locName);
+    }
 }
 
 - (void)updatePet:(PFObject *)pet withDropped:(BOOL)dropped withLat:(NSNumber *)latitude withLong:(NSNumber *)longitude withName:(NSString *)locName
@@ -266,6 +298,10 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.distanceFilter = kCLDistanceFilterNone;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+    [self.locationManager startUpdatingLocation];
     [self setupScrollView];
     [self setupForm];
     [self setupSubmitButton];

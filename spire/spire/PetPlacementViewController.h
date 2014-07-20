@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "YCameraViewController.h"
+#import <MobileCoreServices/MobileCoreServices.h>
+#import <CoreLocation/CoreLocation.h>
 
-@interface PetPlacementViewController : UIViewController <UIScrollViewDelegate, UITextFieldDelegate, YCameraViewControllerDelegate>
+@interface PetPlacementViewController : UIViewController <UIScrollViewDelegate, UITextFieldDelegate, YCameraViewControllerDelegate, CLLocationManagerDelegate>
 
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) UIScrollView *scrollView;
@@ -18,5 +20,6 @@
 @property (strong, nonatomic) UIButton *submitButton;
 @property (strong, nonatomic) UISwitch *toggleDrop;
 @property (strong, nonatomic) YCameraViewController *cvc;
+@property (strong, nonatomic) CLLocationManager *locationManager;
 
 @end

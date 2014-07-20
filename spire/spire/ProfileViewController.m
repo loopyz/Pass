@@ -31,7 +31,7 @@
     // Custom initialization
     self.bgColor = [UIColor colorWithRed:248/255.0f green:248/255.0f blue:248/255.0f alpha:1.0f];
     
-    self.videos = [[NSMutableArray alloc] init];
+    self.photos = [[NSMutableArray alloc] init];
     [self setupHeader];
     
     locationIcon = [UIImage imageNamed:@"locationicon.png"];
@@ -116,6 +116,7 @@
   numScore.textAlignment = NSTextAlignmentCenter;
   [numScore setFont:[UIFont fontWithName:@"Avenir-Book" size:22]];
   numScore.text = @"123";
+    self.numScoresLabel = numScore;
   
   UILabel *numoffers = [[UILabel alloc] initWithFrame:CGRectMake(155, 100, 25, 50)];
   [numoffers setTextColor:[UIColor colorWithRed:105/255.0f green:32/255.0f blue:213/255.0f alpha:1.0f]];
@@ -163,34 +164,30 @@
   [super viewDidLoad];
   UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
   self.tableView.contentInset = inset;
-
-  
-  //    // Do any additional setup after loading the view.
-  //    PFQuery *query = [PFQuery queryWithClassName:@"Video"];
-  //    if ([PFUser currentUser]) {
-  //        [query whereKey:@"creator" equalTo:[PFUser currentUser]];
-  //    }
-  //    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-  //        if (objects) {
-  //            self.videos = objects;
-  //            [self.videosTable reloadData];
-  //        }
-  //    }];
+  // Do any additional setup after loading the view.
 }
 
 - (void)refreshView
 {
-  PFQuery *query = [PFQuery queryWithClassName:@"Video"];
-  if ([PFUser currentUser]) {
-    [query whereKey:@"creator" equalTo:[PFUser currentUser]];
-  }
-  [query orderByDescending:@"createdAt"];
-  [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-    if (objects) {
-      self.videos = objects;
-      [self.tableView reloadData];
-    }
-  }];
+    PFQuery *countquery = [PFQuery queryWithClassName:@"Photo"];
+    [countquery whereKey:@"user" equalTo:[PFUser currentUser]];
+    [countquery countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+        self.numScoresLabel.text = [NSString stringWithFormat:@"%d", number];
+    }];
+    
+    PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
+    [query includeKey:@"pet"];
+    [query whereKey:@"user" equalTo:[PFUser currentUser]];
+    [query whereKeyExists:@"first"]; // neccessary?
+    [query whereKey:@"first" equalTo:@1];
+    [query orderByAscending:@"createdAt"];
+    
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            [self.photos addObjectsFromArray:objects];
+            [self.tableView reloadData];
+        }
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -204,6 +201,7 @@
   [super didReceiveMemoryWarning];
   // Dispose of any resources that can be recreated.
 }
+
 #pragma mark - UITableView Delegate
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -211,16 +209,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-//  NSUInteger vcount = [self.videos count];
-//  self.videosTable.frame = CGRectMake(0, 130, SCREEN_WIDTH, vcount * 335);
-//  self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 245 + (vcount * 335));
-//  return vcount;
-  
-  NSUInteger count = 20 + 1;
-  //self.videosTable.frame = CGRectMake(0, 164, SCREEN_WIDTH, count * 335);
-  //self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 144 + (count * 130) + 134);
-  
-  return count;
+  return [self.photos count] + 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -259,6 +248,7 @@
     [cell addSubview:self.profileSnippetView];
   }
   else {
+    PFObject *pet = [[self.photos objectAtIndex:(indexPath.row-1)] objectForKey:@"pet"];
     cell.backgroundColor = self.bgColor;
     UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
     imgView.image = [UIImage imageNamed:@"fox.png"];
@@ -272,7 +262,7 @@
     [desc setBackgroundColor:[UIColor clearColor]];
     [desc setFont:[UIFont fontWithName:@"Avenir" size:24]];
 
-    desc.text = @"Pusheen";
+      desc.text = [pet objectForKey:@"name"];//@"Pusheen";
     desc.lineBreakMode = NSLineBreakByWordWrapping;
     desc.numberOfLines = 0;
     [cell addSubview:desc];
@@ -283,7 +273,7 @@
     [numMiles setBackgroundColor:[UIColor clearColor]];
     [numMiles setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
 
-    numMiles.text = @"2187";
+      numMiles.text = [[pet objectForKey:@"miles"] stringValue];//@"2187";
     numMiles.lineBreakMode = NSLineBreakByWordWrapping;
     numMiles.numberOfLines = 0;
     [cell addSubview:numMiles];
@@ -305,7 +295,7 @@
     [numPasses setBackgroundColor:[UIColor clearColor]];
     [numPasses setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
 
-    numPasses.text = @"1322";
+      numPasses.text = [[pet objectForKey:@"passes"] stringValue];//@"1322";
     numPasses.lineBreakMode = NSLineBreakByWordWrapping;
     numPasses.numberOfLines = 0;
     [cell addSubview:numPasses];

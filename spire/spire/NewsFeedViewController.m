@@ -31,6 +31,8 @@
     locationIcon = [UIImage imageNamed:@"locationicon.png"];
     heartButtonIcon = [UIImage imageNamed:@"heartbutton.png"];
     commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
+    
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
   }
   return self;
 }
@@ -91,19 +93,62 @@
 
 // Table View Delegate Methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-  return 1; //number of alphabet letters + recent
+  return 20; //number of items
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+  return 70;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  // return [self.videos count];
-  return 20;
+  return 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  return 375;
+  return 385;
 }
 
+//for each header
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+  UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 400)];
+  
+  UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
+  
+  //setup avatar
+  UIImageView *avatarView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 20, 40, 40)];
+  avatarView.image = [UIImage imageNamed:@"tempnewsavatar.png"];
+  [view addSubview:avatarView];
+  
+  //setup avatar name
+  UILabel *avatarName = [[UILabel alloc] initWithFrame:CGRectMake(60, 10, 300, 50)];
+  [avatarName setTextColor:descColor];
+  [avatarName setBackgroundColor:[UIColor clearColor]];
+  [avatarName setFont:[UIFont fontWithName:@"Avenir" size:16]];
+  
+  avatarName.text = @"startstar";
+  avatarName.lineBreakMode = NSLineBreakByWordWrapping;
+  avatarName.numberOfLines = 0;
+  [view addSubview:avatarName];
+  
+  // setup tags
+  UILabel *tags = [[UILabel alloc] initWithFrame:CGRectMake(60, 20, 300, 50)];
+  [tags setTextColor:descColor];
+  [tags setBackgroundColor:[UIColor clearColor]];
+  [tags setFont:[UIFont fontWithName:@"Avenir-Light" size:10]];
+  
+  tags.text = @"I love Foxy hehe.";
+  tags.lineBreakMode = NSLineBreakByWordWrapping;
+  tags.numberOfLines = 0;
+  [view addSubview:tags];
+  
+  view.backgroundColor = [UIColor whiteColor];
+  view.alpha = .94f;
+  
+  return view;
+}
 
 //for each cell in table
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -125,34 +170,11 @@
   //MPMoviePlayerViewController *movie = [[MPMoviePlayerViewController alloc] initWithContentURL:fileUrl];
   //[self presentMoviePlayerViewControllerAnimated:movie];
   
+  UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
+  imageView.image = [UIImage imageNamed:@"tempsingleimage.png"];
+  [cell addSubview:imageView];
+  
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
-  
-  //setup avatar
-  UIImageView *avatarView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 295, 40, 40)];
-  avatarView.image = [UIImage imageNamed:@"tempnewsavatar.png"];
-  [cell addSubview:avatarView];
-  
-  //setup avatar name
-  UILabel *avatarName = [[UILabel alloc] initWithFrame:CGRectMake(60, 278, 300, 50)];
-  [avatarName setTextColor:descColor];
-  [avatarName setBackgroundColor:[UIColor clearColor]];
-  [avatarName setFont:[UIFont fontWithName:@"Avenir" size:16]];
-  
-  avatarName.text = @"startstar";
-  avatarName.lineBreakMode = NSLineBreakByWordWrapping;
-  avatarName.numberOfLines = 0;
-  [cell addSubview:avatarName];
-  
-  // setup tags
-  UILabel *tags = [[UILabel alloc] initWithFrame:CGRectMake(60, 298, 300, 50)];
-  [tags setTextColor:descColor];
-  [tags setBackgroundColor:[UIColor clearColor]];
-  [tags setFont:[UIFont fontWithName:@"Avenir-Light" size:10]];
-  
-  tags.text = @"#pizza #pizzahut #puns";
-  tags.lineBreakMode = NSLineBreakByWordWrapping;
-  tags.numberOfLines = 0;
-  [cell addSubview:tags];
   
   // setup location icon
   UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 345, 11, 17)];

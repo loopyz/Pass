@@ -78,8 +78,7 @@
     [cell addSubview:self.header];
   }
   else {
-    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pusheen.png"]];
-    cell.backgroundView.backgroundColor = [UIColor blackColor];
+    cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tempsingleimage.png"]];
   }
     return cell;
 }
@@ -95,8 +94,8 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
   NSLog(@"%d", indexPath.row);
   SingleImageViewController *ppvc = [[SingleImageViewController alloc] initWithNibName:nil bundle:nil];
-  // [self presentViewController:ppvc animated:YES completion:nil];
-  [self.navigationController pushViewController:ppvc animated:YES];
+  [self presentViewController:ppvc animated:YES completion:nil];
+  // [self.navigationController pushViewController:ppvc animated:YES];
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {

@@ -23,6 +23,10 @@
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (nonatomic, retain) UIToolbar *keyboardToolbar;
 
+@property (nonatomic, retain) UIButton *dropButton;
+
+@property (nonatomic) BOOL dropButtonActivated;
+
 - (IBAction)hideKeyboard:(id)sender;
 
 @end

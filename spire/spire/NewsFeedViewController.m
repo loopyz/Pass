@@ -123,7 +123,7 @@
   [view addSubview:avatarView];
   
   //setup avatar name
-  UILabel *avatarName = [[UILabel alloc] initWithFrame:CGRectMake(60, 10, 300, 50)];
+  UILabel *avatarName = [[UILabel alloc] initWithFrame:CGRectMake(60, 5, 300, 50)];
   [avatarName setTextColor:descColor];
   [avatarName setBackgroundColor:[UIColor clearColor]];
   [avatarName setFont:[UIFont fontWithName:@"Avenir" size:16]];
@@ -134,7 +134,7 @@
   [view addSubview:avatarName];
   
   // setup tags
-  UILabel *tags = [[UILabel alloc] initWithFrame:CGRectMake(60, 20, 300, 50)];
+  UILabel *tags = [[UILabel alloc] initWithFrame:CGRectMake(60, 25, 300, 50)];
   [tags setTextColor:descColor];
   [tags setBackgroundColor:[UIColor clearColor]];
   [tags setFont:[UIFont fontWithName:@"Avenir-Light" size:10]];

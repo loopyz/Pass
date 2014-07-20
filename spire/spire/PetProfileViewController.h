@@ -20,4 +20,7 @@
 @property (nonatomic) BOOL photoTouched;
 @property (nonatomic) BOOL personTouched;
 
+@property (strong, nonatomic) NSString *petId;
+@property (strong, nonatomic) NSMutableArray *photos;
+
 @end

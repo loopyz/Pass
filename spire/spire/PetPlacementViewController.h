@@ -7,18 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "YCameraViewController.h"
 
-@interface PetPlacementViewController : UIViewController <UIScrollViewDelegate, UITextFieldDelegate>
-
-- (id)initWithImage:(UIImage *)image;
-- (void)setupImagePetContainer;
-- (void)setupImage;
-- (void)setupPet;
+@interface PetPlacementViewController : UIViewController <UIScrollViewDelegate, UITextFieldDelegate, YCameraViewControllerDelegate>
 
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property (strong, nonatomic) UIView *container;
 @property (strong, nonatomic) UITextField *textEntry;
 @property (strong, nonatomic) UIButton *submitButton;
+@property (strong, nonatomic) YCameraViewController *cvc;
 
 @end

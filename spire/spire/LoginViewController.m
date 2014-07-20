@@ -11,8 +11,6 @@
 #import "HomeViewController.h"
 #import "RegisterInformationViewController.h"
 
-#import "CameraViewController.h"
-
 @interface LoginViewController ()
 
 @end
@@ -90,9 +88,6 @@
 - (void)normalLoginTouched
 {
     //lol we'll have this later
-    CameraViewController *cvc = [[CameraViewController alloc] init];
-    [self.navigationController pushViewController:cvc animated:YES];
-
 }
 
 #pragma mark - Button Setup

@@ -10,10 +10,10 @@
 #import "HomeViewController.h"
 #import "NewsFeedViewController.h"
 #import "FindPetViewController.h"
-#import "CameraViewController.h"
 #import "FriendsFeedViewController.h"
 #import "ProfileViewController.h"
 #import "PetProfileViewController.h"
+#import "PetPlacementViewController.h"
 
 #import <Parse/Parse.h>
 
@@ -130,8 +130,8 @@
     FindPetViewController *evc = [[FindPetViewController alloc] initWithNibName:nil bundle:nil];
     evc.tabBarItem.image = [UIImage imageNamed:@"searchtab.png"];
     
-    CameraViewController *nfvc = [[CameraViewController alloc] initWithNibName:nil bundle:nil];
-    nfvc.tabBarItem.image = [UIImage imageNamed:@"pettab.png"];
+    PetPlacementViewController *placevc = [[PetPlacementViewController alloc] initWithNibName:nil bundle:nil];
+    placevc.tabBarItem.image = [UIImage imageNamed:@"pettab.png"];
     
     FriendsFeedViewController *ffvc = [[FriendsFeedViewController alloc] initWithNibName:nil bundle:nil];
     ffvc.tabBarItem.image = [UIImage imageNamed:@"newstab.png"];
@@ -140,7 +140,7 @@
     PetProfileViewController *pvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];
     pvc.tabBarItem.image = [UIImage imageNamed:@"profiletab.png"];
     
-    self.viewControllers=[NSArray arrayWithObjects:nvc, evc, nfvc, ffvc, pvc, nil];
+    self.viewControllers=[NSArray arrayWithObjects:nvc, evc, placevc, ffvc, pvc, nil];
 }
 
 - (void)assignTabColors

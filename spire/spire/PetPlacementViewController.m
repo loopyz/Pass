@@ -27,15 +27,27 @@
     return self;
 }
 
+- (void)yCameraControllerDidCancel {
+    //[self.cvc dismissModalViewControllerAnimated:YES];
+    // TODO: return to home page
+    
+    [self.tabBarController setSelectedIndex:0];
 
-- (id)initWithImage:(UIImage *)image
-{
-    self = [super init];
-    if (self) {
-        // Custom initialization
-        self.image = image;
-    }
-    return self;
+    
+}
+
+- (void)yCameraControllerdidSkipped {
+    //[self.cvc dismissModalViewControllerAnimated:YES];
+    // TODO: return to home page
+    [self.tabBarController setSelectedIndex:0];
+
+
+}
+
+- (void)didFinishPickingImage:(UIImage *)image{
+    self.image = image;
+    [self setupImagePetContainer];
+
 }
 
 - (void)setupScrollView
@@ -133,7 +145,7 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     
-    self.scrollView.contentOffset = CGPointMake(0, textField.frame.origin.y);
+    [self.scrollView setContentOffset:CGPointMake(0, textField.frame.origin.y) animated:YES];
 }
 
 
@@ -152,6 +164,9 @@
     NSLog(@"%f, %f", image.size.height, image.size.width);
     
     // TODO: submit image to parse
+    // TODO: process image/pass
+    
+    [self.tabBarController setSelectedIndex:0];
 }
 
 - (void)setupSubmitButton
@@ -168,12 +183,26 @@
     [self.scrollView addSubview:self.submitButton];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:NO];
+    
+    
+    YCameraViewController *camController = [[YCameraViewController alloc] initWithNibName:@"YCameraViewController" bundle:nil];
+    self.cvc = camController;
+    camController.delegate=self;
+    
+    [self presentViewController:camController animated:NO completion:^{
+        // completion code
+    }];
+    
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self setupScrollView];
-    [self setupImagePetContainer];
     [self setupTextEntry];
     [self setupSubmitButton];
 }

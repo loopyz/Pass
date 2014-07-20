@@ -72,7 +72,18 @@
                         NSDictionary *userData = (NSDictionary *)result;
                         [currentUser setObject:userData[@"id"] forKey:@"fbId"];
                         [currentUser setObject:userData[@"name"] forKey:@"fbName"];
-                        [currentUser saveInBackground];
+                        NSString *url = [NSString stringWithFormat:@"http://graph.facebook.com/%@/picture?type=square", userData[@"id"]];
+                        NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+                        
+                        PFFile *image = [PFFile fileWithName:@"profile.png" data:imageData];
+                        [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                            if (succeeded) {
+                                [[PFUser currentUser] setObject:image forKey:@"fbProfilePic"];
+                                [currentUser saveInBackground];
+                            } else {
+                                NSLog(@"parse error --saving profile image%@", error);
+                            }
+                        }];
                         RegisterInformationViewController *svc = [[RegisterInformationViewController alloc] init];
                         svc.fbId = userData[@"id"];
                         svc.fbName = userData[@"name"];

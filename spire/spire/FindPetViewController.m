@@ -339,17 +339,6 @@
   
   cell.backgroundColor = [UIColor clearColor];
   
-  
-  //  PFObject *object = self.videos[indexPath.row];
-  //  PFFile *videoFile = [object objectForKey:@"file"];
-  //  NSURL *fileUrl = [NSURL URLWithString:videoFile.url];
-  //  self.player = [[KSVideoPlayerView alloc] initWithFrame:CGRectMake(0, 0, 320, 280) contentURL:fileUrl];
-  //  [cell addSubview:self.player];
-  //[self.player play];
-  //MPMoviePlayerViewController *movie = [[MPMoviePlayerViewController alloc] initWithContentURL:fileUrl];
-  //[self presentMoviePlayerViewControllerAnimated:movie];
-  
-  
   [self setupCollection:indexPath withView:tempView];
   
   [cell addSubview:tempView];

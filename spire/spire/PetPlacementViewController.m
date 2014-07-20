@@ -28,30 +28,57 @@
     return self;
 }
 
+- (void)getLocation:(void (^)(NSNumber *latitude, NSNumber *longitude, NSString *locName)) callback
+{
+    // TODO: take in callback, call with lat/long/name
+    NSNumber *latitude = @3.14;
+    NSNumber *longitude = @2.71;
+    NSString *locName = @"Medium HQ";
+    callback(latitude, longitude, locName);
+}
 
-- (void)saveImageToParse:(NSData *)data withCaption:(NSString *)caption {
-    PFQuery *query = [PFQuery queryWithClassName:@"Pass"];
+- (void)updatePet:(PFObject *)pet withDropped:(BOOL)dropped withLat:(NSNumber *)latitude withLong:(NSNumber *)longitude withName:(NSString *)locName
+{
+    [pet setObject:latitude forKey:@"latitude"];
+    [pet setObject:longitude forKey:@"longitude"];
+    [pet setObject:locName forKey:@"locName"];
+    if (dropped) {
+        [pet setObject:[NSNull null] forKey:@"currentUser"];
+        [pet incrementKey:@"passes"];
+    }
+    // TODO: update miles
+    [pet saveInBackground];
+}
+
+- (void)addPhoto:(NSData *)photoData withUser:(PFUser *)user withPet:(PFObject *)pet withLat:(NSNumber *)latitude withLong:(NSNumber *)longitude withName:(NSString *)locName withCaption:(NSString *)caption
+{
+    PFFile *image = [PFFile fileWithName:@"image.png" data:photoData];
+    [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            PFObject *photo = [PFObject objectWithClassName:@"Photo"];
+            [photo setObject:user forKey:@"user"];
+            [photo setObject:pet forKey:@"pet"];
+            [photo setObject:image forKey:@"image"];
+            [photo setObject:caption forKey:@"caption"];
+            [photo setObject:latitude forKey:@"latitude"];
+            [photo setObject:longitude forKey:@"longitude"];
+            [photo setObject:locName forKey:@"locName"];
+            [photo setObject:@1 forKey:@"first"];
+            // TODO: set first only if first taken by that (user, pet)
+            [photo saveInBackground];
+        }
+    }];
+}
+
+- (void)saveToParse:(NSData *)photoData withCaption:(NSString *)caption withDropped:(BOOL) dropped
+{
+    PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
     PFUser *currentUser = [PFUser currentUser];
-    [query whereKey:@"user" equalTo:currentUser];
-    [query whereKeyDoesNotExist:@"complete"];
-    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        PFFile *image = [PFFile fileWithName:@"image.png" data:data];
-        [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (succeeded) {
-                PFObject *photo = [PFObject objectWithClassName:@"Photo"];
-                [photo setObject:image forKey:@"image"];
-                [photo setObject:caption forKey:@"caption"];
-                [photo saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    if (succeeded) {
-                        [object addObject:image forKey:@"photos"];
-                        [object saveInBackground];
-                    } else {
-                        NSLog(@"photo failed to save to parse: %@", error);
-                    }
-                }];
-            } else {
-                NSLog(@"image failed to save to parse: %@", error);
-            }
+    [query whereKey:@"currentUser" equalTo:currentUser];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
+        [self getLocation:^(NSNumber *latitude, NSNumber *longitude, NSString *locName) {
+            [self updatePet:pet withDropped:dropped withLat:latitude withLong:longitude withName:locName];
+            [self addPhoto:photoData withUser:currentUser withPet:pet withLat:latitude withLong:longitude withName:locName withCaption:caption];
         }];
     }];
 }
@@ -161,7 +188,7 @@
      */
 }
 
-- (void)setupTextEntry
+- (void)setupForm
 {
     self.textEntry = [[UITextField alloc] initWithFrame:CGRectMake(10, SCREEN_WIDTH + 10, SCREEN_WIDTH - 20, 44)];
     //self.textEntry.layer.borderWidth = 1.0;
@@ -170,6 +197,14 @@
     self.textEntry.placeholder = @"Caption";
     
     self.textEntry.delegate = self;
+    
+    // TODO: HEY LUCY STYLE THIS THINGY
+    self.toggleDrop = [[UISwitch alloc] initWithFrame:CGRectMake(10, SCREEN_WIDTH + 10 + 44 + 10, SCREEN_WIDTH - 20, 44)];
+    [self.scrollView addSubview:self.toggleDrop];
+    
+    // label for togglign drop, doesn't work
+//    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 50, SCREEN_WIDTH + 10 + 44 + 10 + 44, SCREEN_WIDTH - 20, 44)];
+//    [self.scrollView addSubview:label];
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
@@ -192,7 +227,7 @@
     UIImage *image = [self imageWithView:self.container];
     NSLog(@"%f, %f", image.size.height, image.size.width);
     // submit image to parse
-    [self saveImageToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text];
+    [self saveToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text withDropped:self.toggleDrop.on];
     
     // go back to home
     [self.tabBarController setSelectedIndex:0];
@@ -232,7 +267,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self setupScrollView];
-    [self setupTextEntry];
+    [self setupForm];
     [self setupSubmitButton];
 }
 

@@ -16,6 +16,7 @@
 @property (strong, nonatomic) UIView *container;
 @property (strong, nonatomic) UITextField *textEntry;
 @property (strong, nonatomic) UIButton *submitButton;
+@property (strong, nonatomic) UISwitch *toggleDrop;
 @property (strong, nonatomic) YCameraViewController *cvc;
 
 @end

@@ -160,6 +160,8 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView  {
+    UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
+    self.tableView.contentInset = inset;
     [self.ptr viewDidScroll:scrollView];
 }
 
@@ -197,6 +199,7 @@
         if (!error) {
             self.photos = [[NSMutableArray alloc] init];
             [self.photos addObjectsFromArray:objects];
+
             [self.tableView reloadData];
         }
     }];
@@ -204,6 +207,7 @@
 
 - (void)Refresh {
     [self refreshView];
+    
     // Perform here the required actions to refresh the data (call a JSON API for example).
     // Once the data has been updated, call the method isDoneRefreshing:
     [self.ptr isDoneRefreshing];

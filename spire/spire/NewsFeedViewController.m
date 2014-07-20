@@ -69,6 +69,8 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView  {
+    UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
+    self.tableView.contentInset = inset;
   [self.ptr viewDidScroll:scrollView];
 }
 

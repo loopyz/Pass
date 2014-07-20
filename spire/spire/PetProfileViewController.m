@@ -75,42 +75,42 @@
     cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"picCell" forIndexPath:indexPath];
   }
   
-  dispatch_async(dispatch_get_main_queue(), ^{
-    
-    //  ********* Changed *******
-    
-    for (UIView *v in [cell.contentView subviews])
-      [v removeFromSuperview];
-    
-    // ********** Changed **********
-    if (indexPath.row == 0) {
-      // [cell addSubview:self.header];
-      cell.backgroundView = self.header;
-    }
-    else {
-      PFFile *image = [[self.photos objectAtIndex:(indexPath.row - 1)] objectForKey:@"image"];
-      PFImageView *photo = [[PFImageView alloc] init];
-      photo.image = [UIImage imageNamed:@"tempsingleimage.png"];
-      photo.file = image;
-      [photo loadInBackground];
-      cell.backgroundView = photo;
-      // [cell addSubview:photo];
-    }
-  });
-  
-
-//  if (indexPath.row == 0) {
-//    [cell addSubview:self.header];
-//  }
-//  else {
+//  dispatch_async(dispatch_get_main_queue(), ^{
+//    
+//    //  ********* Changed *******
+//    
+//    for (UIView *v in [cell.contentView subviews])
+//      [v removeFromSuperview];
+//    
+//    // ********** Changed **********
+//    if (indexPath.row == 0) {
+//      // [cell addSubview:self.header];
+//      cell.backgroundView = self.header;
+//    }
+//    else {
 //      PFFile *image = [[self.photos objectAtIndex:(indexPath.row - 1)] objectForKey:@"image"];
 //      PFImageView *photo = [[PFImageView alloc] init];
 //      photo.image = [UIImage imageNamed:@"tempsingleimage.png"];
 //      photo.file = image;
 //      [photo loadInBackground];
-//    cell.backgroundView = photo;
-//    cell.backgroundView.backgroundColor = [UIColor blackColor];
-//  }
+//      cell.backgroundView = photo;
+//      // [cell addSubview:photo];
+//    }
+//  });
+  
+
+  if (indexPath.row == 0) {
+    cell.backgroundView = self.header;
+  }
+  else {
+      PFFile *image = [[self.photos objectAtIndex:(indexPath.row - 1)] objectForKey:@"image"];
+      PFImageView *photo = [[PFImageView alloc] init];
+      photo.image = [UIImage imageNamed:@"tempsingleimage.png"];
+      photo.file = image;
+      [photo loadInBackground];
+    cell.backgroundView = photo;
+    cell.backgroundView.backgroundColor = [UIColor blackColor];
+  }
     return cell;
 }
 

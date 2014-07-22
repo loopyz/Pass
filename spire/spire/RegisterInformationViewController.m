@@ -36,7 +36,7 @@
     UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [submitButton setTitle:@"Show View" forState:UIControlStateNormal];
     
-    submitButton.frame = CGRectMake(0, 800, 320, 47.5);
+    submitButton.frame = CGRectMake(0, self.formTable.frame.origin.y + self.formTable.frame.size.height + 40, 320, 47.5);
     [submitButton addTarget:self action:@selector(buttonTouched:) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage = [UIImage imageNamed:@"nextbutton.png"];
@@ -107,7 +107,7 @@
     self.labels = [NSArray arrayWithObjects:@"Username",
                    @"Description",
                    @"Website",
-                   @"Hometown (Optional)",
+                   @"Hometown",
                    nil];
 	
 	self.placeholders = [NSArray arrayWithObjects:@"Enter Username",
@@ -123,10 +123,12 @@
     [self.navigationController setNavigationBarHidden:YES];
     // Do any additional setup after loading the view.
     if (self.fbId && self.fbName) {
-        [self setupWelcome];
         [self setupAvatar];
+        [self setupWelcome];
         [self setupTable];
         [self setupSubmitButton];
+        
+        self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, self.formTable.frame.origin.y + self.formTable.frame.size.height + 130);
     }
 }
 
@@ -173,7 +175,7 @@
     [self.scrollView addSubview:name];
     
     //setup description
-    UIImageView *infotext = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2 - 27, 280, 248.5, 35.5)];
+    UIImageView *infotext = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2 - 27, self.fbProfilePic.frame.origin.y + self.fbProfilePic.frame.size.height + 70.0, 248.5, 35.5)];
     infotext.image = [UIImage imageNamed:@"informationtext.png"];
     [self.scrollView addSubview:infotext];
     
@@ -206,7 +208,7 @@
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger rowCount = [self.fields count];
-    self.formTable.frame = CGRectMake(0, 330, SCREEN_WIDTH, rowCount * 60);
+    self.formTable.frame = CGRectMake(0, self.fbProfilePic.frame.origin.y + self.fbProfilePic.frame.size.height + 70.0 + 25, SCREEN_WIDTH, rowCount * 60);
     return rowCount;
 }
 

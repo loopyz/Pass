@@ -26,5 +26,6 @@
 @property (nonatomic, strong) NSString *fbId;
 @property (nonatomic, strong) NSString *fbName;
 @property (nonatomic, strong) FBProfilePictureView *fbProfilePic;
+@property (nonatomic) BOOL keyboardIsShown;
 
 @end

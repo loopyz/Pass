@@ -10,7 +10,12 @@
 
 @implementation Util
 
-#pragma mark - Parse Pet Utilities
+#pragma mark - Parse Utilities
+
++ (NSString *)currentUserId
+{
+    return [[PFUser currentUser] objectId];
+}
 
 + (void)currentPetWithBlock:(void (^)(PFObject *pet, NSError *error))callback
 {
@@ -22,7 +27,7 @@
     }
 
     [PFQuery queryWithClassName:@"Pet"];
-    [query whereKey:@"currentUser" equalTo:user];
+    [query whereKey:@"currentUserId" equalTo:[user objectId]];
     query.cachePolicy = kPFCachePolicyCacheElseNetwork;
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
         callback(pet, error);

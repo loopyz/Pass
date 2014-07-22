@@ -97,7 +97,7 @@
     // Uncomment to add a bunch of pets!
     /*for (int i = 0; i < 10; i++) {
         PFObject *pet = [PFObject objectWithClassName:@"Pet"];
-        pet[@"currentUser"] = [PFUser currentUser];
+        pet[@"currentUserId"] = [Util currentUserId];
         pet[@"owner"] = [PFUser currentUser];
         pet[@"name"] = [NSString stringWithFormat:@"Pet%d", i];
         pet[@"miles"] = @0;

@@ -62,7 +62,9 @@
         [pet setObject:text forKey:self.fields[i]];
     }
     [pet setObject:[PFUser currentUser] forKey:@"owner"];
-    [pet setObject:[PFUser currentUser] forKey:@"currentUser"];
+    // TODO: DEPRECATED, remove when migration complete.
+    //[pet setObject:[PFUser currentUser] forKey:@"currentUser"];
+    [pet setObject:[Util currentUserId] forKey:@"currentUserId"];
     [pet setObject:@0 forKey:@"miles"];
     [pet setObject:self.type forKey:@"type"];
     [pet saveInBackground];

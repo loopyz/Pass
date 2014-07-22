@@ -68,7 +68,7 @@
     [pet setObject:longitude forKey:@"longitude"];
     [pet setObject:locName forKey:@"locName"];
     if (dropped) {
-        [pet setObject:[NSNull null] forKey:@"currentUser"];
+        [pet setObject:[NSNull null] forKey:@"currentUserId"];
         [pet incrementKey:@"passes"];
     }
     // TODO: actually set miles to what they should be

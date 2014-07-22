@@ -11,6 +11,9 @@
 
 #import "PetProfileViewController.h"
 #import "SingleImageViewController.h"
+
+#import "CreatePetViewController.h"
+
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
 
@@ -137,7 +140,8 @@
   NSLog(@"%d", indexPath.row);
     if (indexPath.row != 0) {
         PFObject *photo = self.photos[indexPath.row - 1];
-        SingleImageViewController *ppvc = [[SingleImageViewController alloc] initWithPhoto:photo];
+//        SingleImageViewController *ppvc = [[SingleImageViewController alloc] initWithPhoto:photo];
+        CreatePetViewController *ppvc = [[CreatePetViewController alloc] initWithNibName:nil bundle:nil] ;
 
   [self presentViewController:ppvc animated:YES completion:nil];
   //[self.navigationController pushViewController:ppvc animated:YES];

@@ -38,7 +38,7 @@
     UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [submitButton setTitle:@"Show View" forState:UIControlStateNormal];
     
-    submitButton.frame = CGRectMake(0, self.formTable.frame.origin.y + self.formTable.frame.size.height + 40, 320, 47.5);
+    submitButton.frame = CGRectMake(0, self.formTable.frame.origin.y + self.formTable.frame.size.height + 60, 320, 47.5);
     [submitButton addTarget:self action:@selector(buttonTouched:) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage = [UIImage imageNamed:@"nextbutton.png"];
@@ -169,7 +169,7 @@
     
     //setup name label
     UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
-    UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(0, 230, SCREEN_WIDTH, 50)];
+    UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(0, 220, SCREEN_WIDTH, 50)];
     
     name.textAlignment = NSTextAlignmentCenter;
     [name setTextColor:nameColor];
@@ -179,7 +179,7 @@
     [self.scrollView addSubview:name];
     
     //setup description
-    UIImageView *infotext = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2 - 27, self.fbProfilePic.frame.origin.y + self.fbProfilePic.frame.size.height + 70.0, 248.5, 35.5)];
+    infotext = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2 - 27, self.fbProfilePic.frame.origin.y + self.fbProfilePic.frame.size.height + name.frame.size.height + 50, 248.5, 35.5)];
     infotext.image = [UIImage imageNamed:@"informationtext.png"];
     [self.scrollView addSubview:infotext];
     
@@ -212,7 +212,7 @@
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger rowCount = [self.fields count];
-    self.formTable.frame = CGRectMake(0, self.fbProfilePic.frame.origin.y + self.fbProfilePic.frame.size.height + 70.0 + 25, SCREEN_WIDTH, rowCount * 60);
+    self.formTable.frame = CGRectMake(0, infotext.frame.size.height + infotext.frame.origin.y + 20, SCREEN_WIDTH, rowCount * 60);
     return rowCount;
 }
 

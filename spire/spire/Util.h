@@ -11,7 +11,7 @@
 @interface Util : NSObject
 
 + (NSString *)currentUserId;
-+ (void)currentPetWithBlock:(void (^)(PFObject *pet, NSError *error))callback
++ (void)currentPetWithBlock:(void (^)(PFObject *pet, NSError *error))callback;
 //+ (BOOL)currentUserHasPet;
 
 @end

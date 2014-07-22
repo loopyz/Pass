@@ -26,7 +26,7 @@
         return;
     }
 
-    [PFQuery queryWithClassName:@"Pet"];
+    PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
     [query whereKey:@"currentUserId" equalTo:[user objectId]];
     query.cachePolicy = kPFCachePolicyCacheElseNetwork;
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {

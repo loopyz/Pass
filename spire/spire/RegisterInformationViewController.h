@@ -14,6 +14,7 @@
 {
 	NSArray *labels;
 	NSArray *placeholders;
+    UIImageView *infotext;
 }
 
 @property (nonatomic, strong) UIScrollView *scrollView;

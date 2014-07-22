@@ -14,7 +14,10 @@
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
 
 
-@interface PetPlacementViewController ()
+@interface PetPlacementViewController () {
+    CGFloat screenWidth;
+    CGFloat screenHeight;
+}
 
 @end
 
@@ -24,6 +27,9 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        screenWidth = screenRect.size.width;
+        screenHeight = screenRect.size.height;
         // Custom initialization
       self.dropButtonActivated = NO;
     }
@@ -144,10 +150,10 @@
 - (void)setupScrollView
 {
     self.scrollView = [[UIScrollView alloc] init];
-    self.scrollView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); //scroll view occupies full parent view!
+    self.scrollView.frame = CGRectMake(0, 0, screenWidth, screenHeight); //scroll view occupies full parent view!
     //specify CGRect bounds in place of self.view.bounds to make it as a portion of parent view!
     
-    self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT + 140);   //scroll view size
+    self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT + 180);   //scroll view size
     
     self.scrollView.showsVerticalScrollIndicator = NO;    // to hide scroll indicators!
     
@@ -234,7 +240,7 @@
     }
     // HEY STYLING AFTER THIS POINT OCCURS ONCE
     
-    self.textEntry = [[UITextView alloc] initWithFrame:CGRectMake(0, SCREEN_WIDTH + 20, SCREEN_WIDTH, 100)];
+    self.textEntry = [[UITextView alloc] initWithFrame:CGRectMake(0, screenWidth, screenHeight, 100)];
     self.textEntry.layer.borderWidth = 1.0;
     self.textEntry.layer.borderColor =  [[UIColor colorWithRed:228/255.0f green:228/255.0f blue:228/255.0f alpha:1.0f] CGColor];
   
@@ -291,7 +297,7 @@
   self.dropButton = [UIButton buttonWithType:UIButtonTypeCustom];
   [self.dropButton setTitle:@"Show View" forState:UIControlStateNormal];
   
-  self.dropButton.frame = CGRectMake(0, SCREEN_WIDTH + 130, 320, 67);
+  self.dropButton.frame = CGRectMake(0, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 35, 320, 67);
   [self.dropButton addTarget:self action:@selector(dropPetButtonTouched) forControlEvents:UIControlEventTouchUpInside];
   
   UIImage *btnImage;
@@ -397,14 +403,17 @@
   // Do any additional setup after loading the view.
   UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
   [submitButton setTitle:@"Show View" forState:UIControlStateNormal];
+    
   
-  submitButton.frame = CGRectMake(0, SCREEN_HEIGHT - 25, 320, 47.5);
+  submitButton.frame = CGRectMake(0, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 120, 320, 47.5);
   [submitButton addTarget:self action:@selector(buttonTouched:withEvent:) forControlEvents:UIControlEventTouchUpInside];
   
   UIImage *btnImage = [UIImage imageNamed:@"submitbutton.png"];
   [submitButton setImage:btnImage forState:UIControlStateNormal];
   submitButton.contentMode = UIViewContentModeScaleToFill;
-  
+    
+    self.scrollView.contentSize = CGSizeMake(screenWidth, 320 + self.textEntry.frame.size.height + 50 + 230);
+    
   [self.scrollView addSubview:submitButton];
 }
 
@@ -421,6 +430,7 @@
     }];
     
     [self setupForm];
+    [self setupSubmitButton];
     YCameraViewController *camController = [[YCameraViewController alloc] initWithNibName:@"YCameraViewController" bundle:nil];
     self.cvc = camController;
     camController.delegate = self;
@@ -487,7 +497,6 @@
     self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
     [self.locationManager startUpdatingLocation];
     [self setupScrollView];
-    [self setupSubmitButton];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
                                    initWithTarget:self

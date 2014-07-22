@@ -14,9 +14,6 @@
 
 #import "CreatePetViewController.h"
 
-#define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
-#define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
-
 @interface PetProfileViewController ()
 
 @end
@@ -54,7 +51,7 @@
     layout.minimumLineSpacing = 2;
     layout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
     
-    self.collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 115, SCREEN_WIDTH, 750) collectionViewLayout:layout];
+    self.collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 115, [Util screenWidth], 750) collectionViewLayout:layout];
     [self.collectionView setDataSource:self];
     [self.collectionView setDelegate:self];
     [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"picCell"];
@@ -130,7 +127,7 @@
 {
 // photoTouched
         if (indexPath.row == 0) {
-            return CGSizeMake (SCREEN_WIDTH, 164);
+            return CGSizeMake ([Util screenWidth], 164);
         }
         return CGSizeMake(105, 105);
 
@@ -179,7 +176,7 @@
     view.backgroundColor = [UIColor whiteColor];
   
     UIImageView *bottomBar = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bottombar.png"]];
-    bottomBar.frame = CGRectMake(0, 164-39.5, SCREEN_WIDTH, 41.5);
+    bottomBar.frame = CGRectMake(0, 164-39.5, [Util screenWidth], 41.5);
     [view addSubview: bottomBar];
   
   // set up miles traveled

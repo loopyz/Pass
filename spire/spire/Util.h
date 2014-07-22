@@ -10,6 +10,10 @@
 
 @interface Util : NSObject
 
++ (BOOL)screenIsPortrait;
++ (CGFloat)screenWidth;
++ (CGFloat)screenHeight;
+
 + (NSString *)currentUserId;
 + (void)currentPetWithBlock:(void (^)(PFObject *pet, NSError *error))callback;
 //+ (BOOL)currentUserHasPet;

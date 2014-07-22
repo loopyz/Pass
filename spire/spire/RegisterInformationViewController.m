@@ -13,9 +13,6 @@
 
 #define FAKE_REGISTER true
 
-#define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
-#define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
-
 @interface RegisterInformationViewController (Private)
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 @end
@@ -76,7 +73,7 @@
 - (void)setupTable
 {
     
-    CGRect tableViewRect = CGRectMake(0, 330, SCREEN_WIDTH, 140);
+    CGRect tableViewRect = CGRectMake(0, 330, [Util screenWidth], 140);
     
     self.formTable = [[UITableView alloc] initWithFrame:tableViewRect style:UITableViewStylePlain];
     self.formTable.delegate = self;
@@ -90,10 +87,10 @@
 - (void)setupScrollView
 {
     self.scrollView = [[UIScrollView alloc] init];
-    self.scrollView.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); //scroll view occupies full parent view!
+    self.scrollView.frame = CGRectMake(0, 0, [Util screenWidth], [Util screenHeight]); //scroll view occupies full parent view!
     //specify CGRect bounds in place of self.view.bounds to make it as a portion of parent view!
     
-    self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, 870);   //scroll view size
+    self.scrollView.contentSize = CGSizeMake([Util screenWidth], 870);   //scroll view size
     
     self.scrollView.showsVerticalScrollIndicator = NO;    // to hide scroll indicators!
     
@@ -134,7 +131,7 @@
         [self setupTable];
         [self setupSubmitButton];
         
-        self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, self.formTable.frame.origin.y + self.formTable.frame.size.height + 130);
+        self.scrollView.contentSize = CGSizeMake([Util screenWidth], self.formTable.frame.origin.y + self.formTable.frame.size.height + 130);
     }
 }
 
@@ -171,7 +168,7 @@
     
     //setup name label
     UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
-    UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(0, 220, SCREEN_WIDTH, 50)];
+    UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(0, 220, [Util screenWidth], 50)];
     
     name.textAlignment = NSTextAlignmentCenter;
     [name setTextColor:nameColor];
@@ -214,7 +211,7 @@
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger rowCount = [self.fields count];
-    self.formTable.frame = CGRectMake(0, infotext.frame.size.height + infotext.frame.origin.y + 20, SCREEN_WIDTH, rowCount * 60);
+    self.formTable.frame = CGRectMake(0, infotext.frame.size.height + infotext.frame.origin.y + 20, [Util screenWidth], rowCount * 60);
     return rowCount;
 }
 

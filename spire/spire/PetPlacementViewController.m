@@ -10,10 +10,6 @@
 #import "VenueTableViewController.h"
 #import "NoPetsErrorView.h"
 
-#define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
-#define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
-
-
 @interface PetPlacementViewController () {
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -153,7 +149,7 @@
     self.scrollView.frame = CGRectMake(0, 0, screenWidth, screenHeight); //scroll view occupies full parent view!
     //specify CGRect bounds in place of self.view.bounds to make it as a portion of parent view!
     
-    self.scrollView.contentSize = CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT + 180);   //scroll view size
+    self.scrollView.contentSize = CGSizeMake([Util screenWidth], [Util screenHeight] + 180);   //scroll view size
     
     self.scrollView.showsVerticalScrollIndicator = NO;    // to hide scroll indicators!
     
@@ -173,7 +169,7 @@
 
 - (void)setupImagePetContainer
 {
-    float screen_width = SCREEN_WIDTH;
+    float screen_width = [Util screenWidth];
     UIView *container = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screen_width, screen_width)];
     self.container = container;
     [self setupImage];
@@ -183,7 +179,7 @@
 
 - (void)setupImage
 {
-    float screen_width = SCREEN_WIDTH;
+    float screen_width = [Util screenWidth];
     UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screen_width, screen_width)];
     imgView.image = self.image;
     [self.container addSubview:imgView];
@@ -193,7 +189,7 @@
 {
     CGPoint point = [[[event allTouches] anyObject] locationInView:self.container];
     // TODO: use actual dims of pet image
-    float max_height = SCREEN_WIDTH - 20;
+    float max_height = [Util screenWidth] - 20;
     if (point.y > max_height) {
         point.y = max_height;
     }

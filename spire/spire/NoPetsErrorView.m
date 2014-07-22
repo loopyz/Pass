@@ -9,9 +9,6 @@
 #import "NoPetsErrorView.h"
 #import "FindPetViewController.h"
 
-#define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
-#define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
-
 @implementation NoPetsErrorView
 
 - (id)initWithFrame:(CGRect)frame
@@ -37,7 +34,7 @@
   UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
   [submitButton setTitle:@"Show View" forState:UIControlStateNormal];
   
-  submitButton.frame = CGRectMake(0, SCREEN_HEIGHT - 180, 320, 47.5);
+  submitButton.frame = CGRectMake(0, [Util screenHeight] - 180, 320, 47.5);
   [submitButton addTarget:self action:@selector(buttonTouched) forControlEvents:UIControlEventTouchUpInside];
   
   UIImage *btnImage = [UIImage imageNamed:@"findonebutton.png"];

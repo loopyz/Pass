@@ -10,6 +10,22 @@
 
 @implementation Util
 
+# pragma mark - Screen Utilities
+
++ (BOOL)screenIsPortrait
+{
+    return ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown);
+
++ (CGFloat)screenWidth
+{
+    return ([self screenIsPortrait] ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height);
+}
+
++ (CGFloat)screenHeight
+{
+  return ([self screenIsPortrait] ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width);
+}
+
 #pragma mark - Parse Utilities
 
 + (NSString *)currentUserId

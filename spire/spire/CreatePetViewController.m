@@ -152,7 +152,7 @@
 - (void)setupWelcome
 {
     //setup welcome message
-    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2 - 10, 200, 217.5, 70)];
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 210.5)/2 - 10, 200, 217.5, 70)];
     imgView.image = [UIImage imageNamed:@"nameyourpet.png"];
     [self.scrollView addSubview:imgView];
 }

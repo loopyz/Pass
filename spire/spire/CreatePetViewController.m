@@ -40,7 +40,7 @@
     UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [submitButton setTitle:@"Show View" forState:UIControlStateNormal];
     
-    submitButton.frame = CGRectMake(0, SCREEN_HEIGHT - 200, 320, 47.5);
+    submitButton.frame = CGRectMake(0, self.formTable.frame.origin.y + self.formTable.frame.size.height + 120, 320, 47.5);
     [submitButton addTarget:self action:@selector(buttonTouched:) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage = [UIImage imageNamed:@"submitbutton.png"];
@@ -75,7 +75,7 @@
 - (void)setupTable
 {
     
-    CGRect tableViewRect = CGRectMake(0, 330, SCREEN_WIDTH, 140);
+    CGRect tableViewRect = CGRectMake(0, 200, SCREEN_WIDTH, 60);
     
     self.formTable = [[UITableView alloc] initWithFrame:tableViewRect style:UITableViewStylePlain];
     self.formTable.delegate = self;
@@ -152,7 +152,7 @@
 - (void)setupWelcome
 {
     //setup welcome message
-    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 190.5)/2 - 10, 200, 217.5, 70)];
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - 210.5)/2 - 10, 200, 217.5, 70)];
     imgView.image = [UIImage imageNamed:@"nameyourpet.png"];
     [self.scrollView addSubview:imgView];
 }
@@ -184,7 +184,7 @@
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger rowCount = [self.fields count];
-    self.formTable.frame = CGRectMake(0, 330, SCREEN_WIDTH, rowCount * 60);
+    self.formTable.frame = CGRectMake(0, 300, SCREEN_WIDTH, rowCount * 60);
     return rowCount;
 }
 

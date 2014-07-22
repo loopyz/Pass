@@ -11,7 +11,12 @@
 #import "HomeViewController.h"
 #import "RegisterInformationViewController.h"
 
-@interface LoginViewController ()
+@interface LoginViewController () {
+    CGFloat screenWidth;
+    CGFloat screenHeight;
+    CGFloat loginPadding;
+    CGFloat buttonBetween;
+}
 
 @end
 
@@ -20,6 +25,17 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        screenWidth = screenRect.size.width;
+        screenHeight = screenRect.size.height;
+        if (screenHeight <= 480) {
+            loginPadding = screenHeight/1.47f;
+            buttonBetween = 10;
+        }
+        else {
+            loginPadding = screenHeight/1.52f;
+            buttonBetween = 15;
+        }
         // Custom initialization
         // moved to view did load temporarily
     }
@@ -118,7 +134,7 @@
     self.facebookButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.facebookButton setTitle:@"Show View" forState:UIControlStateNormal];
     
-    self.facebookButton.frame = CGRectMake((self.view.frame.size.width - 278)/2 + 3, 495, 278, 41);
+    self.facebookButton.frame = CGRectMake((self.view.frame.size.width - 278)/2 + 3, loginPadding + buttonBetween + 41 + 41 + buttonBetween, 278, 41);
     [self.facebookButton addTarget:self action:@selector(normalLoginTouched) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage = [UIImage imageNamed:@"email-register.png"];
@@ -134,7 +150,7 @@
     self.facebookButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.facebookButton setTitle:@"Show View" forState:UIControlStateNormal];
     
-    self.facebookButton.frame = CGRectMake((self.view.frame.size.width - 278)/2 + 3, 445, 278, 41);
+    self.facebookButton.frame = CGRectMake((self.view.frame.size.width - 278)/2 + 3, loginPadding + buttonBetween + 41, 278, 41);
     [self.facebookButton addTarget:self action:@selector(normalLoginTouched) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage = [UIImage imageNamed:@"email-login.png"];
@@ -150,7 +166,7 @@
     self.facebookButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.facebookButton setTitle:@"Show View" forState:UIControlStateNormal];
     
-    self.facebookButton.frame = CGRectMake((self.view.frame.size.width - 278)/2 + 3, 395, 278, 41);
+    self.facebookButton.frame = CGRectMake((self.view.frame.size.width - 278)/2 + 3, loginPadding, 278, 41);
     [self.facebookButton addTarget:self action:@selector(buttonTouched:) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage = [UIImage imageNamed:@"facebook-login.png"];
@@ -171,7 +187,12 @@
 - (void)addBackgroundImage
 {
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
-    imageView.image = [UIImage imageNamed:@"login-bg.png"];
+    if (screenHeight <= 480) {
+        imageView.image = [UIImage imageNamed:@"login-bg.png"];
+    }
+    else {
+        imageView.image = [UIImage imageNamed:@"login-bg-iphone4.png"];
+    }
     
     [self.view insertSubview:imageView atIndex:0];
 }

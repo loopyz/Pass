@@ -421,11 +421,7 @@
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
     
-    PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
-    query.cachePolicy = kPFCachePolicyCacheThenNetwork;
-    PFUser *currentUser = [PFUser currentUser];
-    [query whereKey:@"currentUser" equalTo:currentUser];
-    [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
+    [Util currentPetWithBlock:^(PFObject *pet, NSError *error) {
         self.pet = pet;
     }];
     

@@ -10,6 +10,8 @@
 #import "RegisterInformationViewController.h"
 #import "CreatePetViewController.h"
 
+#define FAKE_REGISTER true
+
 #define SCREEN_WIDTH ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.width : [[UIScreen mainScreen] bounds].size.height)
 #define SCREEN_HEIGHT ((([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown)) ? [[UIScreen mainScreen] bounds].size.height : [[UIScreen mainScreen] bounds].size.width)
 
@@ -56,8 +58,10 @@
         NSString *text = [[cell rightTextField] text];
         [user setObject:text forKey:self.fields[i]];
     }
-    [user setObject:@true forKey:@"registered"];
-    [user saveInBackground];
+    if (!FAKE_REGISTER) {
+        [user setObject:@true forKey:@"registered"];
+        [user saveInBackground];
+    }
     
     // move onto creating pet
     CreatePetViewController *cvc = [[CreatePetViewController alloc] init];
@@ -233,23 +237,35 @@
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    ELCTextFieldCell *textFieldCell = (ELCTextFieldCell*)textField.superview;
+    ELCTextFieldCell *textFieldCell = (ELCTextFieldCell*)[[textField superview] superview];
     if (![textFieldCell isKindOfClass:ELCTextFieldCell.class]) {
         return;
     }
     //It's a better method to get the indexPath like this, in case you are rearranging / removing / adding rows,
     //the set indexPath wouldn't change
     NSIndexPath *indexPath = [self.formTable indexPathForCell:textFieldCell];
-	if(indexPath != nil && indexPath.row < [labels count]-1) {
+	if(indexPath != nil && indexPath.row < [self.labels count]-1) {
 		NSIndexPath *path = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:indexPath.section];
-		[[(ELCTextFieldCell*)[self.formTable cellForRowAtIndexPath:path] rightTextField] becomeFirstResponder];
-		[self.formTable scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionTop animated:YES];
+        ELCTextFieldCell *newCell =(ELCTextFieldCell*)[self.formTable cellForRowAtIndexPath:path];
+		[[newCell rightTextField] becomeFirstResponder];
+//        [self.formTable scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionTop animated:YES];
+        [self.scrollView setContentOffset:CGPointMake(0, newCell.frame.origin.y + newCell.frame.size.height) animated:YES];
 	}
 	else {
 		[[(ELCTextFieldCell*)[self.formTable cellForRowAtIndexPath:indexPath] rightTextField] resignFirstResponder];
+        
 	}
 }
 
+- (void) textFieldDidBeginEditing:(UITextField *)textField
+{
+    ELCTextFieldCell *textFieldCell = (ELCTextFieldCell*)[[textField superview] superview];
+    NSIndexPath *indexPath = [self.formTable indexPathForCell:textFieldCell];
+//    [self.formTable scrollToRowAtIndexPath:[self.formTable indexPathForCell:textFieldCell] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    if (indexPath.row == 0) {
+    [self.scrollView setContentOffset:CGPointMake(0, textField.frame.origin.y + textField.frame.size.height) animated:YES];
+    }
+}
 - (void)textFieldCell:(ELCTextFieldCell *)inCell updateTextLabelAtIndexPath:(NSIndexPath *)indexPath string:(NSString *)string {
     
 	NSLog(@"See input: %@ from section: %d row: %d, should update models appropriately", string, indexPath.section, indexPath.row);

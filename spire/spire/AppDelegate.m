@@ -11,6 +11,7 @@
 #import "AppDelegate.h"
 #import "LoginViewController.h"
 
+#define FORCE_LOGOUT false
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -22,8 +23,11 @@
     [Parse setApplicationId:@"0tIsLeaAK4LvDqxYfrVc9Qzs7l3kyIqlmEYqsnRw"
                   clientKey:@"OxsqVethSVtjArsp2OPWN85RnAsLXQxKS7jbdwJv"];
     [PFFacebookUtils initializeFacebook];
-    // tmp logout
-    //[PFUser logOut];
+    
+    if (FORCE_LOGOUT) {
+        [PFUser logOut];
+    }
+
     //login
     LoginViewController *loginViewController = [[LoginViewController alloc] init];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:loginViewController];

@@ -11,6 +11,8 @@
 #import "HomeViewController.h"
 #import "RegisterInformationViewController.h"
 
+#define FORCE_REGISTER true
+
 @interface LoginViewController () {
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -49,7 +51,7 @@
     [self.navigationController setNavigationBarHidden:YES];
     
     // check if user is cached and linked to Facebook and bypass login if so
-    if ([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
+    if ([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]] && !FORCE_REGISTER) {
         //[PFUser logOut];
         HomeViewController *svc = [[HomeViewController alloc] init];
         [self.navigationController pushViewController:svc animated:YES];
@@ -78,7 +80,7 @@
             } else {
                 NSLog(@"Some error occured during FB Login Process.");
             }
-        } else if (user.isNew || ![user objectForKey:@"registered"]) {
+        } else if (user.isNew || ![user objectForKey:@"registered"] || FORCE_REGISTER) {
             NSLog(@"User just joined the app. Successful login.");
             PFUser *currentUser = [PFUser currentUser];
             if (![currentUser objectForKey:@"fbId"]) {

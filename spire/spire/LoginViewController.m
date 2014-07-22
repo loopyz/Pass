@@ -11,7 +11,7 @@
 #import "HomeViewController.h"
 #import "RegisterInformationViewController.h"
 
-#define FORCE_REGISTER true
+#define FORCE_REGISTER false
 
 @interface LoginViewController () {
     CGFloat screenWidth;

@@ -140,11 +140,11 @@
   NSLog(@"%d", indexPath.row);
     if (indexPath.row != 0) {
         PFObject *photo = self.photos[indexPath.row - 1];
-//        SingleImageViewController *ppvc = [[SingleImageViewController alloc] initWithPhoto:photo];
-        CreatePetViewController *ppvc = [[CreatePetViewController alloc] initWithNibName:nil bundle:nil] ;
+        SingleImageViewController *ppvc = [[SingleImageViewController alloc] initWithPhoto:photo];
+//        CreatePetViewController *ppvc = [[CreatePetViewController alloc] initWithNibName:nil bundle:nil] ;
 
   [self presentViewController:ppvc animated:YES completion:nil];
-  //[self.navigationController pushViewController:ppvc animated:YES];
+//  [self.navigationController pushViewController:ppvc animated:YES];
     }
 }
 

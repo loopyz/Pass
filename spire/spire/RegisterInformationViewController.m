@@ -9,6 +9,7 @@
 
 #import "RegisterInformationViewController.h"
 #import "CreatePetViewController.h"
+#import "HomeViewController.h"
 
 #define FAKE_REGISTER true
 
@@ -67,6 +68,7 @@
     CreatePetViewController *cvc = [[CreatePetViewController alloc] init];
     [self.navigationController pushViewController:cvc animated:YES];
     // open home view controller
+//    
 //    HomeViewController *svc = [[HomeViewController alloc] init];
 //    [self.navigationController pushViewController:svc animated:YES];
 }

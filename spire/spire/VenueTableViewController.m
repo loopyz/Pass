@@ -79,6 +79,15 @@
     return self;
 }
 
+- (BOOL)prefersStatusBarHidden {return YES;}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES];
+
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -91,7 +100,7 @@
     
     UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissMenu)];
     self.navigationItem.leftBarButtonItem = backButton;
-    [self.tableView setContentInset:UIEdgeInsetsMake(30, 0, 0, 0)];
+    //[self.tableView setContentInset:UIEdgeInsetsMake(30, 0, 0, 0)];
 }
 
 - (void)didReceiveMemoryWarning
@@ -101,6 +110,10 @@
 }
 
 #pragma mark - Table view data source
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return 320 + 39;
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -113,6 +126,24 @@
 {
     // Return the number of rows in the section.
     return [self.venues count];
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 320 + 39)];
+    
+    // TODO: ADD APPLE MAPS
+    //height and width of screen.
+    UIImageView *map = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
+    map.image = [UIImage imageNamed:@"googlemap.png"];
+    [view addSubview:map];
+    
+    // foursquare attribution
+    UIImageView *foursquare = [[UIImageView alloc] initWithFrame:CGRectMake(0, 320, 320, 39)];
+    foursquare.image = [UIImage imageNamed:@"foursquare.png"];
+    [view addSubview:foursquare];
+    
+    return view;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

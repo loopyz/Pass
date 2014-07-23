@@ -15,6 +15,7 @@
 + (BOOL)screenIsPortrait
 {
     return ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait) || ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown);
+}
 
 + (CGFloat)screenWidth
 {

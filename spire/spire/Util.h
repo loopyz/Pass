@@ -18,4 +18,13 @@
 + (void)currentPetWithBlock:(void (^)(PFObject *pet, NSError *error))callback;
 //+ (BOOL)currentUserHasPet;
 
++ (void)likePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock;
++ (void)unlikePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock;
+
++ (void)followUserInBackground:(PFUser *)user block:(void (^)(BOOL succeeded, NSError *error))completionBlock;
++ (void)unfollowUserEventually:(PFUser *)user;
+
++ (PFQuery *)queryForActivitiesOnPhoto:(PFObject *)photo cachePolicy:(PFCachePolicy)cachePolicy;
+
+
 @end

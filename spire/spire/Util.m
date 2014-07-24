@@ -57,4 +57,73 @@
     return (user != nil && user[@"currentPetId"] != [NSNull null]);
 }*/
 
++ (void)likePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock
+{
+    PFObject *likeActivity = [PFObject objectWithClassName:@"Activity"];
+    [likeActivity setObject:@"like" forKey:@"type"];
+    [likeActivity setObject:[PFUser currentUser] forKey:@"fromUser"];
+    [likeActivity setObject:[photo objectForKey:@"user"] forKey:@"toUser"];
+    [likeActivity setObject:photo forKey:@"photo"];
+    
+    // TODO: ACL protection
+    
+    [likeActivity saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (completionBlock) {
+            completionBlock(succeeded, error);
+        }
+        // TODO: updating cache
+    }];
+    
+}
+
++ (void)unlikePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock
+{
+    
+}
+
++ (void)followUserInBackground:(PFUser *)user block:(void (^)(BOOL succeeded, NSError *error))completionBlock
+{
+    // don't follow yourself
+    if ([[user objectId] isEqualToString:[[PFUser currentUser] objectId]]) {
+        return;
+    }
+    
+    PFObject *followActivity = [PFObject objectWithClassName:@"Activity"];
+    [followActivity setObject:@"follow" forKey:@"type"];
+    [followActivity setObject:[PFUser currentUser] forKey:@"fromUser"];
+    [followActivity setObject:user forKey:@"toUser"];
+    
+    // TODO: ACL protection
+    
+    [followActivity saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (completionBlock) {
+            completionBlock(succeeded, error);
+        }
+        // TODO: updating cache
+    }];
+}
+
++ (void)unfollowUserEventually:(PFUser *)user
+{
+    
+}
+
++ (PFQuery *)queryForActivitiesOnPhoto:(PFObject *)photo cachePolicy:(PFCachePolicy)cachePolicy
+{
+    PFQuery *queryLikes = [PFQuery queryWithClassName:@"Activity"];
+    [queryLikes whereKey:@"photo" equalTo:photo];
+    [queryLikes whereKey:@"type" equalTo:@"like"];
+    
+    PFQuery *queryComments = [PFQuery queryWithClassName:@"Activity"];
+    [queryComments whereKey:@"photo" equalTo:photo];
+    [queryComments whereKey:@"type" equalTo:@"comment"];
+    
+    PFQuery *query = [PFQuery orQueryWithSubqueries:[NSArray arrayWithObjects:queryLikes,queryComments,nil]];
+    // TODO: set cache policy
+    [query includeKey:@"fromUser"];
+    [query includeKey:@"photo"];
+
+    return query;
+}
+
 @end

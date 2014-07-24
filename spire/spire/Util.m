@@ -44,7 +44,7 @@
     }
 
     PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
-    [query whereKey:@"currentUserId" equalTo:[user objectId]];
+    [query whereKey:@"currentUser" equalTo:user];
     query.cachePolicy = kPFCachePolicyCacheElseNetwork;
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
         callback(pet, error);

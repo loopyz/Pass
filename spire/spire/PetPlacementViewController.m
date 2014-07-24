@@ -425,10 +425,8 @@
     
     [Util currentPetWithBlock:^(PFObject *pet, NSError *error) {
         self.pet = pet;
-        PFQuery *getPet = [PFQuery queryWithClassName:@"Pet"];
-        self.pet = [getPet getObjectWithId:@"osgACYg7UZ"];
     }];
-    
+
     [self setupForm];
     [self setupSubmitButton];
     YCameraViewController *camController = [[YCameraViewController alloc] initWithNibName:@"YCameraViewController" bundle:nil];

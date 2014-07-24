@@ -74,7 +74,7 @@
     // real miles yay!
     CLLocation *oldLoc = [[CLLocation alloc] initWithLatitude:oldLatitude longitude:oldLongitude];
     CLLocation *newLoc = [[CLLocation alloc] initWithLatitude:[latitude doubleValue] longitude:[longitude doubleValue]];
-    NSNumber *miles = [NSNumber numberWithFloat:(0.000621371192 * [oldLoc distanceFromLocation:newLoc])];
+    NSNumber *miles = [NSNumber numberWithFloat:(0.000621371192 * 0.001 * [oldLoc distanceFromLocation:newLoc])];
     [pet incrementKey:@"miles" byAmount:miles];
     [pet saveInBackground];
 }

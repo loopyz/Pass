@@ -60,6 +60,9 @@
 
 - (void)updatePet:(PFObject *)pet withDropped:(BOOL)dropped withLat:(NSNumber *)latitude withLong:(NSNumber *)longitude withName:(NSString *)locName
 {
+    double oldLongitude = [[pet objectForKey:@"longitude"] doubleValue];
+    double oldLatitude = [[pet objectForKey:@"latitude"] doubleValue];
+
     [pet setObject:latitude forKey:@"latitude"];
     [pet setObject:longitude forKey:@"longitude"];
     [pet setObject:locName forKey:@"locName"];
@@ -67,8 +70,11 @@
         [pet setObject:[NSNull null] forKey:@"currentUserId"];
         [pet incrementKey:@"passes"];
     }
-    // TODO: actually set miles to what they should be
-    NSNumber *miles = [[NSNumber alloc] initWithInt:(arc4random() % 5)];
+
+    // real miles yay!
+    CLLocation *oldLoc = [[CLLocation alloc] initWithLatitude:oldLatitude longitude:oldLongitude];
+    CLLocation *newLoc = [[CLLocation alloc] initWithLatitude:[latitude doubleValue] longitude:[longitude doubleValue]];
+    NSNumber *miles = [NSNumber numberWithFloat:(0.000621371192 * [oldLoc distanceFromLocation:newLoc])];
     [pet incrementKey:@"miles" byAmount:miles];
     [pet saveInBackground];
 }
@@ -419,6 +425,8 @@
     
     [Util currentPetWithBlock:^(PFObject *pet, NSError *error) {
         self.pet = pet;
+        PFQuery *getPet = [PFQuery queryWithClassName:@"Pet"];
+        self.pet = [getPet getObjectWithId:@"osgACYg7UZ"];
     }];
     
     [self setupForm];

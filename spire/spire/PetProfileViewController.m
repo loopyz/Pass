@@ -185,7 +185,7 @@
   [numMiles setBackgroundColor:[UIColor clearColor]];
   [numMiles setFont:[UIFont fontWithName:@"HelveticaNeue" size:15]];
   
-    numMiles.text = [[pet objectForKey:@"miles"] stringValue];//@"2187";
+    numMiles.text = [NSString stringWithFormat:@"%d", [[pet objectForKey:@"miles"] intValue]];//@"2187";
   numMiles.lineBreakMode = NSLineBreakByWordWrapping;
   numMiles.numberOfLines = 0;
   [view addSubview:numMiles];

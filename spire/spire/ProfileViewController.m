@@ -341,7 +341,8 @@
     
 
         UILabel *numMiles = (UILabel *)[cell viewWithTag:202];
-        numMiles.text = [[pet objectForKey:@"miles"] stringValue];//@"2187";
+        
+        numMiles.text = [NSString stringWithFormat:@"%d", [[pet objectForKey:@"miles"] intValue]];//@"2187";
     
         UILabel *numPasses = (UILabel *)[cell viewWithTag:204];
         numPasses.text = [[pet objectForKey:@"passes"] stringValue];//@"1322";

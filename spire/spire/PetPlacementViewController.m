@@ -60,8 +60,10 @@
 
 - (void)updatePet:(PFObject *)pet withDropped:(BOOL)dropped withLat:(NSNumber *)latitude withLong:(NSNumber *)longitude withName:(NSString *)locName
 {
-    double oldLongitude = [[pet objectForKey:@"longitude"] doubleValue];
-    double oldLatitude = [[pet objectForKey:@"latitude"] doubleValue];
+    CLLocationDegrees oldLongitude =(CLLocationDegrees) [[pet objectForKey:@"longitude"] doubleValue];
+    CLLocationDegrees oldLatitude =(CLLocationDegrees) [[pet objectForKey:@"latitude"] doubleValue];
+    CLLocationDegrees newLongitude = (CLLocationDegrees)[longitude doubleValue];
+    CLLocationDegrees newLatitude = (CLLocationDegrees)[latitude doubleValue];
 
     [pet setObject:latitude forKey:@"latitude"];
     [pet setObject:longitude forKey:@"longitude"];
@@ -73,7 +75,7 @@
 
     // real miles yay!
     CLLocation *oldLoc = [[CLLocation alloc] initWithLatitude:oldLatitude longitude:oldLongitude];
-    CLLocation *newLoc = [[CLLocation alloc] initWithLatitude:[latitude doubleValue] longitude:[longitude doubleValue]];
+    CLLocation *newLoc = [[CLLocation alloc] initWithLatitude:newLatitude longitude:newLongitude];
     NSNumber *miles = [NSNumber numberWithDouble:(0.000621371192 * [oldLoc distanceFromLocation:newLoc])];
     [pet incrementKey:@"miles" byAmount:miles];
     [pet saveInBackground];

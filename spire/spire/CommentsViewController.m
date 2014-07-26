@@ -66,6 +66,31 @@ static NSString * const CellIdentifier = @"cell";
     return query;
 }
 
+- (void) saveCommentToParse: (NSString *)commentText
+{
+    if (commentText.length != 0) {
+        PFObject *comment = [PFObject objectWithClassName:@"Activity"];
+        [comment setObject:commentText forKey:@"content"];
+        [comment setObject:@"comment" forKey:@"type"];
+        [comment setObject:[self.photo objectForKey:@"user"] forKey:@"toUser"];
+        [comment setObject:[PFUser currentUser] forKey:@"fromUser"];
+        [comment setObject:self.photo forKey:@"photo"];
+        
+        // setting ACLs
+        PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+        [ACL setPublicReadAccess:YES];
+        comment.ACL = ACL;
+        
+        // todo -- update comment records in SPCACHE
+        [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (error){
+                NSLog(@"some error");
+            } else {
+                NSLog(@"comment success");
+            }
+        }];
+    }
+}
 - (void)loadView
 {
     [super loadView];

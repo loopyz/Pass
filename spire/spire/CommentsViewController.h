@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RDRStickyKeyboardView.h"
 
-@interface CommentsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface CommentsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate,CommentTextViewDelegate>
 
-@property (nonatomic, strong) UITableView *commentsTable;
 @property (nonatomic, strong) NSArray *comments;
 @property (nonatomic, strong) PFObject *photo;
 

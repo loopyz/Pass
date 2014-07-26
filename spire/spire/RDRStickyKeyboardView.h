@@ -30,18 +30,25 @@
 
 #pragma mark - RDRKeyboardInputView
 
-@interface RDRKeyboardInputView : UIView
+@class RDRKeyboardInputView;
 
-@property (nonatomic, strong, readonly) UIButton *leftButton;
-@property (nonatomic, strong, readonly) UIButton *rightButton;
-@property (nonatomic, strong, readonly) UITextView *textView;
-
+@protocol CommentTextViewDelegate <NSObject>
+- (void)commentTextViewDidPressPostButton:(RDRKeyboardInputView *)commentView;
 @end
+
+@interface RDRKeyboardInputView : UIView
+@property (nonatomic, strong, readonly) UIToolbar *toolbar;
+@property (nonatomic, strong) UIButton *rightButton;
+@property (nonatomic, strong, readonly) UITextView *textView;
+@property (nonatomic, weak) id <CommentTextViewDelegate> delegate;
+@end
+
+
+
 
 #pragma mark - UIScrollView+RDRStickyKeyboardView
 
 @interface UIScrollView (RDRStickyKeyboardView)
-
 - (BOOL)rdr_isAtBottom;
 - (void)rdr_scrollToBottomAnimated:(BOOL)animated
                withCompletionBlock:(void(^)(void))completionBlock;
@@ -55,7 +62,7 @@
 #pragma mark - RDRStickyKeyboardView
 
 @interface RDRStickyKeyboardView : UIView
-
+@property (nonatomic, strong) UILabel *placeHolderLabel;
 @property (nonatomic, strong, readonly) UIScrollView *scrollView;
 
 // The inputView that is always visible, right below the content.

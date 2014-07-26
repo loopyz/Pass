@@ -104,7 +104,7 @@ static NSString * const CellIdentifier = @"cell";
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             self.comments = objects;
-            [self.commentsTable reloadData];
+            [self.tableView reloadData];
         }
     }];
 }
@@ -126,6 +126,8 @@ static NSString * const CellIdentifier = @"cell";
     self.contentWrapper = [[RDRStickyKeyboardView alloc] initWithScrollView:self.tableView];
     self.contentWrapper.frame = self.view.bounds;
     self.contentWrapper.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+    self.contentWrapper.inputView.delegate = self;
+    self.contentWrapper.inputViewScrollView.delegate = self;
     [self.view addSubview:self.contentWrapper];
 }
 
@@ -173,6 +175,12 @@ static NSString * const CellIdentifier = @"cell";
     return 60;
 }
 
-
+- (void)commentTextViewDidPressPostButton:(RDRKeyboardInputView *)commentView {
+    NSLog(@"Post message %@", commentView.textView.text);
+    [self saveCommentToParse:commentView.textView.text];
+    commentView.textView.text = @"";
+    self.contentWrapper.inputView.textView.text = @"";
+    [self.contentWrapper hideKeyboard];
+}
 
 @end

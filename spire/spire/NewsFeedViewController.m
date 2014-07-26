@@ -100,6 +100,26 @@
     [self.navigationController pushViewController:ppvc animated:YES];
 }
 
+- (void)heartTouched:(id)sender
+{
+    UIView *commentView = (UIView *)sender;
+    UITableViewCell *containingCell = (UITableViewCell *)[[commentView superview] superview];
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:containingCell];
+    PFObject *photo = [self.photos objectAtIndex:indexPath.section];
+
+    // TODO: toggle styles of heart
+    // TODO: add dislike part
+    [Util likePhotoInBackground:photo block:^(BOOL succeeded, NSError *error) {
+        if (error) {
+            NSLog(@"error liking photo");
+        } else {
+            NSLog(@"liked photo successfully");
+        }
+    }];
+    
+    
+}
+
 #pragma mark - Table view data source
 
 // Table View Delegate Methods
@@ -210,7 +230,7 @@
       [heartButton setTitle:@"Heart" forState:UIControlStateNormal];
       
       heartButton.frame = CGRectMake(self.view.frame.size.width - 40, 345, 32.5, 22);
-      [heartButton addTarget:self action:@selector(heartTouched) forControlEvents:UIControlEventTouchUpInside];
+      [heartButton addTarget:self action:@selector(heartTouched:) forControlEvents:UIControlEventTouchUpInside];
       heartButton.tag = 103;
       [cell addSubview:heartButton];
       [heartButton setImage:heartButtonIcon forState:UIControlStateNormal];

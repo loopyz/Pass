@@ -66,6 +66,10 @@
     [likeActivity setObject:photo forKey:@"photo"];
     
     // TODO: ACL protection
+    PFACL *likeACL = [PFACL ACLWithUser:[PFUser currentUser]];
+    [likeACL setPublicReadAccess:YES];
+    likeActivity.ACL = likeACL;
+
     
     [likeActivity saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (completionBlock) {

@@ -62,6 +62,7 @@ static NSString * const CellIdentifier = @"cell";
     [query includeKey:@"fromUser"];
     [query orderByDescending:@"createdAt"];
     [query setCachePolicy:kPFCachePolicyNetworkOnly];
+    [query setLimit:10];
 
     return query;
 }

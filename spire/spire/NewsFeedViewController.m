@@ -8,6 +8,7 @@
 
 #import "NewsFeedViewController.h"
 #import "PullToRefresh.h"
+#import "CommentsViewController.h"
 
 #import <MediaPlayer/MediaPlayer.h>
 #import <Parse/Parse.h>
@@ -86,6 +87,13 @@
 {
   [super didReceiveMemoryWarning];
   // Dispose of any resources that can be recreated.
+}
+
+- (void)commentTouched
+{
+    CommentsViewController *ppvc = [[CommentsViewController alloc] initWithNibName:nil bundle:nil];
+    
+    [self.navigationController pushViewController:ppvc animated:YES];
 }
 
 #pragma mark - Table view data source

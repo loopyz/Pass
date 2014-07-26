@@ -89,9 +89,13 @@
   // Dispose of any resources that can be recreated.
 }
 
-- (void)commentTouched
+- (void)commentTouched:(id)sender
 {
-    CommentsViewController *ppvc = [[CommentsViewController alloc] initWithNibName:nil bundle:nil];
+    UIView *commentView = (UIView *)sender;
+    UITableViewCell *containingCell = (UITableViewCell *)[[commentView superview] superview];
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:containingCell];
+    PFObject *photo = [self.photos objectAtIndex:indexPath.section];
+    CommentsViewController *ppvc = [[CommentsViewController alloc] initWithPhoto:photo];
     
     [self.navigationController pushViewController:ppvc animated:YES];
 }
@@ -194,15 +198,16 @@
       [commentButton setTitle:@"Comment" forState:UIControlStateNormal];
       
       commentButton.frame = CGRectMake(self.view.frame.size.width - 90, 345, 32.5, 22);
-      [commentButton addTarget:self action:@selector(commentTouched) forControlEvents:UIControlEventTouchUpInside];
+
       commentButton.tag = 102;
       [cell addSubview:commentButton];
       [commentButton setImage:commentButtonIcon forState:UIControlStateNormal];
       commentButton.contentMode = UIViewContentModeScaleToFill;
+      [commentButton addTarget:self action:@selector(commentTouched:) forControlEvents:UIControlEventTouchUpInside];
       
       // setup heart button
       UIButton *heartButton = [UIButton buttonWithType:UIButtonTypeCustom];
-      [commentButton setTitle:@"Heart" forState:UIControlStateNormal];
+      [heartButton setTitle:@"Heart" forState:UIControlStateNormal];
       
       heartButton.frame = CGRectMake(self.view.frame.size.width - 40, 345, 32.5, 22);
       [heartButton addTarget:self action:@selector(heartTouched) forControlEvents:UIControlEventTouchUpInside];
@@ -221,7 +226,7 @@
       desc.tag = 104;
       [cell addSubview:desc];
   }
-  
+    
     PFImageView *imageView = (PFImageView *)[cell viewWithTag:100];
     imageView.file = [photo objectForKey:@"image"];
     [imageView loadInBackground];

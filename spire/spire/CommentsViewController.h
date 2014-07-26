@@ -11,5 +11,8 @@
 @interface CommentsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) UITableView *commentsTable;
+@property (nonatomic, strong) NSArray *comments;
+@property (nonatomic, strong) PFObject *photo;
 
+- (id) initWithPhoto: (PFObject *)photo;
 @end

@@ -37,7 +37,34 @@ static NSString * const CellIdentifier = @"cell";
     return self;
 }
 
+- (id)initWithPhoto:(PFObject *)photo
+{
+    self = [super initWithNibName:nil bundle:nil];
+    if (self) {
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        screenWidth = screenRect.size.width;
+        screenHeight = screenRect.size.height;
+        self.photo = photo;
+        self.comments = [[NSArray alloc] init];
+        //        [self setupTable];
+        //        [self setupCommentBox];
+    }
+    return self;
+}
+
 #pragma mark - View lifecycle
+
+- (PFQuery *) queryForComments
+{
+    PFQuery *query = [PFQuery queryWithClassName:@"Activity"];
+    [query whereKey:@"photo" equalTo:self.photo];
+    [query whereKey:@"type" equalTo:@"comment"];
+    [query includeKey:@"fromUser"];
+    [query orderByDescending:@"createdAt"];
+    [query setCachePolicy:kPFCachePolicyNetworkOnly];
+
+    return query;
+}
 
 - (void)loadView
 {
@@ -46,6 +73,16 @@ static NSString * const CellIdentifier = @"cell";
     [self _setupSubviews];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    PFQuery *query = [self queryForComments];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            self.comments = objects;
+            [self.commentsTable reloadData];
+        }
+    }];
+}
 #pragma mark - Private
 
 - (void)_setupSubviews
@@ -82,13 +119,14 @@ static NSString * const CellIdentifier = @"cell";
     }
     
     if (indexPath.row == 0) {
-        cell.text = @"hello this is the original comment";
+        cell.text = [self.photo objectForKey:@"caption"]; // is this the caption?
     }
     if (indexPath.row == 1) {
-        cell.text = @"load more comments link here";
+        cell.text = @"Load more comments link here";
     }
-    else {
-        cell.text = @"regular comment";
+    else if (indexPath.row > 1){
+        PFObject *comment = [self.comments objectAtIndex:(indexPath.row - 2)];
+        cell.text = [comment objectForKey:@"content"];
         
     }
     return cell;
@@ -100,7 +138,8 @@ static NSString * const CellIdentifier = @"cell";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // TODO: make it dynamic so that we add rows when people click "load more comments"
-    return 10;
+    NSInteger numComments = [self.comments count] + 2;
+    return numComments;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

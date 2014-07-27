@@ -143,48 +143,100 @@
 
 - (void)setupTabBars
 {
+    [[UITabBar appearance] setBackgroundColor:[UIColor whiteColor]];
     NewsFeedViewController *nvc = [[NewsFeedViewController alloc]initWithNibName:nil bundle:nil];
-    nvc.tabBarItem.image = [UIImage imageNamed:@"hometab.png"];
+    nvc.tabBarItem.image = [UIImage imageNamed:@"hometabsmall.png"];
     
     FindPetViewController *evc = [[FindPetViewController alloc] initWithNibName:nil bundle:nil];
-    evc.tabBarItem.image = [UIImage imageNamed:@"searchtab.png"];
+    evc.tabBarItem.image = [UIImage imageNamed:@"searchtabsmall.png"];
     
     PetPlacementViewController *placevc = [[PetPlacementViewController alloc] initWithNibName:nil bundle:nil];
-    placevc.tabBarItem.image = [UIImage imageNamed:@"pettab.png"];
+    placevc.tabBarItem.image = [UIImage imageNamed:@"pettabsmall.png"];
     
     FriendsFeedViewController *ffvc = [[FriendsFeedViewController alloc] initWithNibName:nil bundle:nil];
-    ffvc.tabBarItem.image = [UIImage imageNamed:@"newstab.png"];
+    ffvc.tabBarItem.image = [UIImage imageNamed:@"newstabsmall.png"];
     
     ProfileViewController *pvc = [[ProfileViewController alloc] initWithNibName:nil bundle:nil];
 //    PetProfileViewController *pvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];
-    pvc.tabBarItem.image = [UIImage imageNamed:@"profiletab.png"];
+    pvc.tabBarItem.image = [UIImage imageNamed:@"profiletabsmall.png"];
     
-    [placevc.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"pettab-highlighted.png"] withFinishedUnselectedImage:[UIImage imageNamed:@"pettab.png"]];
+    [placevc.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"pettab-highlighted.png"] withFinishedUnselectedImage:[UIImage imageNamed:@"pettabsmall.png"]];
     
     self.viewControllers=[NSArray arrayWithObjects:nvc, evc, placevc, ffvc, pvc, nil];
 }
 
 - (void)assignTabColors
 {
-    switch (self.selectedIndex) {
-        case 0: {
-            UIColor * color = [UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f];
-            self.view.tintColor = color;
-            break;
-        }
-            
-        default:
-            break;
-    }
+//    switch (self.selectedIndex) {
+//        case 0: {
+//            UIColor * color = [UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f];
+//            self.view.tintColor = color;
+//            
+//            break;
+//        }
+//            
+//        default:
+//            break;
+//    }
+    
+    UIColor *backgroundColor = [UIColor colorWithRed:255/255.0f green:254/255.0f blue:252/255.0f alpha:1.0f];
+    
+    // set the bar background color
+    [[UITabBar appearance] setBackgroundImage:[self imageFromColor:backgroundColor forSize:CGSizeMake(320, 49) withCornerRadius:0]];
+    
+    // set the text color for selected state
+    [[UITabBarItem appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], UITextAttributeTextColor, nil] forState:UIControlStateSelected];
+    // set the text color for unselected state
+    [[UITabBarItem appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], UITextAttributeTextColor, nil] forState:UIControlStateNormal];
+    
+    // set the selected icon color
+    [[UITabBar appearance] setTintColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f]];
+    [[UITabBar appearance] setSelectedImageTintColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f]];
+    // remove the shadow
+    [[UITabBar appearance] setShadowImage:nil];
+    
+    // Set the dark color to selected tab (the dimmed background)
+    [[UITabBar appearance] setSelectionIndicatorImage:[self imageFromColor:[UIColor colorWithRed:243/255.0f green:243/255.0f blue:243/255.0f alpha:1.0f] forSize:CGSizeMake(64, 49) withCornerRadius:0]];
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController
 {
-    [self assignTabColors];
+    // [self assignTabColors];
     [viewController viewWillAppear:YES];
 //    if ([])
 //    [viewController Refresh];
 }
+
+- (UIImage *)imageFromColor:(UIColor *)color forSize:(CGSize)size withCornerRadius:(CGFloat)radius
+{
+    CGRect rect = CGRectMake(0, 0, size.width, size.height);
+    UIGraphicsBeginImageContext(rect.size);
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, [color CGColor]);
+    CGContextFillRect(context, rect);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    // Begin a new image that will be the new image with the rounded corners
+    // (here with the size of an UIImageView)
+    UIGraphicsBeginImageContext(size);
+    
+    // Add a clip before drawing anything, in the shape of an rounded rect
+    [[UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:radius] addClip];
+    // Draw your image
+    [image drawInRect:rect];
+    
+    // Get the image, here setting the UIImageView image
+    image = UIGraphicsGetImageFromCurrentImageContext();
+    
+    // Lets forget about that we were drawing
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
 
 @end
 

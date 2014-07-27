@@ -19,6 +19,8 @@
 @property (strong, nonatomic) UIColor *bgColor;
 @property (strong, nonatomic) UILabel *numScoresLabel;
 @property (nonatomic, strong) PullToRefresh *ptr;
+@property (nonatomic, strong) PFUser *user;
 
+- (id)initWithUser:(PFUser *)user;
 
 @end

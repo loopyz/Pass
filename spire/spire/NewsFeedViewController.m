@@ -9,6 +9,7 @@
 #import "NewsFeedViewController.h"
 #import "PullToRefresh.h"
 #import "CommentsViewController.h"
+#import "ProfileViewController.h"
 
 #import <MediaPlayer/MediaPlayer.h>
 #import <Parse/Parse.h>
@@ -144,6 +145,7 @@
 //for each header
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
+    // TODO: if this is clicked, then open person's profile
     PFObject *photo = [self.photos objectAtIndex:section];
   UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 400)];
   
@@ -192,6 +194,11 @@
   return view;
 }
 
+- (void)personTouched:(PFUser *)user
+{
+    ProfileViewController *pvc = [[ProfileViewController alloc] initWithUser:user];
+    [self.navigationController pushViewController:pvc animated:YES];
+}
 //for each cell in table
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   PFObject *photo = [self.photos objectAtIndex:indexPath.section];

@@ -21,28 +21,28 @@
 
 @implementation ProfileViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithUser:(PFUser *)user
 {
-  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-  if (self) {
-    // Custom initialization
-    self.bgColor = [UIColor colorWithRed:248/255.0f green:248/255.0f blue:248/255.0f alpha:1.0f];
-    
-    self.photos = [[NSMutableArray alloc] init];
-    [self setupHeader];
-    
-    locationIcon = [UIImage imageNamed:@"locationicon.png"];
-    heartButtonIcon = [UIImage imageNamed:@"heartbutton.png"];
-    commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
-    
-    self.tableView.separatorColor = [UIColor colorWithRed:211/255.0f green:211/255.0f blue:211/255.0f alpha:1.0f];
-  }
-  return self;
+    self = [super initWithNibName:nil bundle:nil];
+    if (self) {
+        // Custom initialization
+        self.bgColor = [UIColor colorWithRed:248/255.0f green:248/255.0f blue:248/255.0f alpha:1.0f];
+        self.user = user;
+        self.photos = [[NSMutableArray alloc] init];
+        [self setupHeader];
+        
+        locationIcon = [UIImage imageNamed:@"locationicon.png"];
+        heartButtonIcon = [UIImage imageNamed:@"heartbutton.png"];
+        commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
+        
+        self.tableView.separatorColor = [UIColor colorWithRed:211/255.0f green:211/255.0f blue:211/255.0f alpha:1.0f];
+    }
+    return self;
 }
 
 - (void)setupHeader
 {
-    PFUser *currentUser = [PFUser currentUser];
+    PFUser *currentUser = self.user;
   UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 164)];
   view.backgroundColor = [UIColor whiteColor];
   self.profileSnippetView = view;
@@ -180,14 +180,14 @@
 - (void)refreshView
 {
     PFQuery *countquery = [PFQuery queryWithClassName:@"Photo"];
-    [countquery whereKey:@"user" equalTo:[PFUser currentUser]];
+    [countquery whereKey:@"user" equalTo:self.user];
     [countquery countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
         self.numScoresLabel.text = [NSString stringWithFormat:@"%d", number];
     }];
     
     PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
     [query includeKey:@"pet"];
-    [query whereKey:@"user" equalTo:[PFUser currentUser]];
+    [query whereKey:@"user" equalTo:self.user];
     [query whereKeyExists:@"first"]; // neccessary?
     [query whereKey:@"first" equalTo:@1];
     [query orderByDescending:@"createdAt"];

@@ -159,7 +159,7 @@
     SPNotificationsViewController *ffvc = [[SPNotificationsViewController alloc] initWithNibName:nil bundle:nil];
     ffvc.tabBarItem.image = [UIImage imageNamed:@"newstabsmall.png"];
     
-    ProfileViewController *pvc = [[ProfileViewController alloc] initWithNibName:nil bundle:nil];
+    ProfileViewController *pvc = [[ProfileViewController alloc] initWithUser:[PFUser currentUser]];
 //    PetProfileViewController *pvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];
     pvc.tabBarItem.image = [UIImage imageNamed:@"profiletabsmall.png"];
     

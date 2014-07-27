@@ -45,7 +45,7 @@
 
     PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
     [query whereKey:@"currentUser" equalTo:user];
-    query.cachePolicy = kPFCachePolicyCacheElseNetwork;
+    query.cachePolicy = kPFCachePolicyNetworkOnly;//kPFCachePolicyCacheElseNetwork;
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
         callback(pet, error);
     }];
@@ -128,6 +128,29 @@
     [query includeKey:@"photo"];
 
     return query;
+}
+
++ (void)migrateLatitudeLongitudeToGeoPoint
+{
+    NSLog(@"Migrating LL for pets...");
+    NSArray *pets = [[PFQuery queryWithClassName:@"Pet"] findObjects];
+    for (PFObject *pet in pets) {
+        if ([pet objectForKey:@"geoPoint"] == nil) {
+            PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:[[pet objectForKey:@"latitude"] doubleValue] longitude:[[pet objectForKey:@"longitude"] doubleValue]];
+            [pet setObject:geoPoint forKey:@"geoPoint"];
+            [pet saveInBackground];
+        }
+    }
+
+    NSLog(@"Migrating LL for photos...");
+    NSArray *photos = [[PFQuery queryWithClassName:@"Photo"] findObjects];
+    for (PFObject *photo in photos) {
+        if ([photo objectForKey:@"geoPoint"] == nil) {
+            PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:[[photo objectForKey:@"latitude"] doubleValue] longitude:[[photo objectForKey:@"longitude"] doubleValue]];
+            [photo setObject:geoPoint forKey:@"geoPoint"];
+            [photo saveInBackground];
+        }
+    }
 }
 
 @end

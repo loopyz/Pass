@@ -17,41 +17,29 @@
 
 @implementation FindPetViewController
 
-
-- (void)getLocation:(void (^)(float latitude, float longitude)) callback
-{
-  float latitude = 3.14;
-  float longitude = 2.71;
-  if ([CLLocationManager locationServicesEnabled]) {
-    latitude = self.locationManager.location.coordinate.latitude;
-    longitude = self.locationManager.location.coordinate.longitude;
-    callback(latitude, longitude);
-  }
-}
-
 - (void)findNearbyPets
 {
-    [self getLocation:^(float latitude, float longitude) {
+    [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
+        if (error) {
+            // TODO: handle when location service is disabled? For now just use fake coordinates.
+            geoPoint = [PFGeoPoint geoPointWithLatitude:3.14 longitude:2.71];
+        }
+
         self.pets = [[NSMutableArray alloc] initWithArray:@[@[], @[], @[]]];
         
-        // TODO: FIND BETTER LL OFFSETS for 500 ft, 1 mi, 5 mi away
-        float offsets[] = {1, 5, 10};
-        NSString *predicateStrings[3];
+        // Max distance in miles from current location (500 ft, 1 mi, 5 mi).
+        double maxDistances[] = {0.0947, 1.0, 5.0};
         
         __block int callbacksReceived = 0;
         
         for (int i = 0; i < 3; i++) {
-            float offset = offsets[i];
+            double maxDistance = maxDistances[i];
             
-            // First, query by offsets from latitude and longitude.
-            predicateStrings[i] = [NSString stringWithFormat:@"latitude >= %f AND latitude <= %f AND longitude >= %f AND longitude <= %f", latitude-offset, latitude+offset, longitude-offset, longitude+offset];
-            
-            // Next, query by class name and other filters.
-            PFQuery *query = [PFQuery queryWithClassName:@"Pet" predicate:[NSPredicate predicateWithFormat:predicateStrings[i]]];
-            [query whereKey:@"currentUserId" equalTo:[NSNull null]];
+            PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
+            [query whereKey:@"currentUser" equalTo:[NSNull null]];
+            [query whereKey:@"geoPoint" nearGeoPoint:geoPoint withinMiles:maxDistance];
             //[query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
             query.limit = 15;
-            
             
             [query findObjectsInBackgroundWithBlock:^(NSArray *pets, NSError *error) {
                 if (pets != nil) {
@@ -63,6 +51,7 @@
                     NSArray *petIds0 = [self.pets[0] valueForKey:@"objectId"];
                     NSArray *petIds1 = [self.pets[1] valueForKey:@"objectId"];
                     
+                    // Filter out pets in closer sections from sections 2 and 3.
                     self.pets[2] = [self.pets[2] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(PFObject *evaluatedObject, NSDictionary *bindings) {
                         NSLog(@"%@", [evaluatedObject objectId]);
                         return [petIds1 indexOfObject:[evaluatedObject objectId]] == NSNotFound;
@@ -102,11 +91,6 @@
     UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
     self.tableView.contentInset = inset;
     [self.tableView setAllowsSelection:NO];
-    
-    self.locationManager = [[CLLocationManager alloc] init];
-    self.locationManager.distanceFilter = kCLDistanceFilterNone;
-    self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-    [self.locationManager startUpdatingLocation];
     
     self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
     self.ptr.delegate = self;
@@ -267,9 +251,7 @@
       PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
       [query whereKey:@"objectId" equalTo:self.selectedPetId];
       [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
-          // TODO: DEPRECATED. Remove when migration complete.
-          //[pet setObject:[PFUser currentUser] forKey:@"currentUser"];
-          [pet setObject:[Util currentUserId] forKey:@"currentUserId"];
+          [pet setObject:[PFUser currentUser] forKey:@"currentUser"];
           [pet saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
               [self Refresh];
           }];
@@ -309,7 +291,7 @@
     // Perform here the required actions to refresh the data (call a JSON API for example).
     // Once the data has been updated, call the method isDoneRefreshing:
     PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
-    [query whereKey:@"currentUserId" equalTo:[Util currentUserId]];
+    [query whereKey:@"currentUser" equalTo:[PFUser currentUser]];
     [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
         self.userHasPet = number > 0;
     }];

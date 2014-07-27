@@ -90,13 +90,16 @@
 {
     [super viewDidLoad];
     
+    // Uncomment to migrate latitude and longitude to geoPoint!
+//    [Util migrateLatitudeLongitudeToGeoPoint];
+
 //    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
 //    [currentInstallation addUniqueObject:@"PetsNearby" forKey:@"channels"];
 //    [currentInstallation saveInBackground];
     // Uncomment to add a bunch of pets!
     /*for (int i = 0; i < 10; i++) {
         PFObject *pet = [PFObject objectWithClassName:@"Pet"];
-        pet[@"currentUserId"] = [Util currentUserId];
+        pet[@"currentUser"] = [PFUser currentUser];
         pet[@"owner"] = [PFUser currentUser];
         pet[@"name"] = [NSString stringWithFormat:@"Pet%d", i];
         pet[@"miles"] = @0;

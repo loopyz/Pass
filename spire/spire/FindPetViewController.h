@@ -16,7 +16,6 @@
 
 @property (strong, nonatomic) NSMutableArray *pets;
 @property (strong, nonatomic) PFObject *selectedPetId;
-@property (strong, nonatomic) CLLocationManager *locationManager;
 @property (nonatomic, strong) PullToRefresh *ptr;
 
 @property (strong, nonatomic) UIView *popup;

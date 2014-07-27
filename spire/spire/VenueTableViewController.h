@@ -12,7 +12,7 @@
 
 typedef void(^DictCallback)(NSDictionary *selectedVenue);
 
-- (id)initWithLat:(NSNumber *)latitude andLong:(NSNumber *)longitude andCallback:(DictCallback)callback;
+- (id)initWithGeoPoint:(PFGeoPoint *)geoPoint andCallback:(DictCallback)callback;
 
 @property (strong, nonatomic) NSArray *venues;
 @property (strong, nonatomic) DictCallback callback;

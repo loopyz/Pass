@@ -22,7 +22,7 @@
     [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
         if (error) {
             // TODO: handle when location service is disabled? For now just use fake coordinates.
-            geoPoint = [PFGeoPoint geoPointWithLatitude:3.14, longitude:2.71];
+            geoPoint = [PFGeoPoint geoPointWithLatitude:3.14 longitude:2.71];
         }
 
         self.pets = [[NSMutableArray alloc] initWithArray:@[@[], @[], @[]]];

@@ -89,7 +89,7 @@
     [super viewDidLoad];
     
     // Uncomment to migrate latitude and longitude to geoPoint!
-    //[Util migrateLatitudeLongitudeToGeoPoint];
+//    [Util migrateLatitudeLongitudeToGeoPoint];
 
 //    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
 //    [currentInstallation addUniqueObject:@"PetsNearby" forKey:@"channels"];

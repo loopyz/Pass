@@ -69,7 +69,7 @@
             // TODO: deprecated, remove.
             //[photo setObject:latitude forKey:@"latitude"];
             //[photo setObject:longitude forKey:@"longitude"];
-            [photo setObject:geoPoint forKey:@"geoPoint"]
+            [photo setObject:geoPoint forKey:@"geoPoint"];
             [photo setObject:locName forKey:@"locName"];
             
             PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
@@ -110,7 +110,7 @@
         if (error) {
             // TODO: Handle when location disabled.
             NSLog(@"Fake location used");
-            geoPoint = [PFGeoPoint geoPointWithLatitude:3.14, longitude:2.71];
+            geoPoint = [PFGeoPoint geoPointWithLatitude:3.14 longitude:2.71];
             callback(geoPoint, locName);
         }
 

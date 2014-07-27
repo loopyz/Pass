@@ -12,7 +12,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <Parse/Parse.h>
 
-@interface PetPlacementViewController : UIViewController <UIScrollViewDelegate, UITextViewDelegate, YCameraViewControllerDelegate, CLLocationManagerDelegate>
+@interface PetPlacementViewController : UIViewController <UIScrollViewDelegate, UITextViewDelegate, YCameraViewControllerDelegate>
 
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) UIScrollView *scrollView;
@@ -21,7 +21,6 @@
 @property (strong, nonatomic) UIButton *submitButton;
 @property (strong, nonatomic) UISwitch *toggleDrop;
 @property (strong, nonatomic) YCameraViewController *cvc;
-@property (strong, nonatomic) CLLocationManager *locationManager;
 @property (nonatomic, retain) UIToolbar *keyboardToolbar;
 @property (strong, nonatomic) PFObject *pet;
 

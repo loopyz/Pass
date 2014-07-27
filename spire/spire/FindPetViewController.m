@@ -17,26 +17,18 @@
 
 @implementation FindPetViewController
 
-
-- (void)getLocation:(void (^)(float latitude, float longitude)) callback
-{
-  float latitude = 3.14;
-  float longitude = 2.71;
-  if ([CLLocationManager locationServicesEnabled]) {
-    latitude = self.locationManager.location.coordinate.latitude;
-    longitude = self.locationManager.location.coordinate.longitude;
-    callback(latitude, longitude);
-  }
-}
-
 - (void)findNearbyPets
 {
-    [self getLocation:^(float latitude, float longitude) {
+    [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
+        if (error) {
+            // TODO: handle when location service is disabled? For now just use fake coordinates.
+            geoPoint = [PFGeoPoint geoPointWithLatitude:3.14, longitude:2.71];
+        }
+
         self.pets = [[NSMutableArray alloc] initWithArray:@[@[], @[], @[]]];
         
         // Max distance in miles from current location (500 ft, 1 mi, 5 mi).
         double maxDistances[] = {0.0947, 1.0, 5.0};
-        PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:[latitude doubleValue] longitude:[longitude doubleValue]];
         
         __block int callbacksReceived = 0;
         
@@ -48,7 +40,6 @@
             [query whereKey:@"geoPoint" nearGeoPoint:geoPoint withinMiles:maxDistance];
             //[query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
             query.limit = 15;
-            
             
             [query findObjectsInBackgroundWithBlock:^(NSArray *pets, NSError *error) {
                 if (pets != nil) {
@@ -98,11 +89,6 @@
     UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
     self.tableView.contentInset = inset;
     [self.tableView setAllowsSelection:NO];
-    
-    self.locationManager = [[CLLocationManager alloc] init];
-    self.locationManager.distanceFilter = kCLDistanceFilterNone;
-    self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-    [self.locationManager startUpdatingLocation];
     
     self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
     self.ptr.delegate = self;

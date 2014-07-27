@@ -32,36 +32,10 @@
     return self;
 }
 
-- (void)getLocation:(void (^)(NSNumber *latitude, NSNumber *longitude, NSString *locName)) callback
-{
-    NSNumber *latitude = @3.14;
-    NSNumber *longitude = @2.71;
-    __block NSString *locName = @"Medium HQ";
-    if ([CLLocationManager locationServicesEnabled]) {
-        latitude = [NSNumber numberWithFloat:self.locationManager.location.coordinate.latitude];
-        longitude = [NSNumber numberWithFloat:self.locationManager.location.coordinate.longitude];
-        
-        // push VenueViewController
-        VenueTableViewController *vtvc = [[VenueTableViewController alloc] initWithLat:latitude andLong:longitude andCallback:^(NSDictionary *selectedVenue) {
-                // got venue selected
-            if (selectedVenue == nil) {
-                NSLog(@"Location not chosen");
-            } else {
-                locName = selectedVenue[@"name"];
-            }
-            callback(latitude, longitude, locName);
-        }];
-        [self presentViewController:vtvc animated:YES completion:nil];
-    } else {
-        NSLog(@"Fake location used");
-        callback(latitude, longitude, locName);
-    }
-}
 
-- (void)updatePet:(PFObject *)pet withDropped:(BOOL)dropped withLat:(NSNumber *)latitude withLong:(NSNumber *)longitude withName:(NSString *)locName
+- (void)updatePet:(PFObject *)pet withDropped:(BOOL)dropped withGeoPoint:(PFGeoPoint *)newGeoPoint withName:(NSString *)locName
 {
     PFGeoPoint *oldGeoPoint = [pet objectForKey:@"geoPoint"];
-    PFGeoPoint *newGeoPoint = [PFGeoPoint geoPointWithLatitude:[latitude doubleValue] longitude:[longitude doubleValue]];
 
     // TODO: Deprecated, remove.
     //[pet setObject:latitude forKey:@"latitude"];
@@ -79,7 +53,7 @@
     [pet saveInBackground];
 }
 
-- (void)addPhoto:(NSData *)photoData withUser:(PFUser *)user withPet:(PFObject *)pet withLat:(NSNumber *)latitude withLong:(NSNumber *)longitude withName:(NSString *)locName withCaption:(NSString *)caption
+- (void)addPhoto:(NSData *)photoData withUser:(PFUser *)user withPet:(PFObject *)pet withGeoPoint:(PFGeoPoint *)geoPoint withName:(NSString *)locName withCaption:(NSString *)caption
 {
     if ([caption isEqualToString:@"Add a caption..."]) {
         caption = locName;
@@ -87,7 +61,6 @@
     PFFile *image = [PFFile fileWithName:@"image.png" data:photoData];
     [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
-            PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:[latitude doubleValue] longitude:[longitude doubleValue]];
             PFObject *photo = [PFObject objectWithClassName:@"Photo"];
             [photo setObject:user forKey:@"user"];
             [photo setObject:pet forKey:@"pet"];
@@ -114,9 +87,11 @@
 - (void)saveToParse:(NSData *)photoData withCaption:(NSString *)caption withDropped:(BOOL) dropped
 {
     PFUser *currentUser = [PFUser currentUser];
-    [self getLocation:^(NSNumber *latitude, NSNumber *longitude, NSString *locName) {
-        [self updatePet:self.pet withDropped:dropped withLat:latitude withLong:longitude withName:locName];
-        [self addPhoto:photoData withUser:currentUser withPet:self.pet withLat:latitude withLong:longitude withName:locName withCaption:caption];
+
+    // Callback to call when location determined.
+    void (^callback)(PFGeoPoint *geoPoint, NSString *locName) = ^void(PFGeoPoint *geoPoint, NSString *locName) {
+        [self updatePet:self.pet withDropped:dropped withGeoPoint:geoPoint withName:locName];
+        [self addPhoto:photoData withUser:currentUser withPet:self.pet withGeoPoint:geoPoint withName:locName withCaption:caption];
         
         if (dropped) {
             PFPush *push = [[PFPush alloc] init];
@@ -126,6 +101,29 @@
         }
         // go back to home tab
         [self.tabBarController setSelectedIndex:0];
+    };
+
+
+    // Query for current location as GeoPoint.
+    [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
+        __block NSString *locName = @"Medium HQ";
+        if (error) {
+            // TODO: Handle when location disabled.
+            NSLog(@"Fake location used");
+            geoPoint = [PFGeoPoint geoPointWithLatitude:3.14, longitude:2.71];
+            callback(geoPoint, locName);
+        }
+
+        // Push VenueViewController for selecting location.
+        VenueTableViewController *vtvc = [[VenueTableViewController alloc] initWithGeoPoint:geoPoint andCallback:^(NSDictionary *selectedVenue) {
+            if (selectedVenue == nil) {
+                NSLog(@"Location not chosen");
+            } else {
+                locName = selectedVenue[@"name"];
+            }
+            callback(geoPoint, locName);
+        }];
+        [self presentViewController:vtvc animated:YES completion:nil];
     }];
 }
 
@@ -494,10 +492,6 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.locationManager = [[CLLocationManager alloc] init];
-    self.locationManager.distanceFilter = kCLDistanceFilterNone;
-    self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-    [self.locationManager startUpdatingLocation];
     [self setupScrollView];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]

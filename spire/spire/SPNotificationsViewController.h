@@ -9,7 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "PullToRefresh.h"
 
-@interface SPNotificationsViewController : UITableViewController<UIScrollViewDelegate, BEMPullToRefreshDelegate>
+@interface SPNotificationsViewController : UITableViewController<UIScrollViewDelegate//, BEMPullToRefreshDelegate
+>
 
 @property (nonatomic, strong) PullToRefresh *ptr;
 @property (nonatomic, strong) NSArray *notifications;

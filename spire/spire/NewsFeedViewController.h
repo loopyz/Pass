@@ -9,7 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "PullToRefresh.h"
 
-@interface NewsFeedViewController : UITableViewController<UIScrollViewDelegate, BEMPullToRefreshDelegate>
+@interface NewsFeedViewController : UITableViewController<UIScrollViewDelegate//, BEMPullToRefreshDelegate
+>
 
 @property (nonatomic, strong) PullToRefresh *ptr;
 @property (nonatomic, strong) NSMutableArray *photos;

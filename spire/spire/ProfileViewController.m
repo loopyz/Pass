@@ -36,6 +36,8 @@
     commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
     
     self.tableView.separatorColor = [UIColor colorWithRed:211/255.0f green:211/255.0f blue:211/255.0f alpha:1.0f];
+      
+      
   }
   return self;
 }

@@ -90,6 +90,8 @@
     self.tableView.backgroundColor = color;
     self.headerBig = @[@"Here", @"A walk away", @"A drive away"];
     self.headerDetail = @[@"500 feet", @"1.0 miles away", @"5.0 miles away"];
+      
+      
   }
   return self;
 }

@@ -34,6 +34,8 @@
         
         self.notifications = [[NSArray alloc] init];
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        
+        
     }
     return self;
 }

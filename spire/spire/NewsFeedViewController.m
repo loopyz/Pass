@@ -34,6 +34,7 @@
     commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
     
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+      
   }
   return self;
 }
@@ -66,7 +67,17 @@
     [self updatePhotos];
   
   [self.tableView setAllowsSelection:NO];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(refreshView:)
+                                                 name:@"refreshView"
+                                               object:nil];
   
+}
+
+-(void)refreshView:(NSNotification *) notification{
+    if (self == self.navigationController.topViewController)
+        [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView  {

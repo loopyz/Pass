@@ -18,23 +18,6 @@ typedef NS_ENUM(NSInteger, Gender)
     GenderOther
 };
 
-
-typedef NS_OPTIONS(NSInteger, Interests)
-{
-    InterestComputers = 1 << 0,
-    InterestSocializing = 1 << 1,
-    InterestSports = 1 << 2
-};
-
-
-typedef NS_OPTIONS(NSInteger, ServicePlan)
-{
-    ServicePlanMicro = 0,
-    ServicePlanNormal,
-    ServicePlanMaxi
-};
-
-
 @interface SettingsForm : NSObject <FXForm>
 
 @property (nonatomic, copy) NSString *email;
@@ -50,10 +33,8 @@ typedef NS_OPTIONS(NSInteger, ServicePlan)
 @property (nonatomic, copy) NSString *country;
 @property (nonatomic, copy) NSString *language;
 @property (nonatomic, copy) NSArray *interests;
-@property (nonatomic, assign) Interests otherInterests;
 @property (nonatomic, copy) NSString *about;
 
-@property (nonatomic, assign) ServicePlan plan;
 
 @property (nonatomic, copy) NSString *notifications;
 @property (nonatomic, assign) BOOL agreedToTerms;

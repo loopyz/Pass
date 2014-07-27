@@ -62,9 +62,14 @@
   UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
   self.tableView.contentInset = inset;
   
-  self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
-  self.ptr.delegate = self;
-  [self.view addSubview:self.ptr];
+//  self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
+//  self.ptr.delegate = self;
+//  [self.view addSubview:self.ptr];
+  
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    
+    [self.refreshControl addTarget:self action:@selector(Refresh) forControlEvents:UIControlEventValueChanged];
+    
     [self updatePhotos];
   
   [self.tableView setAllowsSelection:NO];
@@ -88,10 +93,14 @@
 }
 
 - (void)Refresh {
+    // make asynchronous?
     [self updatePhotos];
   // Perform here the required actions to refresh the data (call a JSON API for example).
   // Once the data has been updated, call the method isDoneRefreshing:
-  [self.ptr isDoneRefreshing];
+  
+    // [self.ptr isDoneRefreshing];
+    
+    [self.refreshControl endRefreshing];
 }
 
 

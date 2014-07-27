@@ -60,23 +60,21 @@
 
 - (void)updatePet:(PFObject *)pet withDropped:(BOOL)dropped withLat:(NSNumber *)latitude withLong:(NSNumber *)longitude withName:(NSString *)locName
 {
-    CLLocationDegrees oldLongitude =(CLLocationDegrees) [[pet objectForKey:@"longitude"] doubleValue];
-    CLLocationDegrees oldLatitude =(CLLocationDegrees) [[pet objectForKey:@"latitude"] doubleValue];
-    CLLocationDegrees newLongitude = (CLLocationDegrees)[longitude doubleValue];
-    CLLocationDegrees newLatitude = (CLLocationDegrees)[latitude doubleValue];
+    PFGeoPoint *oldGeoPoint = [pet objectForKey:@"geoPoint"];
+    PFGeoPoint *newGeoPoint = [PFGeoPoint geoPointWithLatitude:[latitude doubleValue] longitude:[longitude doubleValue]];
 
-    [pet setObject:latitude forKey:@"latitude"];
-    [pet setObject:longitude forKey:@"longitude"];
+    // TODO: Deprecated, remove.
+    //[pet setObject:latitude forKey:@"latitude"];
+    //[pet setObject:longitude forKey:@"longitude"];
+    [pet setObject:newGeoPoint forKey:@"geoPoint"];
     [pet setObject:locName forKey:@"locName"];
     if (dropped) {
         [pet setObject:[NSNull null] forKey:@"currentUser"];
         [pet incrementKey:@"passes"];
     }
 
-    // real miles yay!
-    CLLocation *oldLoc = [[CLLocation alloc] initWithLatitude:oldLatitude longitude:oldLongitude];
-    CLLocation *newLoc = [[CLLocation alloc] initWithLatitude:newLatitude longitude:newLongitude];
-    NSNumber *miles = [NSNumber numberWithDouble:(0.000621371192 * [oldLoc distanceFromLocation:newLoc])];
+    // Calculate real miles from old location.
+    NSNumber *miles = [NSNumber numberWithDouble:[oldGeoPoint distanceInMilesTo:newGeoPoint]];
     [pet incrementKey:@"miles" byAmount:miles];
     [pet saveInBackground];
 }
@@ -89,13 +87,16 @@
     PFFile *image = [PFFile fileWithName:@"image.png" data:photoData];
     [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
+            PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:[latitude doubleValue] longitude:[longitude doubleValue]];
             PFObject *photo = [PFObject objectWithClassName:@"Photo"];
             [photo setObject:user forKey:@"user"];
             [photo setObject:pet forKey:@"pet"];
             [photo setObject:image forKey:@"image"];
             [photo setObject:caption forKey:@"caption"];
-            [photo setObject:latitude forKey:@"latitude"];
-            [photo setObject:longitude forKey:@"longitude"];
+            // TODO: deprecated, remove.
+            //[photo setObject:latitude forKey:@"latitude"];
+            //[photo setObject:longitude forKey:@"longitude"];
+            [photo setObject:geoPoint forKey:@"geoPoint"]
             [photo setObject:locName forKey:@"locName"];
             
             PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
@@ -145,7 +146,8 @@
 
 }
 
-- (void)didFinishPickingImage:(UIImage *)image{
+- (void)didFinishPickingImage:(UIImage *)image
+{
     self.image = image;
     [self setupImagePetContainer];
 

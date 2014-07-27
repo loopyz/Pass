@@ -34,21 +34,18 @@
     [self getLocation:^(float latitude, float longitude) {
         self.pets = [[NSMutableArray alloc] initWithArray:@[@[], @[], @[]]];
         
-        // TODO: FIND BETTER LL OFFSETS for 500 ft, 1 mi, 5 mi away
-        float offsets[] = {1, 5, 10};
-        NSString *predicateStrings[3];
+        // Max distance in miles from current location (500 ft, 1 mi, 5 mi).
+        double maxDistances[] = {0.0947, 1.0, 5.0};
+        PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:[latitude doubleValue] longitude:[longitude doubleValue]];
         
         __block int callbacksReceived = 0;
         
         for (int i = 0; i < 3; i++) {
-            float offset = offsets[i];
+            double maxDistance = maxDistances[i];
             
-            // First, query by offsets from latitude and longitude.
-            predicateStrings[i] = [NSString stringWithFormat:@"latitude >= %f AND latitude <= %f AND longitude >= %f AND longitude <= %f", latitude-offset, latitude+offset, longitude-offset, longitude+offset];
-            
-            // Next, query by class name and other filters.
-            PFQuery *query = [PFQuery queryWithClassName:@"Pet" predicate:[NSPredicate predicateWithFormat:predicateStrings[i]]];
+            PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
             [query whereKey:@"currentUser" equalTo:[NSNull null]];
+            [query whereKey:@"geoPoint" nearGeoPoint:geoPoint withinMiles:maxDistance];
             //[query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
             query.limit = 15;
             
@@ -63,6 +60,7 @@
                     NSArray *petIds0 = [self.pets[0] valueForKey:@"objectId"];
                     NSArray *petIds1 = [self.pets[1] valueForKey:@"objectId"];
                     
+                    // Filter out pets in closer sections from sections 2 and 3.
                     self.pets[2] = [self.pets[2] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(PFObject *evaluatedObject, NSDictionary *bindings) {
                         NSLog(@"%@", [evaluatedObject objectId]);
                         return [petIds1 indexOfObject:[evaluatedObject objectId]] == NSNotFound;

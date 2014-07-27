@@ -22,9 +22,10 @@ Pet:
 * currentUserId (DEPRECATED, do not use)
 * miles
 * passes
-* latitude
-* longitude
+* latitude (DEPRECATED, do not use)
+* longitude (DEPRECATED, do not use)
 * locName
+* geoPoint - PFGeoPoint
 
 Photo:
 * image - File
@@ -32,9 +33,10 @@ Photo:
 * user - User
 * pet - Pet
 * first
-* latitude
-* longitude
+* latitude (DEPRECATED, do not use)
+* longitude (DEPRECATED, do not use)
 * locName
+* geoPoint - PFGeoPoint
 
 Activity:
 * type

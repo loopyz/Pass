@@ -27,8 +27,9 @@
              //we don't need to modify these fields at all, so we'll
              //just refer to them by name to use the default settings
              
-             @{FXFormFieldKey: @"Change Password",
-               FXFormFieldOptions: @[@"password", @"repeat password"]},
+//             @{FXFormFieldKey: @"Change Password",
+//               FXFormFieldOptions: @[@"password", @"repeatPassword"]},
+             @"currentPassword",
              
              @"password",
              @"repeatPassword",
@@ -42,14 +43,6 @@
              //because this is an enum property, the indexes of the options should match enum values
              
              @{FXFormFieldKey: @"gender", FXFormFieldDefaultValue:@"Female", FXFormFieldOptions: @[@"Male", @"Female", @"It's Complicated"]},
-             
-             //another regular field
-             
-             @"dateOfBirth",
-             
-             //we want to use a stepper control for this value, so let's specify that
-             
-             @{FXFormFieldKey: @"age", FXFormFieldCell: [FXFormStepperCell class]},
              
              //some more regular fields
              

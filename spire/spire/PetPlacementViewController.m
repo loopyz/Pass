@@ -69,7 +69,7 @@
     [pet setObject:longitude forKey:@"longitude"];
     [pet setObject:locName forKey:@"locName"];
     if (dropped) {
-        [pet setObject:[NSNull null] forKey:@"currentUserId"];
+        [pet setObject:[NSNull null] forKey:@"currentUser"];
         [pet incrementKey:@"passes"];
     }
 

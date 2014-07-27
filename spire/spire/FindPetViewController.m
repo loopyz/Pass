@@ -48,7 +48,7 @@
             
             // Next, query by class name and other filters.
             PFQuery *query = [PFQuery queryWithClassName:@"Pet" predicate:[NSPredicate predicateWithFormat:predicateStrings[i]]];
-            [query whereKey:@"currentUserId" equalTo:[NSNull null]];
+            [query whereKey:@"currentUser" equalTo:[NSNull null]];
             //[query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
             query.limit = 15;
             
@@ -265,9 +265,7 @@
       PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
       [query whereKey:@"objectId" equalTo:self.selectedPetId];
       [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
-          // TODO: DEPRECATED. Remove when migration complete.
-          //[pet setObject:[PFUser currentUser] forKey:@"currentUser"];
-          [pet setObject:[Util currentUserId] forKey:@"currentUserId"];
+          [pet setObject:[PFUser currentUser] forKey:@"currentUser"];
           [pet saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
               [self Refresh];
           }];
@@ -307,7 +305,7 @@
     // Perform here the required actions to refresh the data (call a JSON API for example).
     // Once the data has been updated, call the method isDoneRefreshing:
     PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
-    [query whereKey:@"currentUserId" equalTo:[Util currentUserId]];
+    [query whereKey:@"currentUser" equalTo:[PFUser currentUser]];
     [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
         self.userHasPet = number > 0;
     }];

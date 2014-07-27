@@ -18,8 +18,8 @@ Pet:
 * name
 * type
 * owner - User
-* currentUser - User (DEPRECATED, do not use)
-* currentUserId
+* currentUser - User
+* currentUserId (DEPRECATED, do not use)
 * miles
 * passes
 * latitude

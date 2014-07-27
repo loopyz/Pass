@@ -26,5 +26,7 @@
 
 + (PFQuery *)queryForActivitiesOnPhoto:(PFObject *)photo cachePolicy:(PFCachePolicy)cachePolicy;
 
++ (void)migrateLatitudeLongitudeToGeoPoint;
+
 
 @end

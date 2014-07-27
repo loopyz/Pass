@@ -28,6 +28,10 @@
         screenHeight = screenRect.size.height;
         // Custom initialization
       self.dropButtonActivated = NO;
+        self.facebookShareActivated = NO;
+        self.tumblrShareActivated = NO;
+        self.twitterShareActivated = NO;
+        self.instagramShareActivated = NO;
     }
     return self;
 }
@@ -270,6 +274,7 @@
   
   // Do any additional setup after loading the view.
   [self setupDropButton];
+    [self setupShareButtons];
   
     // completely got rid of labels
 //  UIImageView *dropPetImage = [[UIImageView alloc] initWithFrame:CGRectMake(5, SCREEN_WIDTH + 115, 50, 53)];
@@ -316,6 +321,17 @@
   self.dropButton.contentMode = UIViewContentModeScaleToFill;
   
   [self.scrollView addSubview:self.dropButton];
+}
+
+- (void)setupShareButtons
+{
+    self.shareBG = [[UIImageView alloc] initWithFrame:CGRectMake(0, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 120, 320, 84)];
+    self.shareBG.image = [UIImage imageNamed:@"buttonform.png"];
+    [self.scrollView addSubview:self.shareBG];
+    [self setupFacebookButton];
+    [self setupInstagramButton];
+    [self setupTwitterButton];
+    [self setupTumblrButton];
 }
 
 - (void)dropPetButtonTouched
@@ -402,6 +418,138 @@
     
 }
 
+- (void)shareOnFacebook
+{
+    UIImage *btnImage;
+    
+    if (self.facebookShareActivated) {
+        self.facebookShareActivated = NO;
+        btnImage = [UIImage imageNamed:@"facebooksharebutton.png"];
+    }
+    else {
+        self.facebookShareActivated = YES;
+        btnImage = [UIImage imageNamed:@"facebooksharebuttonactive.png"];
+    }
+    
+    [self.facebookButton setImage:btnImage forState:UIControlStateNormal];
+}
+
+- (void)shareOnTwitter
+{
+    UIImage *btnImage;
+    
+    if (self.twitterShareActivated) {
+        self.twitterShareActivated = NO;
+        btnImage = [UIImage imageNamed:@"twittersharebutton.png"];
+    }
+    else {
+        self.twitterShareActivated = YES;
+        btnImage = [UIImage imageNamed:@"twittersharebuttonactive.png"];
+    }
+    
+    [self.twitterButton setImage:btnImage forState:UIControlStateNormal];
+}
+
+- (void)shareOnInstagram
+{
+    UIImage *btnImage;
+    
+    if (self.instagramShareActivated) {
+        self.instagramShareActivated = NO;
+        btnImage = [UIImage imageNamed:@"instagramsharebutton.png"];
+    }
+    else {
+        self.instagramShareActivated = YES;
+        btnImage = [UIImage imageNamed:@"instagramsharebuttonactive.png"];
+    }
+    
+    [self.instagramButton setImage:btnImage forState:UIControlStateNormal];
+}
+
+- (void)shareOnTumblr
+{
+    UIImage *btnImage;
+    
+    if (self.tumblrShareActivated) {
+        self.tumblrShareActivated = NO;
+        btnImage = [UIImage imageNamed:@"tumblrsharebutton.png"];
+    }
+    else {
+        self.tumblrShareActivated = YES;
+        btnImage = [UIImage imageNamed:@"tumblrsharebuttonactive.png"];
+    }
+    
+    [self.tumblrButton setImage:btnImage forState:UIControlStateNormal];
+}
+
+- (void)setupFacebookButton
+{
+    // Do any additional setup after loading the view.
+    self.facebookButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.facebookButton setTitle:@"Show View" forState:UIControlStateNormal];
+    
+    
+    self.facebookButton.frame = CGRectMake(15, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 120 + 7.5, 81, 43/2);
+    [self.facebookButton addTarget:self action:@selector(shareOnFacebook) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIImage *btnImage = [UIImage imageNamed:@"facebooksharebutton.png"];
+    [self.facebookButton setImage:btnImage forState:UIControlStateNormal];
+    self.facebookButton.contentMode = UIViewContentModeScaleToFill;
+    
+    [self.scrollView addSubview:self.facebookButton];
+}
+
+- (void)setupTwitterButton
+{
+    // Do any additional setup after loading the view.
+    self.twitterButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.twitterButton setTitle:@"Show View" forState:UIControlStateNormal];
+    
+    
+    self.twitterButton.frame = CGRectMake(screenWidth/2 + 15, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 120 + 8.5, 62.5, 17.5);
+    [self.twitterButton addTarget:self action:@selector(shareOnTwitter) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIImage *btnImage = [UIImage imageNamed:@"twittersharebutton.png"];
+    [self.twitterButton setImage:btnImage forState:UIControlStateNormal];
+    self.twitterButton.contentMode = UIViewContentModeScaleToFill;
+    
+    [self.scrollView addSubview:self.twitterButton];
+}
+
+- (void)setupInstagramButton
+{
+    // Do any additional setup after loading the view.
+    self.instagramButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.instagramButton setTitle:@"Show View" forState:UIControlStateNormal];
+    
+    
+    self.instagramButton.frame = CGRectMake(15, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 120 + 47.5, 80, 21.5);
+    [self.instagramButton addTarget:self action:@selector(shareOnInstagram) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIImage *btnImage = [UIImage imageNamed:@"instagramsharebutton.png"];
+    [self.instagramButton setImage:btnImage forState:UIControlStateNormal];
+    self.instagramButton.contentMode = UIViewContentModeScaleToFill;
+    
+    [self.scrollView addSubview:self.instagramButton];
+}
+
+- (void)setupTumblrButton
+{
+    // Do any additional setup after loading the view.
+    self.tumblrButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.tumblrButton setTitle:@"Show View" forState:UIControlStateNormal];
+    
+    
+    self.tumblrButton.frame = CGRectMake(screenWidth/2 + 15, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 120 + 47.5, 62, 21);
+    [self.tumblrButton addTarget:self action:@selector(shareOnTumblr) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIImage *btnImage = [UIImage imageNamed:@"tumblrsharebutton.png"];
+    [self.tumblrButton setImage:btnImage forState:UIControlStateNormal];
+    self.tumblrButton.contentMode = UIViewContentModeScaleToFill;
+    
+    [self.scrollView addSubview:self.tumblrButton];
+}
+
 - (void)setupSubmitButton
 {
   // Do any additional setup after loading the view.
@@ -409,14 +557,14 @@
   [submitButton setTitle:@"Show View" forState:UIControlStateNormal];
     
   
-  submitButton.frame = CGRectMake(0, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 120, 320, 47.5);
+  submitButton.frame = CGRectMake(0, self.shareBG.frame.origin.y + self.shareBG.frame.size.height + 30, 320, 47.5);
   [submitButton addTarget:self action:@selector(buttonTouched:withEvent:) forControlEvents:UIControlEventTouchUpInside];
   
   UIImage *btnImage = [UIImage imageNamed:@"submitbutton.png"];
   [submitButton setImage:btnImage forState:UIControlStateNormal];
   submitButton.contentMode = UIViewContentModeScaleToFill;
     
-    self.scrollView.contentSize = CGSizeMake(screenWidth, 320 + self.textEntry.frame.size.height + 50 + 230);
+    self.scrollView.contentSize = CGSizeMake(screenWidth, self.shareBG.frame.origin.y + self.shareBG.frame.size.height + 50 + 120 + 82);
     
   [self.scrollView addSubview:submitButton];
 }

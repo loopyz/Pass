@@ -14,6 +14,7 @@
 #import "ProfileViewController.h"
 #import "PetProfileViewController.h"
 #import "PetPlacementViewController.h"
+#import "SettingsViewController.h"
 
 #import <Parse/Parse.h>
 
@@ -32,7 +33,6 @@
         [self modifyBackground];
         [self initNavBar];
         [self setupTabBars];
-        
     
     }
     return self;
@@ -82,6 +82,8 @@
 - (void)settingsTouched
 {
     //blah
+    SettingsViewController *ppvc = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
+    [self.navigationController pushViewController:ppvc animated:YES];
 }
 
 - (void)viewDidLoad
@@ -208,7 +210,37 @@
     [viewController viewWillAppear:YES];
 //    if ([])
 //    [viewController Refresh];
+    
 }
+
+- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController {
+    if (tabBarController.selectedIndex == 0) {
+        
+        UINavigationController *selectedNav = [self.tabBarController.viewControllers objectAtIndex:self.tabBarController.selectedIndex];
+        UIViewController *currentVC = selectedNav.visibleViewController;
+        if([currentVC isMemberOfClass:NSClassFromString(@"HomeViewController")])
+        {
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshView" object:nil];
+        }
+    }
+    return YES;
+    
+//    static UIViewController *previousController = nil;
+//    if (previousController == viewController) {
+//        // the same tab was tapped a second time
+//        UITableViewController *tableViewController = (UITableViewController *)viewController;
+//        [tableViewController.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0
+//                                                                                 inSection:0]
+//                                             atScrollPosition:UITableViewScrollPositionTop
+//                                                     animated:YES];
+//        
+//    }
+//    previousController = viewController;
+//    return YES;
+}
+
+
 
 - (UIImage *)imageFromColor:(UIColor *)color forSize:(CGSize)size withCornerRadius:(CGFloat)radius
 {

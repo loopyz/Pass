@@ -26,7 +26,22 @@
 
 @property (nonatomic, retain) UIButton *dropButton;
 
+@property (nonatomic, retain) UIButton *facebookButton;
+
+@property (nonatomic, retain) UIButton *twitterButton;
+
+@property (nonatomic, retain) UIButton *instagramButton;
+
+@property (nonatomic, retain) UIButton *tumblrButton;
+
+@property (nonatomic, strong) UIImageView *shareBG;
+
 @property (nonatomic) BOOL dropButtonActivated;
+
+@property (nonatomic) BOOL facebookShareActivated;
+@property (nonatomic) BOOL tumblrShareActivated;
+@property (nonatomic) BOOL instagramShareActivated;
+@property (nonatomic) BOOL twitterShareActivated;
 
 - (IBAction)hideKeyboard:(id)sender;
 

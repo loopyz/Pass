@@ -45,7 +45,7 @@ static NSString * const CellIdentifier = @"cell";
         screenWidth = screenRect.size.width;
         screenHeight = screenRect.size.height;
         self.photo = photo;
-        self.comments = [[NSArray alloc] init];
+        self.comments = [[NSMutableArray alloc] init];
         //        [self setupTable];
         //        [self setupCommentBox];
     }
@@ -83,11 +83,14 @@ static NSString * const CellIdentifier = @"cell";
         comment.ACL = ACL;
         
         // todo -- update comment records in SPCACHE
+        [self.comments addObject:comment];
+        [self.tableView reloadData];
         [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (error){
                 NSLog(@"some error");
             } else {
                 NSLog(@"comment success");
+                
             }
         }];
     }
@@ -104,7 +107,7 @@ static NSString * const CellIdentifier = @"cell";
     PFQuery *query = [self queryForComments];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
-            self.comments = objects;
+            self.comments = [[NSMutableArray alloc] initWithArray:objects];
             [self.tableView reloadData];
         }
     }];

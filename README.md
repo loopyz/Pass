@@ -41,3 +41,4 @@ Activity:
 * content
 * fromUser - User
 * toUser - User
+* photo - Photo

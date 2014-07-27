@@ -10,7 +10,7 @@
 #import "HomeViewController.h"
 #import "NewsFeedViewController.h"
 #import "FindPetViewController.h"
-#import "FriendsFeedViewController.h"
+#import "SPNotificationsViewController.h"
 #import "ProfileViewController.h"
 #import "PetProfileViewController.h"
 #import "PetPlacementViewController.h"
@@ -153,7 +153,7 @@
     PetPlacementViewController *placevc = [[PetPlacementViewController alloc] initWithNibName:nil bundle:nil];
     placevc.tabBarItem.image = [UIImage imageNamed:@"pettabsmall.png"];
     
-    FriendsFeedViewController *ffvc = [[FriendsFeedViewController alloc] initWithNibName:nil bundle:nil];
+    SPNotificationsViewController *ffvc = [[SPNotificationsViewController alloc] initWithNibName:nil bundle:nil];
     ffvc.tabBarItem.image = [UIImage imageNamed:@"newstabsmall.png"];
     
     ProfileViewController *pvc = [[ProfileViewController alloc] initWithNibName:nil bundle:nil];

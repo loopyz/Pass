@@ -158,7 +158,10 @@
 {
     // TODO: if this is clicked, then open person's profile
     PFObject *photo = [self.photos objectAtIndex:section];
-  UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 400)];
+  UIView *outerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 400)];
+    UIButton *view = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 400)];
+    [view addTarget:self action:@selector(personTouched:) forControlEvents:UIControlEventTouchUpInside];
+    
   
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
   
@@ -199,16 +202,26 @@
   tags.numberOfLines = 0;
   [view addSubview:tags];
   
-  view.backgroundColor = [UIColor whiteColor];
-  view.alpha = .94f;
+  view.backgroundColor = [UIColor clearColor];
+    outerView.backgroundColor = [UIColor whiteColor];
+    outerView.alpha = .94f;
   
-  return view;
+    view.tag = 800 + section;
+    [outerView addSubview:view];
+  return outerView;
 }
 
-- (void)personTouched:(PFUser *)user
+- (void)personTouched:(id)sender
 {
-    ProfileViewController *pvc = [[ProfileViewController alloc] initWithUser:user];
-    [self.navigationController pushViewController:pvc animated:YES];
+    UIButton *button = (UIButton *)sender;
+    PFUser *user = [[self.photos objectAtIndex:(button.tag - 800)] objectForKey:@"user"];
+    
+    if ([user.objectId isEqualToString:[[PFUser currentUser] objectId]]) {
+        [self.tabBarController setSelectedIndex:4];
+    } else {
+        ProfileViewController *pvc = [[ProfileViewController alloc] initWithUser:user];
+        [self.navigationController pushViewController:pvc animated:YES];
+    }
 }
 //for each cell in table
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -234,7 +247,6 @@
       // setup comment button
       UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
       [commentButton setTitle:@"Comment" forState:UIControlStateNormal];
-      
       commentButton.frame = CGRectMake(self.view.frame.size.width - 90, 345, 32.5, 22);
 
       commentButton.tag = 102;

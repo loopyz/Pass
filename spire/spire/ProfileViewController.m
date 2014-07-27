@@ -28,6 +28,7 @@
         // Custom initialization
         self.bgColor = [UIColor colorWithRed:248/255.0f green:248/255.0f blue:248/255.0f alpha:1.0f];
         self.user = user;
+        self.navigationItem.title = [user objectForKey:@"username"];
         self.photos = [[NSMutableArray alloc] init];
         [self setupHeader];
         
@@ -101,11 +102,12 @@
   [offers setFont:[UIFont fontWithName:@"Avenir" size:13]];
   offers.text = @"Followers";
   
-  UILabel *pending = [[UILabel alloc] initWithFrame:CGRectMake(240, 120, 150, 50)];
-  [pending setTextColor:tinyLabelColor];
-  [pending setBackgroundColor:[UIColor clearColor]];
-  [pending setFont:[UIFont fontWithName:@"Avenir" size:13]];
-  pending.text = @"Following";
+    UILabel *pending = [[UILabel alloc] initWithFrame:CGRectMake(240, 120, 150, 50)];
+    [pending setTextColor:tinyLabelColor];
+    [pending setBackgroundColor:[UIColor clearColor]];
+    [pending setFont:[UIFont fontWithName:@"Avenir" size:13]];
+    pending.text = @"Following";
+  
   
   UILabel *numScore = [[UILabel alloc] initWithFrame:CGRectMake(35, 100, 40, 50)];
   [numScore setTextColor:[UIColor colorWithRed:68/255.0f green:203/255.0f blue:154/255.0f alpha:1.0f]];
@@ -137,10 +139,26 @@
   [self.profileSnippetView addSubview:numoffers];
   [self.profileSnippetView addSubview:numPending];
   
-  
+    UIButton *followButton = [[UIButton alloc] initWithFrame:CGRectMake(240, 0, 70, 50)];
+    [followButton setBackgroundColor:[UIColor blackColor]];
+    [followButton setTitle:@"Follow" forState:UIControlStateNormal];
+    
+    [followButton addTarget:self action:@selector(followUser:) forControlEvents:UIControlEventTouchUpInside];
+    [self.profileSnippetView addSubview:followButton];
   
   self.profileSnippetView.backgroundColor = [UIColor whiteColor];
 
+}
+
+- (void)followUser: (id) sender
+{
+    [Util followUserInBackground:self.user block:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"yay, followed");
+        } else {
+            NSLog(@"booh. no followed");
+        }
+    }];
 }
 
 - (void)addProfile
@@ -237,6 +255,14 @@
   return 130;
 }
 
+
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row == 0) {
+        return nil;
+    }
+    return indexPath;
+}
 
 //for each cell in table
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {

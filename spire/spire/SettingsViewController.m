@@ -21,7 +21,8 @@
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]))
     {
         //set up form
-        self.formController.form = [[RootForm alloc] init];
+        self.formController.form = [[SettingsForm alloc] init];
+        self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
     }
     return self;
 }

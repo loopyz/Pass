@@ -16,7 +16,7 @@
 
 @property (strong, nonatomic) NSMutableArray *pets;
 @property (strong, nonatomic) PFObject *selectedPetId;
-@property (nonatomic, strong) PullToRefresh *ptr;
+// @property (nonatomic, strong) PullToRefresh *ptr;
 
 @property (strong, nonatomic) UIView *popup;
 

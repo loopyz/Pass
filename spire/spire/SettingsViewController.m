@@ -53,6 +53,11 @@
     }
 }
 
+- (void)logoutOfFacebook
+{
+    
+}
+
 
 
 

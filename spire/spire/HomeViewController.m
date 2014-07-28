@@ -165,6 +165,9 @@
 //    PetProfileViewController *pvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];
     pvc.tabBarItem.image = [UIImage imageNamed:@"profiletabsmall.png"];
     
+    // show number of notifications here
+    ffvc.tabBarItem.badgeValue = @"53";
+    
     [placevc.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"pettab-highlighted.png"] withFinishedUnselectedImage:[UIImage imageNamed:@"pettabsmall.png"]];
     
     self.viewControllers=[NSArray arrayWithObjects:nvc, evc, placevc, ffvc, pvc, nil];

@@ -27,8 +27,9 @@
              //we don't need to modify these fields at all, so we'll
              //just refer to them by name to use the default settings
              
-//             @{FXFormFieldKey: @"Change Password",
-//               FXFormFieldOptions: @[@"password", @"repeatPassword"]},
+             @{FXFormFieldKey: @"Change Password",
+               FXFormFieldOptions: @[@"password", @"repeatPassword"]},
+             
              @"currentPassword",
              
              @"password",
@@ -60,7 +61,9 @@
              //object in the responder chain that implements the submitForm
              //method, which in this case would be the AppDelegate
              
-             @{FXFormFieldTitle: @"Submit", FXFormFieldHeader: @"", FXFormFieldAction: @"submitRegistrationForm:"},
+             @{FXFormFieldTitle: @"Save", FXFormFieldHeader: @"", FXFormFieldAction: @"submitRegistrationForm:"},
+             
+             @{FXFormFieldTitle: @"Logout", FXFormFieldHeader: @"", FXFormFieldAction: @"logoutOfFacebook"},
              
              ];
 }

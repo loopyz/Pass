@@ -92,9 +92,14 @@
     self.tableView.contentInset = inset;
     [self.tableView setAllowsSelection:NO];
     
-    self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
-    self.ptr.delegate = self;
-    [self.view addSubview:self.ptr];
+//    self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
+//    self.ptr.delegate = self;
+//    [self.view addSubview:self.ptr];
+    
+    //pull to refresh
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(Refresh) forControlEvents:UIControlEventValueChanged];
+    
     [self Refresh];
 }
 
@@ -284,7 +289,7 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView  {
     UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
     self.tableView.contentInset = inset;
-    [self.ptr viewDidScroll:scrollView];
+    // [self.ptr viewDidScroll:scrollView];
 }
 
 - (void)Refresh {
@@ -296,7 +301,8 @@
         self.userHasPet = number > 0;
     }];
     [self findNearbyPets];
-    [self.ptr isDoneRefreshing];
+    // [self.ptr isDoneRefreshing];
+    [self.refreshControl endRefreshing];
 }
 
 

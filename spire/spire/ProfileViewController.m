@@ -145,6 +145,9 @@ static const int kHeaderSize = 210;
   [self.profileSnippetView addSubview:numPending];
   
     self.followButton = [[UIButton alloc] initWithFrame:CGRectMake(self.tableView.frame.size.width/2 - 281/2, 160, 281, 35)];
+    
+    // TODO: CHECK IF YOU ARE ON YOUR OWN PROFILE. IF SO, SHOW editprofilebutton.png and have it go to another selector that leads to settings.
+    
     [self.followButton addTarget:self action:@selector(followUser:) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage;

@@ -62,6 +62,8 @@
         return @"commented on your photo.";
     } else if ([type isEqualToString:@"like"]){
         return @"liked your photo.";
+    } else if ([type isEqualToString:@"follow"]) {
+        return @"followed you.";
     } else {
         return @"took some action.";
     }

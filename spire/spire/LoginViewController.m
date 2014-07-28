@@ -82,7 +82,18 @@
             } else {
                 NSLog(@"Some error occured during FB Login Process.");
             }
-        } else if (user.isNew || ![user objectForKey:@"registered"] || FORCE_REGISTER) {
+            return;
+        }
+        if (!error) {
+            [PFFacebookUtils reauthorizeUser:user withPublishPermissions:@[@"publish_actions"] audience:FBSessionDefaultAudienceFriends block:^(BOOL succeeded, NSError *error) {
+                if (succeeded) {
+                NSLog(@"success at publish permissions.");
+                } else {
+                    NSLog(@"fail at publish permissions");
+                }
+            }];
+        }
+        if (user.isNew || ![user objectForKey:@"registered"] || FORCE_REGISTER) {
             NSLog(@"User just joined the app. Successful login.");
             PFUser *currentUser = [PFUser currentUser];
             if (![currentUser objectForKey:@"fbId"]) {
@@ -119,6 +130,7 @@
             
         } else {
             NSLog(@"Successful login.");
+            
             HomeViewController *svc = [[HomeViewController alloc] init];
             [self.navigationController pushViewController:svc animated:YES];
         }

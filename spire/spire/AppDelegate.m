@@ -23,6 +23,7 @@
     [Parse setApplicationId:@"0tIsLeaAK4LvDqxYfrVc9Qzs7l3kyIqlmEYqsnRw"
                   clientKey:@"OxsqVethSVtjArsp2OPWN85RnAsLXQxKS7jbdwJv"];
     [PFFacebookUtils initializeFacebook];
+    [PFTwitterUtils initializeWithConsumerKey:@"NlEQ1jyIR5tWnKU9IqnMXm9gk" consumerSecret:@"xz4bdDDFbyLYqsa9TXyk7OO4Hz51XwP5MWzDTZI0TPignIUUYu"];
     
     if (FORCE_LOGOUT) {
         [PFUser logOut];

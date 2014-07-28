@@ -28,5 +28,8 @@
 
 + (void)migrateLatitudeLongitudeToGeoPoint;
 
++ (void)shareToTwitter:(PFUser *)user photo:(UIImage *)image caption:(NSString *)caption block:(void(^) (BOOL succeeded, NSError *error)) completionBlock;
++ (void)shareToFacebook:(PFUser *)user photo:(UIImage *)image caption:(NSString *)caption block:(void(^) (BOOL succeeded, NSError *error)) completionBlock;
+
 
 @end

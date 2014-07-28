@@ -437,8 +437,28 @@
 {
     UIImage *image = [self imageWithView:self.container];
     NSLog(@"%f, %f", image.size.height, image.size.width);
+
     // submit image to parse
     [self saveToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text withDropped:self.toggleDrop.isSelected];
+    
+    // posting to other social networks
+    if (self.facebookShareActivated) {
+        [Util shareToFacebook:[PFUser currentUser] photo:image caption:self.textEntry.text block:^(BOOL succeeded, NSError *error) {
+            if (error) {
+                NSLog(@"%@", error.description);
+            }
+            // do nothing
+        }];
+    }
+    if (self.twitterShareActivated) {
+        [Util shareToTwitter:[PFUser currentUser] photo:image caption:self.textEntry.text block:^(BOOL succeeded, NSError *error) {
+            if (error) {
+                NSLog(@"%@", error.description);
+            }
+            // do nothing
+        }];
+        
+    }
 }
 
 - (void)shareOnFacebook

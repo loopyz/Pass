@@ -153,4 +153,110 @@
     }
 }
 
++ (void)shareToTwitter:(PFUser *)user photo:(UIImage *)image caption:(NSString *)caption block:(void(^) (BOOL succeeded, NSError *error)) completionBlock
+{
+    if (![PFTwitterUtils isLinkedWithUser:user]) {
+        [PFTwitterUtils linkUser:user block:^(BOOL succeeded, NSError *error) {
+            // sharing
+            [self twitterImageConverstion:image caption:caption];
+        }];
+    } else {
+        // sharing
+        //UIImagePNGRepresentation(image)
+        [self twitterImageConverstion:image caption:caption];
+    }
+}
+
++ (void) twitterImageConverstion:(UIImage *)image caption:(NSString *)caption
+{
+    NSURL *requestURL = [NSURL URLWithString:@"https://upload.twitter.com/1.1/statuses/update_with_media.json"];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    request.HTTPMethod = @"POST";
+    NSString *stringBoundary = @"---------------------------14737809831466499882746641449";
+    
+    // set Content-Type in HTTP header
+    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", stringBoundary];
+    [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
+    
+    // post body
+    NSMutableData *body = [NSMutableData data];
+    
+    
+    [body appendData:[[NSString stringWithFormat:@"--%@\r\n", stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"status\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"%@\r\n", [caption stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    
+    // add image data
+    NSData *imageData = UIImagePNGRepresentation(image);
+    if (imageData) {
+        [body appendData:[[NSString stringWithFormat:@"--%@\r\n", stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[@"Content-Disposition: form-data; name=\"media[]\"; filename=\"image.jpg\"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[@"Content-Type: image/jpeg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:imageData];
+        [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    
+    [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    // setting the body of the post to the reqeust
+    [request setHTTPBody:body];
+    
+    // set URL
+    [request setURL:requestURL];
+    
+    
+    // Construct the parameters string. The value of "status" is percent-escaped.
+    
+    
+    [[PFTwitterUtils twitter] signRequest:request];
+    
+    NSURLResponse *response = nil;
+    NSError *error = nil;
+    
+    // Post status synchronously.
+    NSData *data1 = [NSURLConnection sendSynchronousRequest:request
+                                          returningResponse:&response
+                                                      error:&error];
+    
+    // Handle response.
+    if (!error) {
+        NSString *responseBody = [[NSString alloc] initWithData:data1 encoding:NSUTF8StringEncoding];
+        NSLog(@"Error: %@", responseBody);
+    } else {
+        NSLog(@"Error: %@", error);
+    }
+}
+
++ (void)shareToFacebook:(PFUser *)user photo:(UIImage *)image caption:(NSString *)caption block:(void(^) (BOOL succeeded, NSError *error)) completionBlock
+{
+    if (![PFFacebookUtils isLinkedWithUser:user]) {
+        // todo: adding permissions
+        [PFFacebookUtils linkUser:user permissions:nil block:^(BOOL succeeded, NSError *error) {
+            //sharing
+            if ([FBDialogs canPresentShareDialogWithPhotos]){
+                NSLog(@"can present");
+                FBPhotoParams *params = [[FBPhotoParams alloc]init];
+                params.photos = @[image];
+                [FBDialogs presentShareDialogWithPhotoParams:params clientState:nil handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
+                    completionBlock(error == nil, error);
+                }];
+                
+            }
+        }];
+    } else {
+        // sharing
+        if ([FBDialogs canPresentShareDialogWithPhotos]){
+            NSLog(@"can present");
+            FBPhotoParams *params = [[FBPhotoParams alloc]init];
+            params.photos = @[image];
+            [FBDialogs presentShareDialogWithPhotoParams:params clientState:nil handler:^(FBAppCall *call, NSDictionary *results, NSError *error) {
+                completionBlock(error == nil, error);
+            }];
+            
+        }
+    }
+}
+
+
 @end

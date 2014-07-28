@@ -320,12 +320,36 @@
   [self.dropButton setImage:btnImage forState:UIControlStateNormal];
   self.dropButton.contentMode = UIViewContentModeScaleToFill;
   
-  [self.scrollView addSubview:self.dropButton];
+  // [self.scrollView addSubview:self.dropButton];
+    
+    UIView *dropView = [[UIView alloc] initWithFrame:CGRectMake(0, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 30, screenWidth, 48)];
+    dropView.backgroundColor = [UIColor whiteColor];
+    dropView.layer.borderColor = [[UIColor colorWithRed:228/255.0f green:228/255.0f blue:228/255.0f alpha:1.0f] CGColor];
+    dropView.layer.borderWidth = 1.0f;
+    
+    
+    UILabel *dropLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, 2, 100, 40)];
+    
+    dropLabel.text = @"Drop Pet";
+    dropLabel.textColor = [UIColor colorWithRed:129/255.0f green:129/255.0f blue:129/255.0f alpha:1.0f];
+    dropLabel.font = [UIFont fontWithName:@"Avenir" size:18.0f];
+    
+    [dropView addSubview:dropLabel];
+    
+    self.toggleDrop = [[UISwitch alloc] initWithFrame:CGRectMake(245, 8, screenWidth - 15, 44)];
+    self.toggleDrop.transform = CGAffineTransformMakeScale(0.95, 0.95);
+    self.toggleDrop.onTintColor = [UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f];
+    [dropView addSubview:self.toggleDrop];
+
+    
+    [self.scrollView addSubview:dropView];
+    
+    
 }
 
 - (void)setupShareButtons
 {
-    self.shareBG = [[UIImageView alloc] initWithFrame:CGRectMake(0, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 120, 320, 84)];
+    self.shareBG = [[UIImageView alloc] initWithFrame:CGRectMake(0, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 105, 320, 84)];
     self.shareBG.image = [UIImage imageNamed:@"buttonform.png"];
     [self.scrollView addSubview:self.shareBG];
     [self setupFacebookButton];
@@ -415,7 +439,7 @@
     NSLog(@"%f, %f", image.size.height, image.size.width);
 
     // submit image to parse
-    [self saveToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text withDropped:self.dropButtonActivated];
+    [self saveToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text withDropped:self.toggleDrop.isSelected];
     
     // posting to other social networks
     if (self.facebookShareActivated) {
@@ -435,7 +459,6 @@
         }];
         
     }
-    
 }
 
 - (void)shareOnFacebook
@@ -509,7 +532,7 @@
     [self.facebookButton setTitle:@"Show View" forState:UIControlStateNormal];
     
     
-    self.facebookButton.frame = CGRectMake(15, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 120 + 7.5, 81, 43/2);
+    self.facebookButton.frame = CGRectMake(15, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 105 + 7.5, 81, 43/2);
     [self.facebookButton addTarget:self action:@selector(shareOnFacebook) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage = [UIImage imageNamed:@"facebooksharebutton.png"];
@@ -526,7 +549,7 @@
     [self.twitterButton setTitle:@"Show View" forState:UIControlStateNormal];
     
     
-    self.twitterButton.frame = CGRectMake(screenWidth/2 + 15, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 120 + 8.5, 62.5, 17.5);
+    self.twitterButton.frame = CGRectMake(screenWidth/2 + 15, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 105 + 8.5, 62.5, 17.5);
     [self.twitterButton addTarget:self action:@selector(shareOnTwitter) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage = [UIImage imageNamed:@"twittersharebutton.png"];
@@ -543,7 +566,7 @@
     [self.instagramButton setTitle:@"Show View" forState:UIControlStateNormal];
     
     
-    self.instagramButton.frame = CGRectMake(15, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 120 + 47.5, 80, 21.5);
+    self.instagramButton.frame = CGRectMake(15, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 105 + 47.5, 80, 21.5);
     [self.instagramButton addTarget:self action:@selector(shareOnInstagram) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage = [UIImage imageNamed:@"instagramsharebutton.png"];
@@ -560,7 +583,7 @@
     [self.tumblrButton setTitle:@"Show View" forState:UIControlStateNormal];
     
     
-    self.tumblrButton.frame = CGRectMake(screenWidth/2 + 15, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 120 + 47.5, 62, 21);
+    self.tumblrButton.frame = CGRectMake(screenWidth/2 + 15, self.textEntry.frame.origin.y + self.textEntry.frame.size.height + 105 + 47.5, 62, 21);
     [self.tumblrButton addTarget:self action:@selector(shareOnTumblr) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage = [UIImage imageNamed:@"tumblrsharebutton.png"];
@@ -580,11 +603,11 @@
   submitButton.frame = CGRectMake(0, self.shareBG.frame.origin.y + self.shareBG.frame.size.height + 30, 320, 47.5);
   [submitButton addTarget:self action:@selector(buttonTouched:withEvent:) forControlEvents:UIControlEventTouchUpInside];
   
-  UIImage *btnImage = [UIImage imageNamed:@"submitbutton.png"];
+  UIImage *btnImage = [UIImage imageNamed:@"sharebutton.png"];
   [submitButton setImage:btnImage forState:UIControlStateNormal];
   submitButton.contentMode = UIViewContentModeScaleToFill;
     
-    self.scrollView.contentSize = CGSizeMake(screenWidth, self.shareBG.frame.origin.y + self.shareBG.frame.size.height + 50 + 120 + 82);
+    self.scrollView.contentSize = CGSizeMake(screenWidth, submitButton.frame.origin.y + submitButton.frame.size.height + 112);
     
   [self.scrollView addSubview:submitButton];
 }

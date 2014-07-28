@@ -16,6 +16,8 @@
 
 @interface NewsFeedViewController () {
   UIImage *locationIcon;
+    UIImage *heartIcon;
+    UIImage *commentIcon;
   UIImage *heartButtonIcon;
   UIImage *commentButtonIcon;
 }
@@ -31,6 +33,8 @@
   if (self) {
     // Custom initialization
     locationIcon = [UIImage imageNamed:@"locationicon.png"];
+      heartIcon = [UIImage imageNamed:@"hearticon.png"];
+      commentIcon = [UIImage imageNamed:@"commenticon.png"];
     heartButtonIcon = [UIImage imageNamed:@"heartbutton.png"];
     commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
     
@@ -201,15 +205,23 @@
   [view addSubview:avatarName];
   
   // setup tags
-  UILabel *tags = [[UILabel alloc] initWithFrame:CGRectMake(60, 20, 300, 50)];
+  UILabel *tags = [[UILabel alloc] initWithFrame:CGRectMake(71, 21, 300, 50)];
   [tags setTextColor:descColor];
   [tags setBackgroundColor:[UIColor clearColor]];
-  [tags setFont:[UIFont fontWithName:@"Avenir-Light" size:10]];
+  [tags setFont:[UIFont fontWithName:@"Avenir-Light" size:12]];
   
-    tags.text = [photo objectForKey:@"caption"];//@"I love Foxy hehe.";
+    // tags.text = [photo objectForKey:@"caption"];//@"I love Foxy hehe.";
   tags.lineBreakMode = NSLineBreakByWordWrapping;
   tags.numberOfLines = 0;
   [view addSubview:tags];
+    
+    // setup location icon
+    UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(60, 40, 11/1.5f, 17/1.5f)];
+    locationIconView.image = locationIcon;
+    locationIconView.tag = 101;
+    [view addSubview:locationIconView];
+    
+    tags.text = [photo objectForKey:@"locName"];
   
   view.backgroundColor = [UIColor clearColor];
     outerView.backgroundColor = [UIColor whiteColor];
@@ -217,6 +229,15 @@
   
     view.tag = 800 + section;
     [outerView addSubview:view];
+    
+    CALayer *bottomBorder = [CALayer layer];
+    
+    bottomBorder.frame = CGRectMake(0.0f, 70, self.tableView.frame.size.width, .6f);
+    
+    bottomBorder.backgroundColor = [UIColor colorWithWhite:0.8f
+                                                     alpha:1.0f].CGColor;
+    
+    [outerView.layer addSublayer:bottomBorder];
   return outerView;
 }
 
@@ -247,11 +268,19 @@
       
       UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
       
+      // setup heart icon
+      UIImageView *heartIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 325, 12, 12)];
+      heartIconView.image = heartIcon;
+      heartIconView.tag = 105;
+      [cell addSubview:heartIconView];
+      
       // setup location icon
-      UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 345, 11, 17)];
-      locationIconView.image = locationIcon;
+      UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 348, 12, 12)];
+      locationIconView.image = commentIcon;
       locationIconView.tag = 101;
+      locationIconView.backgroundColor = [UIColor clearColor];
       [cell addSubview:locationIconView];
+      
       
       // setup comment button
       UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -275,8 +304,8 @@
       [heartButton setImage:heartButtonIcon forState:UIControlStateNormal];
       heartButton.contentMode = UIViewContentModeScaleToFill;
       
-      //setup Location label
-      UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(29, 330, 200, 50)];
+      //setup caption label
+      UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(32, 330, 200, 50)];
       [desc setTextColor:descColor];
       [desc setBackgroundColor:[UIColor clearColor]];
       [desc setFont:[UIFont fontWithName:@"Avenir" size:11]];
@@ -284,6 +313,15 @@
       desc.numberOfLines = 0;
       desc.tag = 104;
       [cell addSubview:desc];
+      
+      //setup likes label
+      UILabel *likes = [[UILabel alloc] initWithFrame:CGRectMake(32, 307, 200, 50)];
+      [likes setTextColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f]];
+      [likes setBackgroundColor:[UIColor clearColor]];
+      [likes setFont:[UIFont fontWithName:@"Avenir" size:11]];
+      likes.numberOfLines = 1;
+      likes.tag = 106;
+      [cell addSubview:likes];
   }
     
     PFImageView *imageView = (PFImageView *)[cell viewWithTag:100];
@@ -291,7 +329,12 @@
     [imageView loadInBackground];
 
     UILabel *desc = (UILabel *)[cell viewWithTag:104];
-    desc.text = [photo objectForKey:@"locName"];//@"Mountain View, CA";
+    desc.text = [photo objectForKey:@"caption"];//@"Mountain View, CA";
+    
+    UILabel *likes = (UILabel *)[cell viewWithTag:106];
+    likes.text = @"22 likes";
+    
+    
 
   
   return cell;

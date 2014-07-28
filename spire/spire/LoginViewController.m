@@ -10,6 +10,8 @@
 #import "LoginViewController.h"
 #import "HomeViewController.h"
 #import "RegisterInformationViewController.h"
+#import "RegisterViewController.h"
+#import "NormalLoginViewController.h"
 
 #define FORCE_REGISTER false
 
@@ -125,7 +127,14 @@
 
 - (void)normalLoginTouched
 {
-    //lol we'll have this later
+    NormalLoginViewController *svc = [[NormalLoginViewController alloc] init];
+    [self.navigationController pushViewController:svc animated:YES];
+}
+
+- (void)registerTouched
+{
+    RegisterViewController *svc = [[RegisterViewController alloc] init];
+    [self.navigationController pushViewController:svc animated:YES];
 }
 
 #pragma mark - Button Setup
@@ -137,7 +146,7 @@
     [self.facebookButton setTitle:@"Show View" forState:UIControlStateNormal];
     
     self.facebookButton.frame = CGRectMake((self.view.frame.size.width - 278)/2 + 3, loginPadding + buttonBetween + 41 + 41 + buttonBetween, 278, 41);
-    [self.facebookButton addTarget:self action:@selector(normalLoginTouched) forControlEvents:UIControlEventTouchUpInside];
+    [self.facebookButton addTarget:self action:@selector(registerTouched) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *btnImage = [UIImage imageNamed:@"email-register.png"];
     [self.facebookButton setImage:btnImage forState:UIControlStateNormal];

@@ -35,6 +35,8 @@
              @{FXFormFieldKey: @"name", FXFormFieldHeader: @"Details",
                @"textField.autocapitalizationType": @(UITextAutocapitalizationTypeWords)},
              
+             @"Username",
+             
              //this is a multiple choice field, so we'll need to provide some options
              //because this is an enum property, the indexes of the options should match enum values
              
@@ -44,52 +46,16 @@
              
              @"dateOfBirth",
              
-             //we want to use a stepper control for this value, so let's specify that
-             
-             @{FXFormFieldKey: @"age", FXFormFieldCell: [FXFormStepperCell class]},
-             
+
              //some more regular fields
              
              @"profilePhoto",
              @"phone",
              
-             //this is an options field that uses a FXFormOptionPickerCell to display the available
-             //options in a UIPickerView
-             
-             @{FXFormFieldKey: @"language",
-               FXFormFieldOptions: @[@"English", @"Spanish", @"French", @"Dutch"],
-               FXFormFieldDefaultValue: @"English",
-               FXFormFieldCell: [FXFormOptionPickerCell class]},
-             
-             //this is a multi-select options field - FXForms knows this because the
-             //class of the field property is a collection (in this case, NSArray)
-             
-             @{FXFormFieldKey: @"interests",
-               FXFormFieldDefaultValue: @[@"Videogames"],
-               FXFormFieldOptions: @[@"Videogames", @"Animals", @"Cooking"]},
-             
-             //this is another multi-select options field, but in this case it's represented
-             //as a bitfield. FXForms can't infer this from the property (which is just an integer), so
-             //we explicitly specify the type as FXFormFieldTypeBitfield
-             
-             @{FXFormFieldKey: @"otherInterests",
-               FXFormFieldType: FXFormFieldTypeBitfield,
-               FXFormFieldDefaultValue: @(InterestComputers),
-               FXFormFieldOptions: @[@"Computers", @"Socializing", @"Sports"]},
-             
              //this is a multiline text view that grows to fit its contents
              
              @{FXFormFieldKey: @"about", FXFormFieldType: FXFormFieldTypeLongText, FXFormFieldPlaceholder: @"Text..."},
              
-             //this is an options field that uses a FXFormOptionSegmentsCell to display the available
-             //options in a UIPickerView
-             
-             @{FXFormFieldHeader: @"Plan",
-               FXFormFieldKey: @"plan",
-               FXFormFieldTitle: @"",
-               FXFormFieldPlaceholder: @"Free",
-               FXFormFieldOptions: @[@"Micro", @"Normal", @"Maxi"],
-               FXFormFieldCell: [FXFormOptionSegmentsCell class]},
              
              //we want to add a section header here, so we use another config dictionary
              

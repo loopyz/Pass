@@ -33,12 +33,14 @@
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                               json = [NSJSONSerialization JSONObjectWithData:data
-                                                                      options:0
-                                                                        error:nil];
-                               NSLog(@"%@", json[@"response"][@"venues"][0][@"name"]);
-                               
-                               callback(json[@"response"][@"venues"]);
+                               if (data) {
+                                   json = [NSJSONSerialization JSONObjectWithData:data
+                                                                          options:0
+                                                                            error:nil];
+                                   NSLog(@"%@", json[@"response"][@"venues"][0][@"name"]);
+                                   
+                                   callback(json[@"response"][@"venues"]);
+                               }
                            }];
 }
 

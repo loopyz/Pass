@@ -207,7 +207,7 @@ static const int kHeaderSize = 210;
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView  {
     UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
     self.tableView.contentInset = inset;
-    [self.ptr viewDidScroll:scrollView];
+    // [self.ptr viewDidScroll:scrollView];
 }
 
 - (void)viewDidLoad
@@ -216,9 +216,12 @@ static const int kHeaderSize = 210;
   UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
   self.tableView.contentInset = inset;
     
-    self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
-    self.ptr.delegate = self;
-    [self.view addSubview:self.ptr];
+//    self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
+//    self.ptr.delegate = self;
+//    [self.view addSubview:self.ptr];
+
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(Refresh) forControlEvents:UIControlEventValueChanged];
     
     [self Refresh];
 
@@ -255,7 +258,9 @@ static const int kHeaderSize = 210;
     
     // Perform here the required actions to refresh the data (call a JSON API for example).
     // Once the data has been updated, call the method isDoneRefreshing:
-    [self.ptr isDoneRefreshing];
+    // [self.ptr isDoneRefreshing];
+    
+    [self.refreshControl endRefreshing];
 }
 
 - (void)viewWillAppear:(BOOL)animated

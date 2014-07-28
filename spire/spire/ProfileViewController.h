@@ -18,7 +18,7 @@
 @property (nonatomic, strong) NSMutableArray *photos;
 @property (strong, nonatomic) UIColor *bgColor;
 @property (strong, nonatomic) UILabel *numScoresLabel;
-@property (nonatomic, strong) PullToRefresh *ptr;
+// @property (nonatomic, strong) PullToRefresh *ptr;
 @property (nonatomic, strong) PFUser *user;
 @property (nonatomic, strong) UIButton *followButton;
 

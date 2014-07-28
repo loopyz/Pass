@@ -11,6 +11,8 @@
 #import <Parse/Parse.h>
 #import <FacebookSDK/FacebookSDK.h>
 
+static const int kHeaderSize = 210;
+
 @interface ProfileViewController () {
   UIImage *locationIcon;
   UIImage *heartButtonIcon;
@@ -37,6 +39,9 @@
         commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
         
         self.tableView.separatorColor = [UIColor colorWithRed:211/255.0f green:211/255.0f blue:211/255.0f alpha:1.0f];
+        
+        // TODO: GET FOLLOW BUTTON STATE FROM PARSE. IF FOLLOWING, SAY YES
+        self.isFollowing = NO;
     }
     return self;
 }
@@ -44,7 +49,7 @@
 - (void)setupHeader
 {
     PFUser *currentUser = self.user;
-  UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 164)];
+  UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, kHeaderSize)];
   view.backgroundColor = [UIColor whiteColor];
   self.profileSnippetView = view;
   self.fbProfilePic = [[FBProfilePictureView alloc] init];
@@ -139,19 +144,41 @@
   [self.profileSnippetView addSubview:numoffers];
   [self.profileSnippetView addSubview:numPending];
   
-    UIButton *followButton = [[UIButton alloc] initWithFrame:CGRectMake(240, 0, 70, 50)];
-    [followButton setBackgroundColor:[UIColor blackColor]];
-    [followButton setTitle:@"Follow" forState:UIControlStateNormal];
+    self.followButton = [[UIButton alloc] initWithFrame:CGRectMake(self.tableView.frame.size.width/2 - 281/2, 160, 281, 35)];
+    [self.followButton addTarget:self action:@selector(followUser:) forControlEvents:UIControlEventTouchUpInside];
     
-    [followButton addTarget:self action:@selector(followUser:) forControlEvents:UIControlEventTouchUpInside];
-    [self.profileSnippetView addSubview:followButton];
+    UIImage *btnImage;
+    if (self.isFollowing) {
+        btnImage = [UIImage imageNamed:@"followingbutton.pnrg"];
+    }
+    else {
+        btnImage = [UIImage imageNamed:@"followbutton.png"];
+    }
+    [self.followButton setImage:btnImage forState:UIControlStateNormal];
+    self.followButton.contentMode = UIViewContentModeScaleToFill;
+    
+    [self.profileSnippetView addSubview:self.followButton];
   
-  self.profileSnippetView.backgroundColor = [UIColor whiteColor];
+    self.profileSnippetView.backgroundColor = [UIColor whiteColor];
 
 }
 
 - (void)followUser: (id) sender
 {
+    
+    UIImage *btnImage;
+    
+    if (self.isFollowing) {
+        self.isFollowing = NO;
+        btnImage = [UIImage imageNamed:@"followbutton.png"];
+    }
+    else {
+        self.isFollowing = YES;
+        btnImage = [UIImage imageNamed:@"followingbutton.png"];
+    }
+    
+    [self.followButton setImage:btnImage forState:UIControlStateNormal];
+    
     [Util followUserInBackground:self.user block:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             NSLog(@"yay, followed");
@@ -231,6 +258,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
 }
 
 - (void)didReceiveMemoryWarning
@@ -251,7 +279,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  if (indexPath.row == 0) return 164;
+  if (indexPath.row == 0) return kHeaderSize;
   return 130;
 }
 

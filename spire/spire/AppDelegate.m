@@ -51,8 +51,8 @@
     // Clear caches and NSUserDefaults
     [[SPCache sharedCache] clear];
 
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentPet"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+//    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentPet"];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
     [PFQuery clearAllCachedResults];
 
     // Logout user

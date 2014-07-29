@@ -50,7 +50,7 @@
         [pet setObject:[NSNull null] forKey:@"currentUser"];
         [pet incrementKey:@"passes"];
 
-        [SPCache setCurrentPet:nil];
+        [[SPCache sharedCache] setCurrentPet:nil];
     }
 
     // Calculate real miles from old location.
@@ -443,7 +443,7 @@
     NSLog(@"%f, %f", image.size.height, image.size.width);
 
     // submit image to parse
-    [self saveToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text withDropped:self.toggleDrop.isSelected];
+    [self saveToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text withDropped:self.toggleDrop.on];
     
     // posting to other social networks
     if (self.facebookShareActivated) {

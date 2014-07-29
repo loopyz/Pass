@@ -48,24 +48,30 @@
 - (void)setCurrentPet:(PFObject *)pet {
     NSLog(@"Updating current pet in cache.");
     NSString *key = @"currentPet";
-    [self.cache setObject:friends forKey:key];
-    [[NSUserDefaults standardUserDefaults] setObject:pet forKey:key];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    if (pet) {
+        [self.cache setObject:pet forKey:key];
+    } else {
+        [self.cache removeObjectForKey:key];
+    }
+//    [[NSUserDefaults standardUserDefaults] setObject:pet forKey:key];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (PFObject *)currentPet {
     NSString *key = @"currentPet";
     if ([self.cache objectForKey:key]) {
         return [self.cache objectForKey:key];
+    } else {
+        //    PFObject *pet = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+        PFQuery *petQuery = [PFQuery queryWithClassName:@"Pet"];
+        [petQuery whereKey:@"currentUser" equalTo:[PFUser currentUser]];
+        PFObject *pet = [petQuery getFirstObject];
+        if (pet) {
+            [self.cache setObject:pet forKey:key];
+        }
+        
+        return pet;
     }
-    
-    PFObject *pet = [[NSUserDefaults standardUserDefaults] objectForKey:key];
-    
-    if (pet) {
-        [self.cache setObject:pet forKey:key];
-    }
-
-    return pet;
 }
 
 

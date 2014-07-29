@@ -140,8 +140,8 @@
         SingleImageViewController *ppvc = [[SingleImageViewController alloc] initWithPhoto:photo];
 //        CreatePetViewController *ppvc = [[CreatePetViewController alloc] initWithNibName:nil bundle:nil] ;
 
-  [self presentViewController:ppvc animated:YES completion:nil];
-//  [self.navigationController pushViewController:ppvc animated:YES];
+  //[self presentViewController:ppvc animated:YES completion:nil];
+[self.navigationController pushViewController:ppvc animated:YES];
     }
 }
 

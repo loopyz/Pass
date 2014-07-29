@@ -7,6 +7,7 @@
 //
 
 #import "SingleImageViewController.h"
+#import "CommentsViewController.h"
 #import <Parse/Parse.h>
 #import <FacebookSDK/FacebookSDK.h>
 
@@ -75,7 +76,7 @@
   UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
   
   commentButton.frame = CGRectMake(270, 15, 31.5, 31.5);
-  [commentButton addTarget:self action:@selector(backButtonTouched) forControlEvents:UIControlEventTouchUpInside];
+  [commentButton addTarget:self action:@selector(commentTouched) forControlEvents:UIControlEventTouchUpInside];
   
   btnImage = [UIImage imageNamed:@"circlecommentbutton.png"];
   [commentButton setImage:btnImage forState:UIControlStateNormal];
@@ -86,7 +87,7 @@
   UIButton *likeButton = [UIButton buttonWithType:UIButtonTypeCustom];
   
   likeButton.frame = CGRectMake(230, 15, 31.5, 31.5);
-  [likeButton addTarget:self action:@selector(backButtonTouched) forControlEvents:UIControlEventTouchUpInside];
+  [likeButton addTarget:self action:@selector(heartTouched) forControlEvents:UIControlEventTouchUpInside];
   
   btnImage = [UIImage imageNamed:@"circlelikebutton.png"];
   [likeButton setImage:btnImage forState:UIControlStateNormal];
@@ -374,12 +375,21 @@
 
 - (void)commentTouched
 {
-  
+//    CommentsViewController *ppvc = [[CommentsViewController alloc] initWithPhoto:self.photo];
+//    
+//    [self.navigationController pushViewController:ppvc animated:YES];
+    [self backButtonTouched];
 }
 
 - (void)heartTouched
 {
-  
+    [Util likePhotoInBackground:self.photo block:^(BOOL succeeded, NSError *error) {
+        if (error) {
+            NSLog(@"error liking photo");
+        } else {
+            NSLog(@"liked photo successfully");
+        }
+    }];
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

@@ -28,6 +28,6 @@
 + (void)migrateLatitudeLongitudeToGeoPoint;
 
 + (void)shareToFacebook:(PFUser *)user photo:(UIImage *)image caption:(NSString *)caption block:(void(^) (BOOL succeeded, NSError *error)) completionBlock;
-
++ (PFQuery *)queryForNotifications:(BOOL *)getUnread;
 
 @end

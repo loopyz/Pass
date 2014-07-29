@@ -56,14 +56,18 @@
 
 + (void)likePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock
 {
+    PFUser *toUser = [photo objectForKey:@"user"];
     PFObject *likeActivity = [PFObject objectWithClassName:@"Activity"];
     [likeActivity setObject:@"like" forKey:@"type"];
     [likeActivity setObject:[PFUser currentUser] forKey:@"fromUser"];
-    [likeActivity setObject:[photo objectForKey:@"user"] forKey:@"toUser"];
+    [likeActivity setObject:toUser forKey:@"toUser"];
     [likeActivity setObject:photo forKey:@"photo"];
+    [likeActivity setObject:@1 forKey:@"unread"];
     
     // TODO: ACL protection
-    PFACL *likeACL = [PFACL ACLWithUser:[PFUser currentUser]];
+    PFACL *likeACL = [PFACL ACL];
+    [likeACL setWriteAccess:YES forUser:toUser];
+    [likeACL setWriteAccess:YES forUser:[PFUser currentUser]];
     [likeACL setPublicReadAccess:YES];
     likeActivity.ACL = likeACL;
 
@@ -89,12 +93,19 @@
         return;
     }
     
+
     PFObject *followActivity = [PFObject objectWithClassName:@"Activity"];
     [followActivity setObject:@"follow" forKey:@"type"];
     [followActivity setObject:[PFUser currentUser] forKey:@"fromUser"];
     [followActivity setObject:user forKey:@"toUser"];
+    [followActivity setObject:@1 forKey:@"unread"];
     
-    // TODO: ACL protection
+    //ACL protection
+    PFACL *followACL = [PFACL ACL];
+    [followACL setWriteAccess:YES forUser:user];
+    [followACL setWriteAccess:YES forUser:[PFUser currentUser]];
+    [followACL setPublicReadAccess:YES];
+    followActivity.ACL = followACL;
     
     [followActivity saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (completionBlock) {
@@ -181,5 +192,26 @@
     }
 }
 
++ (PFQuery *)queryForNotifications:(BOOL *)getUnread
+{
+    PFQuery *query = [PFQuery queryWithClassName:@"Activity"];
+    [query whereKey:@"toUser" equalTo:[PFUser currentUser]];
+    [query whereKey:@"fromUser" notEqualTo:[PFUser currentUser]];
+    [query whereKeyExists:@"fromUser"];
+    [query includeKey:@"fromUser"];
+    //[query includeKey:@"photo"]; // todo?
+    if (getUnread) {
+        [query whereKey:@"unread" equalTo:@1];
+    } else {
+        [query setLimit:50];
+    }
+    [query orderByDescending:@"createdAt"];
+    
+    [query setCachePolicy:kPFCachePolicyNetworkOnly];
+    
+    // todo: add caching
+    
+    return query;
+}
 
 @end

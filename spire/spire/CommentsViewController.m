@@ -79,15 +79,19 @@ static NSString * const CellIdentifier = @"cell";
 - (void) saveCommentToParse: (NSString *)commentText
 {
     if (commentText.length != 0) {
+        PFUser *toUser = [self.photo objectForKey:@"user"] ;
         PFObject *comment = [PFObject objectWithClassName:@"Activity"];
         [comment setObject:commentText forKey:@"content"];
         [comment setObject:@"comment" forKey:@"type"];
-        [comment setObject:[self.photo objectForKey:@"user"] forKey:@"toUser"];
+        [comment setObject:toUser forKey:@"toUser"];
         [comment setObject:[PFUser currentUser] forKey:@"fromUser"];
         [comment setObject:self.photo forKey:@"photo"];
+        [comment setObject:@1 forKey:@"unread"];
         
         // setting ACLs
-        PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
+        PFACL *ACL = [PFACL ACL];
+        [ACL setWriteAccess:YES forUser:toUser];
+        [ACL setWriteAccess:YES forUser:[PFUser currentUser]];
         [ACL setPublicReadAccess:YES];
         comment.ACL = ACL;
         

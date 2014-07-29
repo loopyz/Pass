@@ -40,21 +40,7 @@
     return self;
 }
 
-- (PFQuery *)queryForNotifications
-{
-    PFQuery *query = [PFQuery queryWithClassName:@"Activity"];
-    [query whereKey:@"toUser" equalTo:[PFUser currentUser]];
-    [query whereKey:@"fromUser" notEqualTo:[PFUser currentUser]];
-    [query whereKeyExists:@"fromUser"];
-    [query includeKey:@"fromUser"];
-    //[query includeKey:@"photo"]; // todo?
-    [query orderByDescending:@"createdAt"];
-    [query setCachePolicy:kPFCachePolicyNetworkOnly];
-    
-    // todo: add caching
-    
-    return query;
-}
+
 
 - (NSString *)getAction:(NSString *)type
 {
@@ -75,6 +61,9 @@
     UIEdgeInsets inset = UIEdgeInsetsMake(0, 0, 50, 0);
     self.tableView.contentInset = inset;
     
+
+    
+    
 //    self.ptr = [[PullToRefresh alloc] initWithNumberOfDots:5];
 //    self.ptr.delegate = self;
 //    [self.view addSubview:self.ptr];
@@ -89,7 +78,12 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    PFQuery *notificationsQuery = [self queryForNotifications];
+    PFQuery *unreadNotifcationsQuery = [Util queryForNotifications:YES];
+    [unreadNotifcationsQuery countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+        self.tabBarItem.badgeValue = [NSString stringWithFormat:@"%d", number];
+    }];
+    
+    PFQuery *notificationsQuery = [Util queryForNotifications:NO];
     [notificationsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (error) {
             NSLog(@"can't load notifications from parse.");
@@ -204,7 +198,14 @@
     tags.numberOfLines = 0;
     [view addSubview:tags];
     
-    view.backgroundColor = [UIColor whiteColor];
+    // toggle background color if not read
+    if ([notification objectForKey:@"unread"]) {
+        view.backgroundColor = [UIColor whiteColor];
+        [notification setObject:@0 forKey:@"unread"]; // doesn't work now because of acl.
+        [notification saveInBackground];
+    } else {
+        view.backgroundColor = [UIColor yellowColor];
+    }
     view.alpha = .94f;
     
     return view;

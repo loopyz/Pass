@@ -166,7 +166,10 @@
     pvc.tabBarItem.image = [UIImage imageNamed:@"profiletabsmall.png"];
     
     // show number of notifications here
-    ffvc.tabBarItem.badgeValue = @"53";
+    PFQuery *unreadNotifcationsQuery = [Util queryForNotifications:YES];
+    [unreadNotifcationsQuery countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+        ffvc.tabBarItem.badgeValue = [NSString stringWithFormat:@"%d", number];
+    }];
     
     [placevc.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"pettab-highlighted.png"] withFinishedUnselectedImage:[UIImage imageNamed:@"pettabsmall.png"]];
     

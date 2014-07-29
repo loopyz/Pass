@@ -18,7 +18,9 @@
 
 #import <Parse/Parse.h>
 
-@interface HomeViewController ()
+@interface HomeViewController () {
+  PetPlacementViewController *placevc;
+}
 
 @end
 
@@ -33,7 +35,7 @@
         [self modifyBackground];
         [self initNavBar];
         [self setupTabBars];
-    
+      self.delegate = (id<UITabBarControllerDelegate>)self;
     }
     return self;
 }
@@ -155,7 +157,7 @@
     FindPetViewController *evc = [[FindPetViewController alloc] initWithNibName:nil bundle:nil];
     evc.tabBarItem.image = [UIImage imageNamed:@"searchtabsmall.png"];
     
-    PetPlacementViewController *placevc = [[PetPlacementViewController alloc] initWithNibName:nil bundle:nil];
+    placevc = [[PetPlacementViewController alloc] initWithNibName:nil bundle:nil];
     placevc.tabBarItem.image = [UIImage imageNamed:@"pettabsmall.png"];
     
     SPNotificationsViewController *ffvc = [[SPNotificationsViewController alloc] initWithNibName:nil bundle:nil];
@@ -214,6 +216,11 @@
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController
 {
     // [self assignTabColors];
+  // reset camera if index is 2
+  if (tabBarController.selectedIndex == 2) {
+    placevc = [[PetPlacementViewController alloc] initWithNibName:nil bundle:nil];
+  }
+  
     [viewController viewWillAppear:YES];
 //    if ([])
 //    [viewController Refresh];

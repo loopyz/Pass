@@ -13,6 +13,7 @@
 
 #import <MediaPlayer/MediaPlayer.h>
 #import <Parse/Parse.h>
+#import "SettingsViewController.h"
 
 @interface NewsFeedViewController () {
   UIImage *locationIcon;
@@ -40,8 +41,38 @@
     
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
       
+      [self initNavBar];
+      
   }
   return self;
+}
+
+- (void)initNavBar
+{
+    
+    // Logo in the center of navigation bar
+    UIView *logoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 55, 37.5)];
+    UIImageView *titleImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"navlogo.png"]];
+    titleImageView.frame = CGRectMake(0, 0, titleImageView.frame.size.width/2, titleImageView.frame.size.height/2);
+    [logoView addSubview:titleImageView];
+    self.navigationItem.titleView = logoView;
+    
+    
+    // Right bar button item to launch the categories selection screen.
+    UIBarButtonItem *rbb = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settingsicon.png"]
+                                                            style:UIBarButtonItemStylePlain
+                                                           target:self
+                                                           action:@selector(settingsTouched)];
+    
+    rbb.tintColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+    self.navigationItem.rightBarButtonItem = rbb;
+}
+
+- (void)settingsTouched
+{
+    //blah
+    SettingsViewController *ppvc = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
+    [self.navigationController pushViewController:ppvc animated:YES];
 }
 
 - (void)updatePhotos

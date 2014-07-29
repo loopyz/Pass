@@ -103,6 +103,14 @@
     [self Refresh];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
+    self.navigationItem.title = @"Find Pets";
+    self.navigationController.navigationItem.title = @"Find Pets";
+}
+
 - (void)didReceiveMemoryWarning
 {
   [super didReceiveMemoryWarning];

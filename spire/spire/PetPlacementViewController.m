@@ -634,6 +634,10 @@
         // completion code
     }];
     
+    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
+    self.navigationItem.title = @"Add Picture";
+    self.navigationController.navigationItem.title = @"Add Picture";
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

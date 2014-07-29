@@ -7,12 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Parse/Parse.h>
 
 @interface SPCache : NSObject
 
 + (id)sharedCache;
 
 - (void)clear;
+
+- (void)setCurrentPet:(PFObject *)pet;
+- (PFObject *)currentPet;
 
 // todo add cache methods for activities
 //- (void) setAttributesForPhoto: (PFObject *)photo likers:(NSArray *)likers commenters:(NSArray *)commenters likedByCurrentUser:(BOOL)likedByCurrentUser;

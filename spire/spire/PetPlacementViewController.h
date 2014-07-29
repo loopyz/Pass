@@ -22,7 +22,6 @@
 @property (strong, nonatomic) UISwitch *toggleDrop;
 @property (strong, nonatomic) YCameraViewController *cvc;
 @property (nonatomic, retain) UIToolbar *keyboardToolbar;
-@property (strong, nonatomic) PFObject *pet;
 
 @property (nonatomic, retain) UIButton *dropButton;
 

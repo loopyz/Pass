@@ -26,7 +26,7 @@
     [PFTwitterUtils initializeWithConsumerKey:@"NlEQ1jyIR5tWnKU9IqnMXm9gk" consumerSecret:@"xz4bdDDFbyLYqsa9TXyk7OO4Hz51XwP5MWzDTZI0TPignIUUYu"];
     
     if (FORCE_LOGOUT) {
-        [PFUser logOut];
+        [self logOut];
     }
 
     //login
@@ -43,7 +43,22 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-  return [FBAppCall handleOpenURL:url sourceApplication:sourceApplication withSession:[PFFacebookUtils session]];
+    return [FBAppCall handleOpenURL:url sourceApplication:sourceApplication withSession:[PFFacebookUtils session]];
+}
+
+- (void)logOut
+{
+    // Clear caches and NSUserDefaults
+    [[SPCache sharedCache] clear];
+
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"currentPet"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    [PFQuery clearAllCachedResults];
+
+    // Logout user
+    [PFUser logOut];
+
+    // TODO: open login view controller
 }
 
 //- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken

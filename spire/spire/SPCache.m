@@ -45,6 +45,34 @@
 }
 
 
+- (void)setCurrentPet:(PFObject *)pet {
+    NSLog(@"Updating current pet in cache.");
+    NSString *key = @"currentPet";
+    if (pet) {
+        [self.cache setObject:pet forKey:key];
+    } else {
+        [self.cache removeObjectForKey:key];
+    }
+//    [[NSUserDefaults standardUserDefaults] setObject:pet forKey:key];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (PFObject *)currentPet {
+    NSString *key = @"currentPet";
+    if ([self.cache objectForKey:key]) {
+        return [self.cache objectForKey:key];
+    } else {
+        //    PFObject *pet = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+        PFQuery *petQuery = [PFQuery queryWithClassName:@"Pet"];
+        [petQuery whereKey:@"currentUser" equalTo:[PFUser currentUser]];
+        PFObject *pet = [petQuery getFirstObject];
+        if (pet) {
+            [self.cache setObject:pet forKey:key];
+        }
+        
+        return pet;
+    }
+}
 
 
 @end

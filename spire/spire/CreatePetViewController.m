@@ -63,6 +63,9 @@
     [pet setObject:@0 forKey:@"miles"];
     [pet setObject:self.type forKey:@"type"];
     [pet saveInBackground];
+
+    // Add pet to cache
+    [[SPCache sharedCache] setCurrentPet:pet];
     
     // open home view controller
     HomeViewController *svc = [[HomeViewController alloc] init];

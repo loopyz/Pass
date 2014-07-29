@@ -15,8 +15,7 @@
 + (CGFloat)screenHeight;
 
 + (NSString *)currentUserId;
-+ (void)currentPetWithBlock:(void (^)(PFObject *pet, NSError *error))callback;
-//+ (BOOL)currentUserHasPet;
++ (void)updateCurrentPetInBackground;
 
 + (void)likePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock;
 + (void)unlikePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock;

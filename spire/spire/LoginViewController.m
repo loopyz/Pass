@@ -55,6 +55,7 @@
     // check if user is cached and linked to Facebook and bypass login if so
     if ([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]] && !FORCE_REGISTER) {
         //[PFUser logOut];
+        [Util updateCurrentPetInBackground];
         HomeViewController *svc = [[HomeViewController alloc] init];
         [self.navigationController pushViewController:svc animated:YES];
         return;
@@ -130,7 +131,8 @@
             
         } else {
             NSLog(@"Successful login.");
-            
+            [Util updateCurrentPetInBackground];
+
             HomeViewController *svc = [[HomeViewController alloc] init];
             [self.navigationController pushViewController:svc animated:YES];
         }

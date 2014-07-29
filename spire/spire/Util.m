@@ -34,28 +34,25 @@
     return [[PFUser currentUser] objectId];
 }
 
-+ (void)currentPetWithBlock:(void (^)(PFObject *pet, NSError *error))callback
++ (void)updateCurrentPetInBackground
 {
     PFUser *user = [PFUser currentUser];
-    if (user == nil) {
-        NSLog(@"Warning: tried to call current pet while not logged in.");
-        callback(nil, nil);
+    if (!user) {
+        NSLog(@"Warning: tried to set current pet while not logged in.");
         return;
     }
 
     PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
     [query whereKey:@"currentUser" equalTo:user];
-    query.cachePolicy = kPFCachePolicyNetworkOnly;//kPFCachePolicyCacheElseNetwork;
+    query.cachePolicy = kPFCachePolicyNetworkOnly;
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
-        callback(pet, error);
+        if (!error) {
+            [[SPCache sharedCache] setCurrentPet:pet];
+        } else {
+            NSLog(@"Error retrieving current pet.");
+        }
     }];
 }
-
-/*+ (BOOL)currentUserHasPet
-{
-    PFUser *user = [PFUser currentUser];
-    return (user != nil && user[@"currentPetId"] != [NSNull null]);
-}*/
 
 + (void)likePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock
 {

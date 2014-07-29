@@ -49,6 +49,8 @@
     if (dropped) {
         [pet setObject:[NSNull null] forKey:@"currentUser"];
         [pet incrementKey:@"passes"];
+
+        [[SPCache sharedCache] setCurrentPet:nil];
     }
 
     // Calculate real miles from old location.
@@ -91,11 +93,12 @@
 - (void)saveToParse:(NSData *)photoData withCaption:(NSString *)caption withDropped:(BOOL) dropped
 {
     PFUser *currentUser = [PFUser currentUser];
+    PFObject *currentPet = [[SPCache sharedCache] currentPet];
 
     // Callback to call when location determined.
     void (^callback)(PFGeoPoint *geoPoint, NSString *locName) = ^void(PFGeoPoint *geoPoint, NSString *locName) {
-        [self updatePet:self.pet withDropped:dropped withGeoPoint:geoPoint withName:locName];
-        [self addPhoto:photoData withUser:currentUser withPet:self.pet withGeoPoint:geoPoint withName:locName withCaption:caption];
+        [self updatePet:currentPet withDropped:dropped withGeoPoint:geoPoint withName:locName];
+        [self addPhoto:photoData withUser:currentUser withPet:currentPet withGeoPoint:geoPoint withName:locName withCaption:caption];
         
         if (dropped) {
             PFPush *push = [[PFPush alloc] init];
@@ -221,7 +224,8 @@
 
 - (void)setupPet
 {
-    NSString *petType = [self.pet objectForKey:@"type"];
+    PFObject *pet = [[SPCache sharedCache] currentPet];
+    NSString *petType = [pet objectForKey:@"type"];
     
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.frame = CGRectMake((self.view.frame.size.width - 190.5)/2 + 30, 47, 127.5, 127.5);
@@ -439,7 +443,7 @@
     NSLog(@"%f, %f", image.size.height, image.size.width);
 
     // submit image to parse
-    [self saveToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text withDropped:self.toggleDrop.isSelected];
+    [self saveToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text withDropped:self.toggleDrop.on];
     
     // posting to other social networks
     if (self.facebookShareActivated) {
@@ -615,10 +619,6 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
-    
-    [Util currentPetWithBlock:^(PFObject *pet, NSError *error) {
-        self.pet = pet;
-    }];
     
     [self setupForm];
     [self setupSubmitButton];

@@ -72,8 +72,6 @@
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     // Custom initialization
-    // TODO: checks if user has pet
-    self.userHasPet = NO;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     UIColor *color = [UIColor colorWithRed:249/255.0f green:249/255.0f blue:249/255.0f alpha:1.0f];
     self.tableView.backgroundColor = color;
@@ -199,6 +197,8 @@
         }
     }
 
+    BOOL userHasPet = [[SPCache sharedCache] currentPet] != nil;
+
     // TODO: use correct values in an array
     for (int x = 0; x < numberOfPetsInRow; x++) {
         NSUInteger section = indexPath.section;
@@ -215,7 +215,7 @@
         UIImage *petImage = [UIImage imageNamed:[petType stringByAppendingString:@".png"]];
 
         // If nearby, and user does not have pet, add pet as button.
-        if (indexPath.section == 0 && !self.userHasPet) {
+        if (indexPath.section == 0 && !userHasPet) {
             UIButton *petButton = [[UIButton alloc] initWithFrame:CGRectMake(20 + 100 * x, 20, 73.5, 73.5)];
             [petButton setImage:petImage forState:UIControlStateNormal];
             petButton.contentMode = UIViewContentModeScaleAspectFill;
@@ -268,6 +268,7 @@
           [pet saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
               [self Refresh];
           }];
+          [[SPCache sharedCache] setCurrentPet:pet];
           self.selectedPetId = nil;
       }];
   }
@@ -303,11 +304,6 @@
 - (void)Refresh {
     // Perform here the required actions to refresh the data (call a JSON API for example).
     // Once the data has been updated, call the method isDoneRefreshing:
-    PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
-    [query whereKey:@"currentUser" equalTo:[PFUser currentUser]];
-    [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
-        self.userHasPet = number > 0;
-    }];
     [self findNearbyPets];
     // [self.ptr isDoneRefreshing];
     [self.refreshControl endRefreshing];

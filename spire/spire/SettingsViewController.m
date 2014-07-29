@@ -22,11 +22,24 @@
 {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]))
     {
+        [self initNavBar];
         //set up form
         self.formController.form = [[SettingsForm alloc] init];
-        self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
     }
     return self;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
+}
+
+- (void)initNavBar
+{
+    
+    self.navigationController.navigationBar.topItem.title = @"Settings";
+    self.navigationItem.title = @"Settings";
 }
 
 //these are action methods for our forms

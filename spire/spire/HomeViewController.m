@@ -130,7 +130,7 @@
 {
     [super viewWillAppear:animated];
     [self assignTabColors];
-    [self.navigationController setNavigationBarHidden:NO];
+    [self.navigationController setNavigationBarHidden:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -170,7 +170,8 @@
     
     [placevc.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"pettab-highlighted.png"] withFinishedUnselectedImage:[UIImage imageNamed:@"pettabsmall.png"]];
     
-    self.viewControllers=[NSArray arrayWithObjects:nvc, evc, placevc, ffvc, pvc, nil];
+    
+    self.viewControllers=[NSArray arrayWithObjects:[[UINavigationController alloc] initWithRootViewController:nvc], [[UINavigationController alloc] initWithRootViewController:evc], [[UINavigationController alloc] initWithRootViewController:placevc], [[UINavigationController alloc] initWithRootViewController:ffvc], [[UINavigationController alloc] initWithRootViewController:pvc], nil];
 }
 
 - (void)assignTabColors

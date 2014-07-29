@@ -33,8 +33,17 @@ static NSString * const CellIdentifier = @"cell";
         screenHeight = screenRect.size.height;
 //        [self setupTable];
 //        [self setupCommentBox];
+        
+        [self initNavBar];
     }
     return self;
+}
+
+- (void)initNavBar
+{
+    
+    self.navigationController.navigationBar.topItem.title = @"Comments";
+    self.navigationItem.title = @"Comments";
 }
 
 - (id)initWithPhoto:(PFObject *)photo
@@ -104,6 +113,7 @@ static NSString * const CellIdentifier = @"cell";
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     PFQuery *query = [self queryForComments];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
@@ -111,6 +121,9 @@ static NSString * const CellIdentifier = @"cell";
             [self.tableView reloadData];
         }
     }];
+    
+    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
+    self.navigationItem.title = @"Comments";
 }
 #pragma mark - Private
 
@@ -186,5 +199,6 @@ static NSString * const CellIdentifier = @"cell";
     self.contentWrapper.inputView.textView.text = @"";
     [self.contentWrapper hideKeyboard];
 }
+
 
 @end

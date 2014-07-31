@@ -21,6 +21,7 @@
     {
         //set up form
         self.formController.form = [[RegistrationForm alloc] init];
+      [self.tabBarController.tabBar setHidden:YES];
         self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
     }
     return self;

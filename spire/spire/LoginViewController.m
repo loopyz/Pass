@@ -197,7 +197,7 @@
     
     self.facebookButton.frame = CGRectMake((self.view.frame.size.width - 278)/2 + 3, loginPadding, 278, 41);
     [self.facebookButton addTarget:self action:@selector(buttonTouched:) forControlEvents:UIControlEventTouchUpInside];
-    
+  
     UIImage *btnImage = [UIImage imageNamed:@"facebook-login.png"];
     [self.facebookButton setImage:btnImage forState:UIControlStateNormal];
     self.facebookButton.contentMode = UIViewContentModeScaleToFill;
@@ -208,6 +208,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [self.navigationController setNavigationBarHidden:YES];
+  [self.tabBarController.tabBar setHidden:YES];
     // Do any additional setup after loading the view.
 }
 

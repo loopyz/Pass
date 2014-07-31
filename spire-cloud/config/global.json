@@ -1,0 +1,11 @@
+{
+    "applications": {
+        "Spire": {
+            "applicationId": "0tIsLeaAK4LvDqxYfrVc9Qzs7l3kyIqlmEYqsnRw", 
+            "masterKey": "8VxFO48JDsj4jjQRFrv4DBxh2xv7O0Hgv7D5fwgo"
+        }, 
+        "_default": {
+            "link": "Spire"
+        }
+    }
+}

@@ -47,6 +47,10 @@
   return self;
 }
 
+-(UIStatusBarStyle)preferredStatusBarStyle{
+  return UIStatusBarStyleLightContent;
+}
+
 - (void)scrollToTop
 {
   [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0

@@ -37,7 +37,7 @@
         return;
     }
 
-    PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
+    PFQuery *query = [PFQuery queryWithClassName:kSPPetClassKey];
     [query whereKey:@"currentUser" equalTo:user];
     query.cachePolicy = kPFCachePolicyNetworkOnly;
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
@@ -59,7 +59,7 @@
 + (void)likePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock
 {
     PFUser *toUser = [photo objectForKey:@"user"];
-    PFObject *likeActivity = [PFObject objectWithClassName:@"Activity"];
+    PFObject *likeActivity = [PFObject objectWithClassName:kSPActivityClassKey];
     [likeActivity setObject:@"like" forKey:@"type"];
     [likeActivity setObject:[PFUser currentUser] forKey:@"fromUser"];
     [likeActivity setObject:toUser forKey:@"toUser"];
@@ -96,7 +96,7 @@
     }
     
 
-    PFObject *followActivity = [PFObject objectWithClassName:@"Activity"];
+    PFObject *followActivity = [PFObject objectWithClassName:kSPActivityClassKey];
     [followActivity setObject:@"follow" forKey:@"type"];
     [followActivity setObject:[PFUser currentUser] forKey:@"fromUser"];
     [followActivity setObject:user forKey:@"toUser"];
@@ -124,11 +124,11 @@
 
 + (PFQuery *)queryForActivitiesOnPhoto:(PFObject *)photo cachePolicy:(PFCachePolicy)cachePolicy
 {
-    PFQuery *queryLikes = [PFQuery queryWithClassName:@"Activity"];
+    PFQuery *queryLikes = [PFQuery queryWithClassName:kSPActivityClassKey];
     [queryLikes whereKey:@"photo" equalTo:photo];
     [queryLikes whereKey:@"type" equalTo:@"like"];
     
-    PFQuery *queryComments = [PFQuery queryWithClassName:@"Activity"];
+    PFQuery *queryComments = [PFQuery queryWithClassName:kSPActivityClassKey];
     [queryComments whereKey:@"photo" equalTo:photo];
     [queryComments whereKey:@"type" equalTo:@"comment"];
     
@@ -173,7 +173,7 @@
 
 + (PFQuery *)queryForNotifications:(BOOL *)getUnread
 {
-    PFQuery *query = [PFQuery queryWithClassName:@"Activity"];
+    PFQuery *query = [PFQuery queryWithClassName:kSPActivityClassKey];
     [query whereKey:@"toUser" equalTo:[PFUser currentUser]];
     [query whereKey:@"fromUser" notEqualTo:[PFUser currentUser]];
     [query whereKeyExists:@"fromUser"];

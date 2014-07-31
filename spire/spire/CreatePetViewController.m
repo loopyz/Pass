@@ -49,7 +49,7 @@
 
 - (IBAction)buttonTouched:(id)sender
 {
-    PFObject *pet = [[PFObject alloc] initWithClassName:@"Pet"];
+    PFObject *pet = [[PFObject alloc] initWithClassName:kSPPetClassKey];
 
     // TODO : select pet pic.
     for (NSInteger i = 0; i < [self.formTable numberOfRowsInSection:0]; ++i)

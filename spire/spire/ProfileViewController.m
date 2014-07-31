@@ -230,13 +230,13 @@ static const int kHeaderSize = 210;
 
 - (void)refreshView
 {
-    PFQuery *countquery = [PFQuery queryWithClassName:@"Photo"];
+    PFQuery *countquery = [PFQuery queryWithClassName:kSPPhotoClassKey];
     [countquery whereKey:@"user" equalTo:self.user];
     [countquery countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
         self.numScoresLabel.text = [NSString stringWithFormat:@"%d", number];
     }];
     
-    PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
+    PFQuery *query = [PFQuery queryWithClassName:kSPPhotoClassKey];
     [query includeKey:@"pet"];
     [query whereKey:@"user" equalTo:self.user];
     [query whereKeyExists:@"first"]; // neccessary?

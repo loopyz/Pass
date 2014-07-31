@@ -63,7 +63,7 @@
         return [self.cache objectForKey:key];
     } else {
         //    PFObject *pet = [[NSUserDefaults standardUserDefaults] objectForKey:key];
-        PFQuery *petQuery = [PFQuery queryWithClassName:@"Pet"];
+        PFQuery *petQuery = [PFQuery queryWithClassName:kSPPetClassKey];
         [petQuery whereKey:@"currentUser" equalTo:[PFUser currentUser]];
         PFObject *pet = [petQuery getFirstObject];
         if (pet) {

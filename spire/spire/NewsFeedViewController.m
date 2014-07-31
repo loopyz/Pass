@@ -47,9 +47,17 @@
   return self;
 }
 
+- (void)scrollToTop
+{
+  [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0
+                                                            inSection:0]
+                        atScrollPosition:UITableViewScrollPositionTop
+                                animated:YES];
+}
+
 - (void)initNavBar
 {
-    
+  
     // Logo in the center of navigation bar
     UIView *logoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 55, 37.5)];
     UIImageView *titleImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"navlogo.png"]];

@@ -20,6 +20,8 @@
 
 @interface HomeViewController () {
   PetPlacementViewController *placevc;
+  NewsFeedViewController *nvc;
+  UIViewController *previousController;
 }
 
 @end
@@ -36,6 +38,7 @@
         [self initNavBar];
         [self setupTabBars];
       self.delegate = (id<UITabBarControllerDelegate>)self;
+      previousController = nvc;
     }
     return self;
 }
@@ -151,7 +154,7 @@
 - (void)setupTabBars
 {
     [[UITabBar appearance] setBackgroundColor:[UIColor whiteColor]];
-    NewsFeedViewController *nvc = [[NewsFeedViewController alloc]initWithNibName:nil bundle:nil];
+    nvc = [[NewsFeedViewController alloc]initWithNibName:nil bundle:nil];
     nvc.tabBarItem.image = [UIImage imageNamed:@"hometabsmall.png"];
     
     FindPetViewController *evc = [[FindPetViewController alloc] initWithNibName:nil bundle:nil];
@@ -238,20 +241,13 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshView" object:nil];
         }
     }
-    return YES;
+  
+    // return YES;
     
-//    static UIViewController *previousController = nil;
-//    if (previousController == viewController) {
-//        // the same tab was tapped a second time
-//        UITableViewController *tableViewController = (UITableViewController *)viewController;
-//        [tableViewController.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0
-//                                                                                 inSection:0]
-//                                             atScrollPosition:UITableViewScrollPositionTop
-//                                                     animated:YES];
-//        
-//    }
-//    previousController = viewController;
-//    return YES;
+    if (previousController == viewController) {
+    }
+    previousController = viewController;
+    return YES;
 }
 
 

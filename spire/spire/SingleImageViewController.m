@@ -113,8 +113,8 @@
 - (void)backButtonTouched
 {
   // TODO: BACK BUTTON TOUCHED
-  // [self.navigationController popViewControllerAnimated:YES];
-  [self dismissViewControllerAnimated:YES completion:nil];
+  [self.navigationController popViewControllerAnimated:YES];
+  // [self dismissViewControllerAnimated:YES completion:nil];
 }
 - (void)setupCaption
 {

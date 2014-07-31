@@ -44,13 +44,14 @@
 
 - (NSString *)getAction:(NSString *)type
 {
-    if ([type isEqualToString:@"comment"]) {
+    if ([type isEqualToString:kSPActivityTypeComment]) {
         return @"commented on your photo.";
-    } else if ([type isEqualToString:@"like"]){
+    } else if ([type isEqualToString:kSPActivityTypeLike]) {
         return @"liked your photo.";
-    } else if ([type isEqualToString:@"follow"]) {
+    } else if ([type isEqualToString:kSPActivityTypeFollow]) {
         return @"followed you.";
     } else {
+        NSLog(@"Warning: Unexpected activity type!");
         return @"took some action.";
     }
 }

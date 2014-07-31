@@ -1,5 +1,5 @@
 //
-//  Util.m
+//  SPConstants.m
 //  spire
 //
 //  Created by Ivan Wang on 7/31/14.
@@ -21,3 +21,7 @@ NSString *const kSPFoursquareClientSecret = @"XYHXKNHOVBPTX4KLXR1QID4QNA2RSMXZZQ
 NSString *const kSPPetClassKey = @"Pet";
 NSString *const kSPPhotoClassKey = @"Photo";
 NSString *const kSPActivityClassKey = @"Activity";
+
+NSString *const kSPActivityTypeLike = @"like";
+NSString *const kSPActivityTypeComment = @"comment";
+NSString *const kSPActivityTypeFollow = @"follow";

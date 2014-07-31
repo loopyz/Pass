@@ -1,5 +1,5 @@
 //
-//  Util.h
+//  SPConstants.h
 //  spire
 //
 //  Created by Ivan Wang on 7/31/14.
@@ -19,3 +19,7 @@ extern NSString *const kSPFoursquareClientSecret;
 extern NSString *const kSPPetClassKey;
 extern NSString *const kSPPhotoClassKey;
 extern NSString *const kSPActivityClassKey;
+
+extern NSString *const kSPActivityTypeLike;
+extern NSString *const kSPActivityTypeComment;
+extern NSString *const kSPActivityTypeFollow;

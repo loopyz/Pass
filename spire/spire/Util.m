@@ -60,7 +60,7 @@
 {
     PFUser *toUser = [photo objectForKey:@"user"];
     PFObject *likeActivity = [PFObject objectWithClassName:kSPActivityClassKey];
-    [likeActivity setObject:@"like" forKey:@"type"];
+    [likeActivity setObject:kSPActivityTypeLike forKey:@"type"];
     [likeActivity setObject:[PFUser currentUser] forKey:@"fromUser"];
     [likeActivity setObject:toUser forKey:@"toUser"];
     [likeActivity setObject:photo forKey:@"photo"];
@@ -97,7 +97,7 @@
     
 
     PFObject *followActivity = [PFObject objectWithClassName:kSPActivityClassKey];
-    [followActivity setObject:@"follow" forKey:@"type"];
+    [followActivity setObject:kSPActivityTypeFollow forKey:@"type"];
     [followActivity setObject:[PFUser currentUser] forKey:@"fromUser"];
     [followActivity setObject:user forKey:@"toUser"];
     [followActivity setObject:@1 forKey:@"unread"];
@@ -126,11 +126,11 @@
 {
     PFQuery *queryLikes = [PFQuery queryWithClassName:kSPActivityClassKey];
     [queryLikes whereKey:@"photo" equalTo:photo];
-    [queryLikes whereKey:@"type" equalTo:@"like"];
+    [queryLikes whereKey:@"type" equalTo:kSPActivityTypeLike];
     
     PFQuery *queryComments = [PFQuery queryWithClassName:kSPActivityClassKey];
     [queryComments whereKey:@"photo" equalTo:photo];
-    [queryComments whereKey:@"type" equalTo:@"comment"];
+    [queryComments whereKey:@"type" equalTo:kSPActivityTypeComment];
     
     PFQuery *query = [PFQuery orQueryWithSubqueries:[NSArray arrayWithObjects:queryLikes,queryComments,nil]];
     // TODO: set cache policy

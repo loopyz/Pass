@@ -56,6 +56,8 @@
     if ([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]] && !FORCE_REGISTER) {
         //[PFUser logOut];
         [Util updateCurrentPetInBackground];
+        [Util updateCurrentUserActiveInBackground];
+
         HomeViewController *svc = [[HomeViewController alloc] init];
         [self.navigationController pushViewController:svc animated:YES];
         return;
@@ -96,6 +98,7 @@
         }
         if (user.isNew || ![user objectForKey:@"registered"] || FORCE_REGISTER) {
             NSLog(@"User just joined the app. Successful login.");
+            [Util updateCurrentUserActiveInBackground];
             PFUser *currentUser = [PFUser currentUser];
             if (![currentUser objectForKey:@"fbId"]) {
                 FBRequest *request = [FBRequest requestForMe];
@@ -132,6 +135,7 @@
         } else {
             NSLog(@"Successful login.");
             [Util updateCurrentPetInBackground];
+            [Util updateCurrentUserActiveInBackground];
 
             HomeViewController *svc = [[HomeViewController alloc] init];
             [self.navigationController pushViewController:svc animated:YES];

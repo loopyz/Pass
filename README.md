@@ -13,6 +13,7 @@ User:
 * description
 * hometown
 * registered
+* lastActiveAt - Date
 
 Pet:
 * name

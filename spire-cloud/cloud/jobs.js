@@ -10,7 +10,7 @@ Parse.Cloud.job('dropInactivePets', function(request, status) {
   var query = new Parse.Query(Parse.Pet);
   query.each(function(pet) {
     var user = pet.get('currentUser');
-    if (user && user.updatedAt < expiration) {
+    if (user && user.get('lastActiveAt') < expiration) {
       // TODO: Send a message to user telling them their pet was dropped.
       status.message('Dropping pet: ' + pet.get('name'));
       pet.set('currentUser', null);

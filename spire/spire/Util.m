@@ -54,6 +54,13 @@
     }];
 }
 
++ (void)updateCurrentUserActiveInBackground
+{
+    PFUser *user = [PFUser currentUser];
+    [user setObject:[NSDate date] forKey:@"lastActiveAt"];
+    [user saveInBackground];
+}
+
 + (void)likePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock
 {
     PFUser *toUser = [photo objectForKey:@"user"];

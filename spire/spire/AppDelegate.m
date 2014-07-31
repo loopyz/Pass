@@ -19,15 +19,14 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     
-    // register for push notifications
+    // Register for push notifications.
     [application registerForRemoteNotificationTypes:
      UIRemoteNotificationTypeBadge |
      UIRemoteNotificationTypeAlert |
      UIRemoteNotificationTypeSound];
 
-    // parse
-    [Parse setApplicationId:@"0tIsLeaAK4LvDqxYfrVc9Qzs7l3kyIqlmEYqsnRw"
-                  clientKey:@"OxsqVethSVtjArsp2OPWN85RnAsLXQxKS7jbdwJv"];
+    // Set up Parse.
+    [Parse setApplicationId:kSPParseApplicationId clientKey:kSPParseClientKey];
     [PFFacebookUtils initializeFacebook];
     
     if (FORCE_LOGOUT) {

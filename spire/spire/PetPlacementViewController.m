@@ -41,10 +41,6 @@
 - (void)updatePet:(PFObject *)pet withDropped:(BOOL)dropped withGeoPoint:(PFGeoPoint *)newGeoPoint withName:(NSString *)locName
 {
     PFGeoPoint *oldGeoPoint = [pet objectForKey:@"geoPoint"];
-
-    // TODO: Deprecated, remove.
-    //[pet setObject:latitude forKey:@"latitude"];
-    //[pet setObject:longitude forKey:@"longitude"];
     [pet setObject:newGeoPoint forKey:@"geoPoint"];
     [pet setObject:locName forKey:@"locName"];
     if (dropped) {
@@ -73,9 +69,6 @@
             [photo setObject:pet forKey:@"pet"];
             [photo setObject:image forKey:@"image"];
             [photo setObject:caption forKey:@"caption"];
-            // TODO: deprecated, remove.
-            //[photo setObject:latitude forKey:@"latitude"];
-            //[photo setObject:longitude forKey:@"longitude"];
             [photo setObject:geoPoint forKey:@"geoPoint"];
             [photo setObject:locName forKey:@"locName"];
             

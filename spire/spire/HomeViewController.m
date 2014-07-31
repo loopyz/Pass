@@ -152,8 +152,9 @@
 {
     [[UITabBar appearance] setBackgroundColor:[UIColor whiteColor]];
     nvc = [[NewsFeedViewController alloc]initWithNibName:nil bundle:nil];
-    nvc.tabBarItem.image = [UIImage imageNamed:@"hometabsmall.png"];
-    
+    UINavigationController *nav1 = [[UINavigationController alloc] initWithRootViewController:nvc];
+  nav1.tabBarItem.image = [UIImage imageNamed:@"hometabsmall.png"];
+  
     FindPetViewController *evc = [[FindPetViewController alloc] initWithNibName:nil bundle:nil];
     evc.tabBarItem.image = [UIImage imageNamed:@"searchtabsmall.png"];
     
@@ -176,7 +177,7 @@
     [placevc.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"pettab-highlighted.png"] withFinishedUnselectedImage:[UIImage imageNamed:@"pettabsmall.png"]];
     
     
-    self.viewControllers=[NSArray arrayWithObjects:[[UINavigationController alloc] initWithRootViewController:nvc], [[UINavigationController alloc] initWithRootViewController:evc], [[UINavigationController alloc] initWithRootViewController:placevc], [[UINavigationController alloc] initWithRootViewController:ffvc], [[UINavigationController alloc] initWithRootViewController:pvc], nil];
+    self.viewControllers=[NSArray arrayWithObjects:nav1, [[UINavigationController alloc] initWithRootViewController:evc], [[UINavigationController alloc] initWithRootViewController:placevc], [[UINavigationController alloc] initWithRootViewController:ffvc], [[UINavigationController alloc] initWithRootViewController:pvc], nil];
 }
 
 - (void)assignTabColors
@@ -248,7 +249,7 @@
     if (previousController == viewController) {
     }
     previousController = viewController;
-    return YES;
+     return (tabBarController.selectedViewController != viewController);
 }
 
 

@@ -53,11 +53,9 @@
         self.callback = callback;
         self.navigationItem.title = @"Select location";
         
-        NSString *_foursquareId = @"02K3GC4J1Y34WDZG4XIWHBSF2WJKOHIOMSTPWTWQVMPFALL2";
-        NSString *_foursquareSecret = @"XYHXKNHOVBPTX4KLXR1QID4QNA2RSMXZZQML32ANKP1H4VHJ";
         NSString *locFormat = @"https://api.foursquare.com/v2/venues/search?client_id=%@&client_secret=%@&v=20130815&ll=%f,%f";
         
-        NSString *queryAddr = [NSString stringWithFormat:locFormat, _foursquareId, _foursquareSecret, geoPoint.latitude, geoPoint.longitude];
+        NSString *queryAddr = [NSString stringWithFormat:locFormat, kSPFoursquareClientId, kSPFoursquareClientSecret, geoPoint.latitude, geoPoint.longitude];
         
         [self getVenues:queryAddr withCallback:^(NSArray *locs) {
             if ([locs count] == 0) {

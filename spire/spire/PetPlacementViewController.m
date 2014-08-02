@@ -64,7 +64,7 @@
     PFFile *image = [PFFile fileWithName:@"image.png" data:photoData];
     [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
-            PFObject *photo = [PFObject objectWithClassName:@"Photo"];
+            PFObject *photo = [PFObject objectWithClassName:kSPPhotoClassKey];
             [photo setObject:user forKey:@"user"];
             [photo setObject:pet forKey:@"pet"];
             [photo setObject:image forKey:@"image"];
@@ -72,7 +72,7 @@
             [photo setObject:geoPoint forKey:@"geoPoint"];
             [photo setObject:locName forKey:@"locName"];
             
-            PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
+            PFQuery *query = [PFQuery queryWithClassName:kSPPhotoClassKey];
             [query whereKey:@"user" equalTo:user];
             [query whereKey:@"pet" equalTo:pet];
             [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {

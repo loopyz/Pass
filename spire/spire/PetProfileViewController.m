@@ -353,10 +353,10 @@
   [self.navigationController setNavigationBarHidden:NO];
   // Do any additional setup after loading the view.
     if (self.petId) {
-        PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
+        PFQuery *query = [PFQuery queryWithClassName:kSPPetClassKey];
         [query includeKey:@"owner"];
         [query getObjectInBackgroundWithId:self.petId block:^(PFObject *object, NSError *error) {
-            PFQuery *photosquery = [PFQuery queryWithClassName:@"Photo"];
+            PFQuery *photosquery = [PFQuery queryWithClassName:kSPPhotoClassKey];
             [photosquery includeKey:@"user"];
             [photosquery whereKey:@"pet" equalTo:object];
             [photosquery orderByDescending:@"createdAt"];

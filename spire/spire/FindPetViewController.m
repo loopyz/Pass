@@ -35,7 +35,7 @@
         for (int i = 0; i < 3; i++) {
             double maxDistance = maxDistances[i];
             
-            PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
+            PFQuery *query = [PFQuery queryWithClassName:kSPPetClassKey];
             [query whereKey:@"currentUser" equalTo:[NSNull null]];
             [query whereKey:@"geoPoint" nearGeoPoint:geoPoint withinMiles:maxDistance];
             //[query whereKey:@"owner" notEqualTo:[PFUser currentUser]];
@@ -261,7 +261,7 @@
       NSLog(@"user pressed OK: %@", self.selectedPetId);
 
       // Pick up pet!
-      PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
+      PFQuery *query = [PFQuery queryWithClassName:kSPPetClassKey];
       [query whereKey:@"objectId" equalTo:self.selectedPetId];
       [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
           [pet setObject:[PFUser currentUser] forKey:@"currentUser"];

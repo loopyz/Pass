@@ -89,7 +89,7 @@
 
 - (void)updatePhotos
 {
-    PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
+    PFQuery *query = [PFQuery queryWithClassName:kSPPhotoClassKey];
     [query orderByDescending:@"createdAt"];
     [query includeKey:@"user"];
     

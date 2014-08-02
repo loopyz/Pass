@@ -65,9 +65,9 @@ static NSString * const CellIdentifier = @"cell";
 
 - (PFQuery *) queryForComments
 {
-    PFQuery *query = [PFQuery queryWithClassName:@"Activity"];
+    PFQuery *query = [PFQuery queryWithClassName:kSPActivityClassKey];
     [query whereKey:@"photo" equalTo:self.photo];
-    [query whereKey:@"type" equalTo:@"comment"];
+    [query whereKey:@"type" equalTo:kSPActivityTypeComment];
     [query includeKey:@"fromUser"];
     [query orderByDescending:@"createdAt"];
     [query setCachePolicy:kPFCachePolicyNetworkOnly];
@@ -80,9 +80,9 @@ static NSString * const CellIdentifier = @"cell";
 {
     if (commentText.length != 0) {
         PFUser *toUser = [self.photo objectForKey:@"user"] ;
-        PFObject *comment = [PFObject objectWithClassName:@"Activity"];
+        PFObject *comment = [PFObject objectWithClassName:kSPActivityClassKey];
         [comment setObject:commentText forKey:@"content"];
-        [comment setObject:@"comment" forKey:@"type"];
+        [comment setObject:kSPActivityTypeComment forKey:@"type"];
         [comment setObject:toUser forKey:@"toUser"];
         [comment setObject:[PFUser currentUser] forKey:@"fromUser"];
         [comment setObject:self.photo forKey:@"photo"];

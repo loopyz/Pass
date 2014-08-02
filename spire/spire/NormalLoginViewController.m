@@ -23,6 +23,9 @@
         self.formController.form = [[NormalLoginForm alloc] init];
         self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
       [self.tabBarController.tabBar setHidden:YES];
+      
+      [self.navigationController setNavigationBarHidden:YES];
+      self.tabBarController.tabBar.alpha = 0;
     }
     return self;
 }

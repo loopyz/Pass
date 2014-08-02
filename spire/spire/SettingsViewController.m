@@ -72,7 +72,6 @@
 {
     [PFUser logOut];
     LoginViewController *ppvc = [[LoginViewController alloc] init];
-    
     [self.navigationController pushViewController:ppvc animated:YES];
 }
 

@@ -42,6 +42,10 @@
         }
         // Custom initialization
         // moved to view did load temporarily
+      
+      [self.navigationController setNavigationBarHidden:YES];
+      self.tabBarController.tabBar.alpha = 0;
+      [self.tabBarController.tabBar setHidden:YES];
     }
     return self;
 }
@@ -208,6 +212,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [self.navigationController setNavigationBarHidden:YES];
+  self.tabBarController.tabBar.alpha = 0;
   [self.tabBarController.tabBar setHidden:YES];
     // Do any additional setup after loading the view.
 }

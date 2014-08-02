@@ -23,6 +23,7 @@
     if (self) {
         // Custom initialization
       self.tableView.separatorColor = [UIColor colorWithRed:211/255.0f green:211/255.0f blue:211/255.0f alpha:1.0f];
+
         
       
       
@@ -62,38 +63,38 @@
   
   // setup buttons
   // Do any additional setup after loading the view.
-  UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  
-  backButton.frame = CGRectMake(15, 15, 31.5, 31.5);
-  [backButton addTarget:self action:@selector(backButtonTouched) forControlEvents:UIControlEventTouchUpInside];
-  
-  UIImage *btnImage = [UIImage imageNamed:@"circlebackbutton.png"];
-  [backButton setImage:btnImage forState:UIControlStateNormal];
-  backButton.contentMode = UIViewContentModeScaleToFill;
-  
-  [view addSubview:backButton];
-  
-  UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  
-  commentButton.frame = CGRectMake(270, 15, 31.5, 31.5);
-  [commentButton addTarget:self action:@selector(commentTouched) forControlEvents:UIControlEventTouchUpInside];
-  
-  btnImage = [UIImage imageNamed:@"circlecommentbutton.png"];
-  [commentButton setImage:btnImage forState:UIControlStateNormal];
-  commentButton.contentMode = UIViewContentModeScaleToFill;
-  
-  [view addSubview:commentButton];
-  
-  UIButton *likeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  
-  likeButton.frame = CGRectMake(230, 15, 31.5, 31.5);
-  [likeButton addTarget:self action:@selector(heartTouched) forControlEvents:UIControlEventTouchUpInside];
-  
-  btnImage = [UIImage imageNamed:@"circlelikebutton.png"];
-  [likeButton setImage:btnImage forState:UIControlStateNormal];
-  likeButton.contentMode = UIViewContentModeScaleToFill;
-  
-  [view addSubview:likeButton];
+//  UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//  
+//  backButton.frame = CGRectMake(15, 15, 31.5, 31.5);
+//  [backButton addTarget:self action:@selector(backButtonTouched) forControlEvents:UIControlEventTouchUpInside];
+//  
+//  UIImage *btnImage = [UIImage imageNamed:@"circlebackbutton.png"];
+//  [backButton setImage:btnImage forState:UIControlStateNormal];
+//  backButton.contentMode = UIViewContentModeScaleToFill;
+//  
+//  [view addSubview:backButton];
+//  
+//  UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//  
+//  commentButton.frame = CGRectMake(270, 15, 31.5, 31.5);
+//  [commentButton addTarget:self action:@selector(commentTouched) forControlEvents:UIControlEventTouchUpInside];
+//  
+//  btnImage = [UIImage imageNamed:@"circlecommentbutton.png"];
+//  [commentButton setImage:btnImage forState:UIControlStateNormal];
+//  commentButton.contentMode = UIViewContentModeScaleToFill;
+//  
+//  [view addSubview:commentButton];
+//  
+//  UIButton *likeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//  
+//  likeButton.frame = CGRectMake(230, 15, 31.5, 31.5);
+//  [likeButton addTarget:self action:@selector(heartTouched) forControlEvents:UIControlEventTouchUpInside];
+//  
+//  btnImage = [UIImage imageNamed:@"circlelikebutton.png"];
+//  [likeButton setImage:btnImage forState:UIControlStateNormal];
+//  likeButton.contentMode = UIViewContentModeScaleToFill;
+//  
+//  [view addSubview:likeButton];
 }
 
 - (NSString *)randomPersonAvatar
@@ -179,7 +180,10 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-  [self.navigationController setNavigationBarHidden:YES];
+  // [self.navigationController setNavigationBarHidden:YES];
+  self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
+  self.navigationItem.title = @"Photo";
+  self.navigationController.navigationItem.title = @"Photo";
   // Do any additional setup after loading the view.
     if (self.photo) {
         [self setupImage];

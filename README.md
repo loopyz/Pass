@@ -3,9 +3,14 @@ Spire Website
 
 Built with Jekyll
 
+
 Running webserver:
-    bundle install
-    make
+```
+bundle install
+make
+```
 
 Cleaning up:
-    make kill
+```
+make kill
+```

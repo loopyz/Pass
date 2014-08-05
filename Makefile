@@ -1,3 +1,5 @@
+.PHONY: webserver, build, kill
+
 default: webserver
 
 webserver:

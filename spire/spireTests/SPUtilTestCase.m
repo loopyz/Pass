@@ -1,18 +1,18 @@
 //
-//  spireTests.m
-//  spireTests
+//  SPUtilTestCase.m
+//  spire
 //
-//  Created by Niveditha Jayasekar on 7/19/14.
+//  Created by Niveditha Jayasekar on 8/5/14.
 //  Copyright (c) 2014 Niveditha Jayasekar. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
 
-@interface spireTests : XCTestCase
+@interface SPUtilTestCase : XCTestCase
 
 @end
 
-@implementation spireTests
+@implementation SPUtilTestCase
 
 - (void)setUp
 {
@@ -28,7 +28,9 @@
 
 - (void)testExample
 {
-//    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+    if (FALSE) {
+        XCTFail(@"Example Test for SPUtil");
+    }
 }
 
 @end

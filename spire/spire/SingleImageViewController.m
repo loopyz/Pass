@@ -333,7 +333,6 @@ const CGFloat kCommentCellHeight = 50.0f;
     cell.layer.shadowOpacity = 1.0;
     cell.layer.shadowRadius = 0;
     cell.layer.shadowOffset = CGSizeMake(0.0, 1.0);
-      UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 164)];
       
       //    self.captionView = view;
       //      self.captionView.tag = 301;

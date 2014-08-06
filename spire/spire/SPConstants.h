@@ -23,3 +23,14 @@ extern NSString *const kSPActivityClassKey;
 extern NSString *const kSPActivityTypeLike;
 extern NSString *const kSPActivityTypeComment;
 extern NSString *const kSPActivityTypeFollow;
+
+#pragma mark - Cached Photo Attributes
+extern NSString *const kSPPhotoAttributesIsLikedByCurrentUserKey;
+extern NSString *const kSPPhotoAttributesLikeCountKey;
+extern NSString *const kSPPhotoAttributesLikersKey;
+extern NSString *const kSPPhotoAttributesCommentCountKey;
+extern NSString *const kSPPhotoAttributesCommentersKey;
+
+#pragma mark - Cached User Attributes
+extern NSString *const kSPUserAttributesPhotoCountKey;
+extern NSString *const kSPUserAttributesIsFollowedByCurrentUserKey;

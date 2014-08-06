@@ -25,3 +25,15 @@ NSString *const kSPActivityClassKey = @"Activity";
 NSString *const kSPActivityTypeLike = @"like";
 NSString *const kSPActivityTypeComment = @"comment";
 NSString *const kSPActivityTypeFollow = @"follow";
+
+
+#pragma mark - Cached Photo Attributes
+NSString *const kSPPhotoAttributesIsLikedByCurrentUserKey = @"isLikedByCurrentUser";
+NSString *const kSPPhotoAttributesLikeCountKey = @"likeCount";
+NSString *const kSPPhotoAttributesLikersKey = @"likers";
+NSString *const kSPPhotoAttributesCommentCountKey = @"commentCount";
+NSString *const kSPPhotoAttributesCommentersKey = @"commenters";
+
+#pragma mark - Cached User Attributes
+NSString *const kSPUserAttributesPhotoCountKey = @"photoCount";
+NSString *const kSPUserAttributesIsFollowedByCurrentUserKey = @"isFollowedByCurrentUser";

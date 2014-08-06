@@ -195,7 +195,7 @@
 
 #pragma mark - Foursquare API
 
-- (void)getVenues:(NSString *)url withCallback:(void (^)(NSArray *locs))callback
++ (void)getVenues:(NSString *)url withCallback:(void (^)(NSArray *locs))callback
 {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
 

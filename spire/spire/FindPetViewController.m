@@ -7,8 +7,11 @@
 //
 
 #import "FindPetViewController.h"
+#import "KLCPopup.h"
 
-@interface FindPetViewController ()
+@interface FindPetViewController () {
+  KLCPopup* modalPopup;
+}
 
 @property (strong, nonatomic) NSArray *headerBig;
 @property (strong, nonatomic) NSArray *headerDetail;
@@ -246,10 +249,18 @@
 
 - (void)petTouched:(id) sender
 {
+  
     UIButton *clicked = (UIButton *) sender;
     self.selectedPetId = clicked.titleLabel.text;
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Announcement" message: @"Are you sure you want to collect this pet?" delegate: self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes",nil];
     [alert show];
+  
+//  UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+//  contentView.backgroundColor = [UIColor whiteColor];
+//  
+//  KLCPopup* popup = [KLCPopup popupWithContentView:contentView showType:KLCPopupShowTypeGrowIn dismissType:KLCPopupDismissTypeShrinkOut maskType:KLCPopupMaskTypeDimmed dismissOnBackgroundTouch:YES dismissOnContentTouch:YES];
+//  
+//  [popup show];
 }
 
 

@@ -20,6 +20,4 @@
 
 @property (strong, nonatomic) UIView *popup;
 
-@property (nonatomic) BOOL userHasPet;
-
 @end

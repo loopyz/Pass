@@ -157,7 +157,6 @@
     [self.scrollView addSubview:imgView];
 }
 
-#pragma mark -
 #pragma mark Table view data source
 
 - (void)configureCell:(ELCTextFieldCell *)cell atIndexPath:(NSIndexPath *)indexPath {

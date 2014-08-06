@@ -52,12 +52,8 @@
         self.venues = @[];
         self.callback = callback;
         self.navigationItem.title = @"Select location";
-        
-        NSString *locFormat = @"https://api.foursquare.com/v2/venues/search?client_id=%@&client_secret=%@&v=20130815&ll=%f,%f";
-        
-        NSString *queryAddr = [NSString stringWithFormat:locFormat, kSPFoursquareClientId, kSPFoursquareClientSecret, geoPoint.latitude, geoPoint.longitude];
-        
-        [self getVenues:queryAddr withCallback:^(NSArray *locs) {
+
+        [Util getFoursquareVenuesNearGeoPoint:geoPoint withCallback:^(NSArray *locs) {
             if ([locs count] == 0) {
                 [self dismissViewControllerAnimated:YES completion:^(){
                     // TODO: What to do if there are no locations? Currently using Medium as fallback data

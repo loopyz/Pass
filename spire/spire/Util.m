@@ -193,4 +193,14 @@
     return query;
 }
 
+#pragma mark - Foursquare API
+
++ (void)getFoursquareVenuesNearGeoPoint:(PFGeoPoint *)geoPoint withCallback:(void (^)(NSArray *locs))callback
+{
+    NSString *locFormat = @"https://api.foursquare.com/v2/venues/search?client_id=%@&client_secret=%@&v=20130815&ll=%f,%f";
+    NSString *queryAddr = [NSString stringWithFormat:locFormat, kSPFoursquareClientId, kSPFoursquareClientSecret, geoPoint.latitude, geoPoint.longitude];
+
+    [self getVenues:queryAddr withCallback:callback];
+}
+
 @end

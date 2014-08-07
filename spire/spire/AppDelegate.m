@@ -8,6 +8,8 @@
 
 #import <Parse/Parse.h>
 
+#import "SPPet.h"
+
 #import "AppDelegate.h"
 #import "LoginViewController.h"
 
@@ -26,6 +28,11 @@
      UIRemoteNotificationTypeSound];
 
     // Set up Parse.
+    
+    // Register subclasses (before initilziating Parse)
+    [SPPet registerSubclass];
+    [SPUser registerSubclass];
+    
     [Parse setApplicationId:kSPParseApplicationId clientKey:kSPParseClientKey];
     [PFFacebookUtils initializeFacebook];
     

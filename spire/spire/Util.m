@@ -224,29 +224,4 @@
     [self getVenues:queryAddr withCallback:callback];
 }
 
-#pragma mark - Venues
-
-+ (void)getVenues:(NSString *)url withCallback:(void (^)(NSArray *locs))callback
-{
-  NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
-  
-  [request setHTTPMethod: @"GET"];
-  
-  __block NSDictionary *json;
-  [NSURLConnection sendAsynchronousRequest:request
-                                     queue:[NSOperationQueue mainQueue]
-                         completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                           if (data) {
-                             json = [NSJSONSerialization JSONObjectWithData:data
-                                                                    options:0
-                                                                      error:nil];
-                             NSLog(@"%@", json[@"response"][@"venues"][0][@"name"]);
-                             
-                             callback(json[@"response"][@"venues"]);
-                           }
-                         }];
-}
-
-
-
 @end

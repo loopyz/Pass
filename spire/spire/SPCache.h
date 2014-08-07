@@ -15,6 +15,15 @@
 
 - (void)clear;
 
+- (void) setAttributes:(NSDictionary *)attributes forPhoto:(PFObject *)photo;
+- (NSString *)keyForPhoto:(PFObject *)photo;
+
+- (void) setAttributes:(NSDictionary *)attributes forUser:(PFUser *)user;
+- (NSString *)keyForUser:(PFUser *)user;
+
+- (void) setAttributes:(NSDictionary *)attributes forPet:(SPPet *)pet;
+- (NSString *)keyForPet:(SPPet *)pet;
+
 - (void)setCurrentPet:(PFObject *)pet;
 - (PFObject *)currentPet;
 
@@ -39,15 +48,11 @@
 - (NSDictionary *)attributesForUser:(PFUser *)user;
 
 - (NSNumber *)photoCountForUser:(PFUser *)user;
-- (BOOL)followStatusForUser:(PFUser *)user
+- (BOOL)followStatusForUser:(PFUser *)user;
 
 - (void)setPhotoCountForUser:(NSNumber *)count user:(PFUser *)user;
 - (void)setFollowStatus:(BOOL)following user:(PFUser *)user;
 
-- (NSDictionary *) setAttributes:(NSDictionary *)attributes forPhoto:(PFObject *)photo;
-- (NSString *)keyForPhoto:(PFObject *)photo;
 
-- (void) setAttributes:(NSDictionary *)attributes forUser:(PFUser *)user;
-- (NSString *)keyForUser:(PFUser *)user;
 
 @end

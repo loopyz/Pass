@@ -269,5 +269,16 @@
     return [NSString stringWithFormat:@"user_%@", [user objectId]];
 }
 
+- (void) setAttributes:(NSDictionary *)attributes forPet:(SPPet *)pet
+{
+    NSString *key = [self keyForPhoto:pet];
+    [self.cache setObject:attributes forKey:key];
+}
+
+- (NSString *)keyForPet:(SPPet *)pet
+{
+    return [NSString stringWithFormat:@"pet_%@", [pet objectId]];
+}
+
 
 @end

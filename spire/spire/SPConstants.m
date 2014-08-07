@@ -16,6 +16,8 @@ NSString *const kSPParseClientKey = @"OxsqVethSVtjArsp2OPWN85RnAsLXQxKS7jbdwJv";
 NSString *const kSPFoursquareClientId = @"02K3GC4J1Y34WDZG4XIWHBSF2WJKOHIOMSTPWTWQVMPFALL2";
 NSString *const kSPFoursquareClientSecret = @"XYHXKNHOVBPTX4KLXR1QID4QNA2RSMXZZQML32ANKP1H4VHJ";
 
+NSString *const kSPGoogleApplicationKey = @"AIzaSyB-mgnaJYbDRB1yGhy09qTRv40vT8c8ZxQ";
+
 #pragma mark - Parse Model Keys
 
 NSString *const kSPPetClassKey = @"Pet";
@@ -37,3 +39,7 @@ NSString *const kSPPhotoAttributesCommentersKey = @"commenters";
 #pragma mark - Cached User Attributes
 NSString *const kSPUserAttributesPhotoCountKey = @"photoCount";
 NSString *const kSPUserAttributesIsFollowedByCurrentUserKey = @"isFollowedByCurrentUser";
+
+#pragma mark - Google APIs
+
+const int kSPGooglePlacesMaxRadius = 20000;

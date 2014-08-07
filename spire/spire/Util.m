@@ -193,60 +193,58 @@
     return query;
 }
 
-#pragma mark - Foursquare API
+#pragma mark - HTTP Requests
 
-+ (void)getVenues:(NSString *)url withCallback:(void (^)(NSArray *locs))callback
++ (void)sendGETRequest:(NSString *)url withCallback:(void (^)(NSDictionary *json))callback
 {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
-
     [request setHTTPMethod: @"GET"];
 
-    __block NSDictionary *json;
+    //__block NSDictionary *json;
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                                if (data) {
-                                   json = [NSJSONSerialization JSONObjectWithData:data
-                                                                          options:0
-                                                                            error:nil];
-                                   NSLog(@"%@", json[@"response"][@"venues"][0][@"name"]);
-
-                                   callback(json[@"response"][@"venues"]);
+                                   NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
+                                                                                        options:0
+                                                                                          error:nil];
+                                   callback(json);
+                               } else {
+                                   // TODO: Pass in failure callback.
+                                   NSLog(@"Error loading %@: %@", url, connectionError);
                                }
                            }];
 }
+
+#pragma mark - Foursquare API
 
 + (void)getFoursquareVenuesNearGeoPoint:(PFGeoPoint *)geoPoint withCallback:(void (^)(NSArray *locs))callback
 {
     NSString *locFormat = @"https://api.foursquare.com/v2/venues/search?client_id=%@&client_secret=%@&v=20130815&ll=%f,%f";
     NSString *queryAddr = [NSString stringWithFormat:locFormat, kSPFoursquareClientId, kSPFoursquareClientSecret, geoPoint.latitude, geoPoint.longitude];
   
-    [self getVenues:queryAddr withCallback:callback];
+    [self sendGETRequest:queryAddr withCallback:^(NSDictionary *json) {
+        callback(json[@"response"][@"venues"]);
+    }];
 }
 
-#pragma mark - Venues
+#pragma mark - Google API
 
-+ (void)getVenues:(NSString *)url withCallback:(void (^)(NSArray *locs))callback
++ (void)getGooglePlacesNearGeoPoint:(PFGeoPoint *)geoPoint withCallback:(void (^)(NSArray *locs))callback
 {
-  NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
+    NSString *locFormat = @"https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=%@&radius=%d&location=%f,%f";
+    NSString *queryAddr = [NSString stringWithFormat:locFormat, kSPGoogleApplicationKey, kSPGooglePlacesMaxRadius, geoPoint.latitude, geoPoint.longitude];
   
-  [request setHTTPMethod: @"GET"];
-  
-  __block NSDictionary *json;
-  [NSURLConnection sendAsynchronousRequest:request
-                                     queue:[NSOperationQueue mainQueue]
-                         completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                           if (data) {
-                             json = [NSJSONSerialization JSONObjectWithData:data
-                                                                    options:0
-                                                                      error:nil];
-                             NSLog(@"%@", json[@"response"][@"venues"][0][@"name"]);
-                             
-                             callback(json[@"response"][@"venues"]);
-                           }
-                         }];
+    [self sendGETRequest:queryAddr withCallback:^(NSDictionary *json) {
+        if ([json[@"status"] isEqualToString:@"OK"]) {
+            callback(json[@"results"]);
+        } else {
+            // TODO: failure callback?
+            NSString *errorMessage = [json objectForKey:@"error_message"];
+            NSLog(@"Error retrieving Google Places: %@\n%@", json[@"status"], errorMessage ? errorMessage : @"");
+        }
+    }];
 }
-
 
 
 @end

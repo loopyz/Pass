@@ -14,6 +14,8 @@ extern NSString *const kSPParseClientKey;
 extern NSString *const kSPFoursquareClientId;
 extern NSString *const kSPFoursquareClientSecret;
 
+extern NSString *const kSPGoogleApplicationKey;
+
 #pragma mark - Parse Model Keys
 
 extern NSString *const kSPPetClassKey;
@@ -34,3 +36,7 @@ extern NSString *const kSPPhotoAttributesCommentersKey;
 #pragma mark - Cached User Attributes
 extern NSString *const kSPUserAttributesPhotoCountKey;
 extern NSString *const kSPUserAttributesIsFollowedByCurrentUserKey;
+
+#pragma mark - Google APIs
+
+extern const int kSPGooglePlacesMaxRadius;

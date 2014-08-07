@@ -16,7 +16,7 @@ NSString *const kSPParseClientKey = @"OxsqVethSVtjArsp2OPWN85RnAsLXQxKS7jbdwJv";
 NSString *const kSPFoursquareClientId = @"02K3GC4J1Y34WDZG4XIWHBSF2WJKOHIOMSTPWTWQVMPFALL2";
 NSString *const kSPFoursquareClientSecret = @"XYHXKNHOVBPTX4KLXR1QID4QNA2RSMXZZQML32ANKP1H4VHJ";
 
-NSString *const kSPGoogleApplicationKey = @"AIzaSyB-mgnaJYbDRB1yGhy09qTRv40vT8c8ZxQ";
+NSString *const kSPGoogleApplicationKey = @"AIzaSyC2hvD0SPXnBmOEK09pFH02M9UZYp-yYLc";
 
 #pragma mark - Parse Model Keys
 

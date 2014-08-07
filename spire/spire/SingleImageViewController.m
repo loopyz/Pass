@@ -21,7 +21,7 @@
 
 #define HEADER_HEIGHT 320.0f
 #define HEADER_INIT_FRAME CGRectMake(0, 0, self.view.frame.size.width, HEADER_HEIGHT)
-#define TOOLBAR_INIT_FRAME CGRectMake (0, 292, 320, 22)
+#define TOOLBAR_INIT_FRAME CGRectMake (0, 302, 320, 22)
 
 const CGFloat kBarHeight = 50.0f;
 const CGFloat kBackgroundParallexFactor = 0.5f;
@@ -483,12 +483,12 @@ const CGFloat kCommentCellHeight = 50.0f;
 //
 //  
 //  imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-//  _fadeView = [[UIView alloc] initWithFrame:CGRectMake (0, 292, 320, 32)];
+//  _fadeView = [[UIView alloc] initWithFrame:CGRectMake (0, 302, 320, 32)];
 //  _fadeView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3f];
 //  _fadeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 //  
 //  _toolBarView = [[ToolBarView alloc] initWithFrame:TOOLBAR_INIT_FRAME ];
-//  _toolBarView.autoresizingMask =   UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin;
+////  _toolBarView.autoresizingMask =   UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin;
 //  [_backgroundScrollView addSubview:imageView];
 //  [_backgroundScrollView addSubview:_fadeView];
 //  [_backgroundScrollView addSubview:_toolBarView];
@@ -668,8 +668,8 @@ const CGFloat kCommentCellHeight = 50.0f;
 //  if (scrollView.contentOffset.y < 0.0f) {
 //    delta = fabs(MIN(0.0f, _mainScrollView.contentOffset.y));
 //    _backgroundScrollView.frame = CGRectMake(CGRectGetMinX(rect) - delta / 2.0f, CGRectGetMinY(rect) - delta, CGRectGetWidth(rect) + delta, CGRectGetHeight(rect) + delta);
-//    _toolBarView.alpha = MIN(1.0f, 1.0f - delta * kTextFadeOutFactor);
-//    _fadeView.alpha = MIN(1.0f, 1.0f - delta * kTextFadeOutFactor);
+//    _toolBarView.alpha = 1.0f;
+//    // _fadeView.alpha = MIN(1.0f, 1.0f - delta * kTextFadeOutFactor);
 //    _toolBarView.frame = CGRectMake(CGRectGetMinX(toolbarRect) + delta / 2.0f, CGRectGetMinY(toolbarRect) + delta, CGRectGetWidth(toolbarRect), CGRectGetHeight(toolbarRect));
 //    [_commentsTableView setContentOffset:(CGPoint){0,0} animated:NO];
 //  } else {

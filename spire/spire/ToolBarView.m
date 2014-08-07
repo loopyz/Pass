@@ -33,7 +33,7 @@
         _cityLabel.font = [UIFont secretFontLightWithSize:14.f];
         _cityLabel.textColor = [UIColor whiteColor];
         _cityLabel.textAlignment = NSTextAlignmentLeft;
-        _cityLabel.frame = (CGRect) {.origin = {15,0}};
+        _cityLabel.frame = (CGRect) {.origin = {15,-10}};
         _cityLabel.backgroundColor = [UIColor clearColor];
         [_cityLabel sizeToFit];
         [self addSubview:_cityLabel];
@@ -44,7 +44,7 @@
         [self addSubview:_moreButton];
         
         _commentButton = [[UIButton alloc] initWithFrame:(CGRect){.origin = {CGRectGetMaxX(_moreButton.frame) + 20, CGRectGetMinY(_cityLabel.frame) + 2}, .size = {22,17}}];
-        [_commentButton setImage:[UIImage imageNamed:@"commentButton.png"] forState:UIControlStateNormal];
+        [_commentButton setImage:[UIImage imageNamed:@"commentButtonToolbar.png"] forState:UIControlStateNormal];
         [self addSubview:_commentButton];
         
         _commentCountLabel = [[UILabel alloc] init];

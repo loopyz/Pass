@@ -255,7 +255,8 @@
 //    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Announcement" message: @"Are you sure you want to collect this pet?" delegate: self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes",nil];
 //    [alert show];
   
-  UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 226, 246)];
+  self.selectedPetId = clicked.titleLabel.text;
+  UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 226, 256)];
   contentView.backgroundColor = [UIColor whiteColor];
   
   UIImageView *selectedPet = [[UIImageView alloc] initWithFrame:CGRectMake(200/2 - 120/2, 20, 120, 120)];
@@ -263,7 +264,7 @@
   
   [contentView addSubview:selectedPet];
   
-  UIButton *submitButton = [[UIButton alloc] initWithFrame:CGRectMake(contentView.frame.size.width / 2 - 203.5/2, contentView.frame.size.height - 45, 203.5, 38)];
+  UIButton *submitButton = [[UIButton alloc] initWithFrame:CGRectMake(contentView.frame.size.width / 2 - 203.5/2, contentView.frame.size.height - 55, 203.5, 38)];
   [submitButton setImage:[UIImage imageNamed:@"pickuppetbutton.png"] forState:UIControlStateNormal];
   submitButton.contentMode = UIViewContentModeScaleAspectFill;
   [submitButton addTarget:self action:@selector(pickupPet) forControlEvents:UIControlEventTouchUpInside];

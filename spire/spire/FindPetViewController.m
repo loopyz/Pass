@@ -251,16 +251,68 @@
 {
   
     UIButton *clicked = (UIButton *) sender;
-    self.selectedPetId = clicked.titleLabel.text;
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Announcement" message: @"Are you sure you want to collect this pet?" delegate: self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes",nil];
-    [alert show];
+//    self.selectedPetId = clicked.titleLabel.text;
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Announcement" message: @"Are you sure you want to collect this pet?" delegate: self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes",nil];
+//    [alert show];
   
-//  UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-//  contentView.backgroundColor = [UIColor whiteColor];
-//  
-//  KLCPopup* popup = [KLCPopup popupWithContentView:contentView showType:KLCPopupShowTypeGrowIn dismissType:KLCPopupDismissTypeShrinkOut maskType:KLCPopupMaskTypeDimmed dismissOnBackgroundTouch:YES dismissOnContentTouch:YES];
-//  
-//  [popup show];
+  UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 226, 246)];
+  contentView.backgroundColor = [UIColor whiteColor];
+  
+  UIImageView *selectedPet = [[UIImageView alloc] initWithFrame:CGRectMake(200/2 - 120/2, 20, 120, 120)];
+  selectedPet.image = [clicked imageForState:UIControlStateNormal];
+  
+  [contentView addSubview:selectedPet];
+  
+  UIButton *submitButton = [[UIButton alloc] initWithFrame:CGRectMake(contentView.frame.size.width / 2 - 203.5/2, contentView.frame.size.height - 45, 203.5, 38)];
+  [submitButton setImage:[UIImage imageNamed:@"pickuppetbutton.png"] forState:UIControlStateNormal];
+  submitButton.contentMode = UIViewContentModeScaleAspectFill;
+  [submitButton addTarget:self action:@selector(pickupPet) forControlEvents:UIControlEventTouchUpInside];
+  
+  [contentView addSubview:submitButton];
+  
+  UILabel *pickupLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, submitButton.frame.origin.y  - 65, contentView.frame.size.width - 40, 70)];
+  pickupLabel.text = @"Are you sure you want to collect this pet?";
+  pickupLabel.textAlignment = NSTextAlignmentCenter;
+  pickupLabel.font = [UIFont fontWithName:@"Avenir" size:14];
+  pickupLabel.textColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
+  pickupLabel.lineBreakMode = NSLineBreakByWordWrapping;
+  pickupLabel.numberOfLines = 0;
+  [contentView addSubview:pickupLabel];
+  
+  contentView.layer.cornerRadius = 5;
+  
+  UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 10, 20, 20)];
+  [closeButton setImage:[UIImage imageNamed:@"findpetclosebutton.png"] forState:UIControlStateNormal];
+  closeButton.contentMode = UIViewContentModeScaleAspectFill;
+  [closeButton addTarget:self action:@selector(closePressed) forControlEvents:UIControlEventTouchUpInside];
+  
+  [contentView addSubview:closeButton];
+  
+  KLCPopup* popup = [KLCPopup popupWithContentView:contentView showType:KLCPopupShowTypeGrowIn dismissType:KLCPopupDismissTypeShrinkOut maskType:KLCPopupMaskTypeDimmed dismissOnBackgroundTouch:YES dismissOnContentTouch:YES];
+  
+  [popup show];
+}
+
+- (void)pickupPet
+{
+  NSLog(@"user pressed OK: %@", self.selectedPetId);
+  
+  // Pick up pet!
+  PFQuery *query = [PFQuery queryWithClassName:kSPPetClassKey];
+  [query whereKey:@"objectId" equalTo:self.selectedPetId];
+  [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
+    [pet setObject:[PFUser currentUser] forKey:@"currentUser"];
+    [pet saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+      [self Refresh];
+    }];
+    [[SPCache sharedCache] setCurrentPet:pet];
+    self.selectedPetId = nil;
+  }];
+}
+
+- (void)closePressed
+{
+  
 }
 
 

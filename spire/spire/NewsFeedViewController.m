@@ -15,12 +15,13 @@
 #import <Parse/Parse.h>
 #import "SettingsViewController.h"
 
-@interface NewsFeedViewController () {
+@interface NewsFeedViewController ()<UIActionSheetDelegate> {
   UIImage *locationIcon;
     UIImage *heartIcon;
     UIImage *commentIcon;
   UIImage *heartButtonIcon;
   UIImage *commentButtonIcon;
+  UIActionSheet *moreActions;
 }
 
 
@@ -41,11 +42,19 @@
     // commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
     
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-      
+    moreActions = [[UIActionSheet alloc] initWithTitle:@"More Actions" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil, nil];
       [self initNavBar];
+    [self setupMoreActions];
       
   }
   return self;
+}
+
+- (void)setupMoreActions
+{
+  [moreActions addButtonWithTitle:@"Report this post"];
+  [moreActions addButtonWithTitle:@"Share post"];
+  moreActions.cancelButtonIndex = [moreActions addButtonWithTitle:@"Cancel"];
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -391,7 +400,7 @@
     [informationView addSubview:shareButton];
     [shareButton setImage:heartButtonIcon forState:UIControlStateNormal];
     shareButton.contentMode = UIViewContentModeScaleToFill;
-    [shareButton addTarget:self action:@selector(commentTouched:) forControlEvents:UIControlEventTouchUpInside];
+    [shareButton addTarget:self action:@selector(moreButtonPressed) forControlEvents:UIControlEventTouchUpInside];
   }
   
     PFImageView *imageView = (PFImageView *)[cell viewWithTag:100];
@@ -409,6 +418,22 @@
   
   
   return cell;
+}
+
+#pragma mark - UIActionSheetDelegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+  if (buttonIndex == actionSheet.cancelButtonIndex) {
+    return;
+  }
+  NSString *message = [moreActions buttonTitleAtIndex:buttonIndex];
+}
+
+- (void)moreButtonPressed
+{
+  [moreActions showFromTabBar:[[self tabBarController] tabBar]];
+
 }
 
 

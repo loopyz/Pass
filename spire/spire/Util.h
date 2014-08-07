@@ -30,4 +30,6 @@
 
 + (void)getFoursquareVenuesNearGeoPoint:(PFGeoPoint *)geoPoint withCallback:(void (^)(NSArray *locs))callback;
 
++ (void)getGooglePlacesNearGeoPoint:(PFGeoPoint *)geoPoint withCallback:(void (^)(NSArray *locs))callback;
+
 @end

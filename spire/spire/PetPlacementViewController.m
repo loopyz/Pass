@@ -167,6 +167,18 @@
                 [self.tabBarController setSelectedIndex:0];
                 
             }
+        } else {
+            [self updatePet:currentPet withDropped:dropped withGeoPoint:geoPoint withName:locName];
+            [self addPhoto:photoData withUser:currentUser withPet:currentPet withGeoPoint:geoPoint withName:locName withCaption:caption];
+            
+            if (dropped) {
+                PFPush *push = [[PFPush alloc] init];
+                [push setChannel:@"PetsNearby"];
+                [push setMessage:[NSString stringWithFormat:@"A pet's been dropped at %@", locName]];
+                [push sendPushInBackground];
+            }
+            // go back to home tab
+            [self.tabBarController setSelectedIndex:0];
         }
         
     };

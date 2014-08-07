@@ -176,13 +176,13 @@ static NSString * const CellIdentifier = @"cell";
   
   if (indexPath.row == 0) {
     //setup avatar
-    PFImageView *avatarView = [[PFImageView alloc] initWithFrame:CGRectMake(10,20,40,40)];
+    PFImageView *avatarView = [[PFImageView alloc] initWithFrame:CGRectMake(17,8,40,40)];
     avatarView.image = [UIImage imageNamed:@"lucyguo.png"];
     [cell addSubview:avatarView];
     UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
     
     //setup avatar name
-    UILabel *avatarName = [[UILabel alloc] initWithFrame:CGRectMake(60, 5, 300, 50)];
+    UILabel *avatarName = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, 300, 50)];
     [avatarName setTextColor:descColor];
     [avatarName setBackgroundColor:[UIColor clearColor]];
     [avatarName setFont:[UIFont fontWithName:@"Avenir" size:16]];
@@ -195,7 +195,7 @@ static NSString * const CellIdentifier = @"cell";
     // setup description
     UIColor *descriptionColor = [UIColor colorWithRed:137/255.0f green:137/255.0f blue:137/255.0f alpha:1.0f];
     
-    UILabel *description = [[UILabel alloc] initWithFrame:CGRectMake(60, 10, 300, 75)];
+    UILabel *description = [[UILabel alloc] initWithFrame:CGRectMake(70, 10, 300, 75)];
     [description setTextColor:descriptionColor];
     [description setBackgroundColor:[UIColor clearColor]];
     [description setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
@@ -205,7 +205,11 @@ static NSString * const CellIdentifier = @"cell";
     
   }
   if (indexPath.row == 1) {
-    cell.text = @"Load more comments link here";
+    UILabel *loadMoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, 200, 20)];
+    loadMoreLabel.text = @"Load more comments";
+    loadMoreLabel.textAlignment = NSTextAlignmentCenter;
+    loadMoreLabel.textColor = [UIColor colorWithRed:137/255.0f green:137/255.0f blue:137/255.0f alpha:1.0f];
+    [cell addSubview:loadMoreLabel];
   }
   else if (indexPath.row > 1){
     PFObject *comment = [self.comments objectAtIndex:(indexPath.row - 2)];

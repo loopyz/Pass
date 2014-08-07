@@ -39,7 +39,7 @@
 - (NSDictionary *)attributesForUser:(PFUser *)user;
 
 - (NSNumber *)photoCountForUser:(PFUser *)user;
-- (BOOL)followStatusForUser:(PFUser *)user
+- (BOOL)followStatusForUser:(PFUser *)user;
 
 - (void)setPhotoCountForUser:(NSNumber *)count user:(PFUser *)user;
 - (void)setFollowStatus:(BOOL)following user:(PFUser *)user;

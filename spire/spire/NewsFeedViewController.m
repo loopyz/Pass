@@ -15,12 +15,13 @@
 #import <Parse/Parse.h>
 #import "SettingsViewController.h"
 
-@interface NewsFeedViewController () {
+@interface NewsFeedViewController ()<UIActionSheetDelegate> {
   UIImage *locationIcon;
     UIImage *heartIcon;
     UIImage *commentIcon;
   UIImage *heartButtonIcon;
   UIImage *commentButtonIcon;
+  UIActionSheet *moreActions;
 }
 
 
@@ -33,18 +34,27 @@
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     // Custom initialization
+    commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
     locationIcon = [UIImage imageNamed:@"locationicon.png"];
       heartIcon = [UIImage imageNamed:@"hearticon.png"];
       commentIcon = [UIImage imageNamed:@"commenticon.png"];
     heartButtonIcon = [UIImage imageNamed:@"heartbutton.png"];
-    commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
+    // commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
     
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-      
+    moreActions = [[UIActionSheet alloc] initWithTitle:@"More Actions" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil, nil];
       [self initNavBar];
+    [self setupMoreActions];
       
   }
   return self;
+}
+
+- (void)setupMoreActions
+{
+  [moreActions addButtonWithTitle:@"Report this post"];
+  [moreActions addButtonWithTitle:@"Share post"];
+  moreActions.cancelButtonIndex = [moreActions addButtonWithTitle:@"Cancel"];
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle{
@@ -206,7 +216,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  return 385;
+  return 480;
 }
 
 //for each header
@@ -251,7 +261,7 @@
   UILabel *tags = [[UILabel alloc] initWithFrame:CGRectMake(71, 21, 300, 50)];
   [tags setTextColor:descColor];
   [tags setBackgroundColor:[UIColor clearColor]];
-  [tags setFont:[UIFont fontWithName:@"Avenir-Light" size:12]];
+  [tags setFont:[UIFont fontWithName:@"Avenir" size:12]];
   
     // tags.text = [photo objectForKey:@"caption"];//@"I love Foxy hehe.";
   tags.lineBreakMode = NSLineBreakByWordWrapping;
@@ -303,70 +313,96 @@
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
   if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
-      cell.backgroundColor = [UIColor clearColor];
+      cell.backgroundColor =  [UIColor colorWithRed:237/255.0f green:237/255.0f blue:237/255.0f alpha:1.0f];
+    
+    // setup information view
+    UIView *informationView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, cell.frame.size.width, 450)];
+    informationView.backgroundColor = [UIColor whiteColor];
       PFImageView *imageView = [[PFImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
       imageView.image =[UIImage imageNamed:@"tempsingleimage.png"];
       imageView.tag = 100;
-      [cell addSubview:imageView];
+      [informationView addSubview:imageView];
       
       UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
-      
-      // setup heart icon
-      UIImageView *heartIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 325, 12, 12)];
-      heartIconView.image = heartIcon;
-      heartIconView.tag = 105;
-      [cell addSubview:heartIconView];
-      
-      // setup location icon
-      UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 348, 12, 12)];
-      locationIconView.image = commentIcon;
-      locationIconView.tag = 101;
-      locationIconView.backgroundColor = [UIColor clearColor];
-      [cell addSubview:locationIconView];
-      
-      
-      // setup comment button
-      UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
-      [commentButton setTitle:@"Comment" forState:UIControlStateNormal];
-      commentButton.frame = CGRectMake(self.view.frame.size.width - 90, 345, 32.5, 22);
-
-      commentButton.tag = 102;
-      [cell addSubview:commentButton];
-      [commentButton setImage:commentButtonIcon forState:UIControlStateNormal];
-      commentButton.contentMode = UIViewContentModeScaleToFill;
-      [commentButton addTarget:self action:@selector(commentTouched:) forControlEvents:UIControlEventTouchUpInside];
-      
-      // setup heart button
-      UIButton *heartButton = [UIButton buttonWithType:UIButtonTypeCustom];
-      [heartButton setTitle:@"Heart" forState:UIControlStateNormal];
-      
-      heartButton.frame = CGRectMake(self.view.frame.size.width - 40, 345, 32.5, 22);
-      [heartButton addTarget:self action:@selector(heartTouched:) forControlEvents:UIControlEventTouchUpInside];
-      heartButton.tag = 103;
-      [cell addSubview:heartButton];
-      [heartButton setImage:heartButtonIcon forState:UIControlStateNormal];
-      heartButton.contentMode = UIViewContentModeScaleToFill;
+    
+    
+      // setup comment icon
+//      UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 348, 12, 12)];
+//      locationIconView.image = commentIcon;
+//      locationIconView.tag = 101;
+//      locationIconView.backgroundColor = [UIColor clearColor];
+//      [informationView addSubview:locationIconView];
       
       //setup caption label
-      UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(32, 330, 200, 50)];
+      UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(15, 320, 200, 50)];
       [desc setTextColor:descColor];
       [desc setBackgroundColor:[UIColor clearColor]];
-      [desc setFont:[UIFont fontWithName:@"Avenir" size:11]];
+      [desc setFont:[UIFont fontWithName:@"Avenir" size:17]];
       desc.lineBreakMode = NSLineBreakByWordWrapping;
       desc.numberOfLines = 0;
       desc.tag = 104;
-      [cell addSubview:desc];
-      
+      [informationView addSubview:desc];
+    
+    // setup separator
+    UIImageView *separator = [[UIImageView alloc] initWithFrame:CGRectMake(14.75, desc.frame.origin.y + desc.frame.size.height + 25, 291, 5)];
+    separator.image = [UIImage imageNamed:@"newsfeedborder.png"];
+    separator.tag = 105;
+    [informationView addSubview:separator];
+    
       //setup likes label
-      UILabel *likes = [[UILabel alloc] initWithFrame:CGRectMake(32, 307, 200, 50)];
+      UILabel *likes = [[UILabel alloc] initWithFrame:CGRectMake(15, desc.frame.origin.y + desc.frame.size.height - 16, 55, 50)];
       [likes setTextColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f]];
       [likes setBackgroundColor:[UIColor clearColor]];
-      [likes setFont:[UIFont fontWithName:@"Avenir" size:11]];
+      [likes setFont:[UIFont fontWithName:@"Avenir" size:12]];
       likes.numberOfLines = 1;
       likes.tag = 106;
-      [cell addSubview:likes];
-  }
+      [informationView addSubview:likes];
     
+    //setup comments label
+    UILabel *comments = [[UILabel alloc] initWithFrame:CGRectMake(likes.frame.origin.x + likes.frame.size.width, desc.frame.origin.y + desc.frame.size.height - 16, 200, 50)];
+    [comments setTextColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f]];
+    [comments setBackgroundColor:[UIColor clearColor]];
+    [comments setFont:[UIFont fontWithName:@"Avenir" size:12]];
+    comments.numberOfLines = 1;
+    comments.tag = 107;
+    [informationView addSubview:comments];
+    
+    [cell addSubview:informationView];
+    
+    // setup heart button
+    UIButton *heartButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [heartButton setTitle:@"Heart" forState:UIControlStateNormal];
+    
+    heartButton.frame = CGRectMake(15, separator.frame.origin.y + separator.frame.size.height + 10, 32.5 * 1.2, 22 * 1.2);
+    [heartButton addTarget:self action:@selector(heartTouched:) forControlEvents:UIControlEventTouchUpInside];
+    heartButton.tag = 103;
+    [informationView addSubview:heartButton];
+    [heartButton setImage:heartButtonIcon forState:UIControlStateNormal];
+    heartButton.contentMode = UIViewContentModeScaleToFill;
+    
+    // setup comment button
+    UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [commentButton setTitle:@"Comment" forState:UIControlStateNormal];
+    commentButton.frame = CGRectMake(heartButton.frame.size.height + heartButton.frame.origin.x + 30, separator.frame.origin.y + separator.frame.size.height + 10, 32.5 * 1.2f, 22 * 1.2f);
+    
+    commentButton.tag = 102;
+    [informationView addSubview:commentButton];
+    [commentButton setImage:heartButtonIcon forState:UIControlStateNormal];
+    commentButton.contentMode = UIViewContentModeScaleToFill;
+    [commentButton addTarget:self action:@selector(commentTouched:) forControlEvents:UIControlEventTouchUpInside];
+    
+    // setup share button
+    UIButton *shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [shareButton setTitle:@"Share" forState:UIControlStateNormal];
+    shareButton.frame = CGRectMake(self.view.frame.size.width - 50, separator.frame.origin.y + separator.frame.size.height + 10, 32.5 * 1.2f, 22 * 1.2f);
+    
+    shareButton.tag = 108;
+    [informationView addSubview:shareButton];
+    [shareButton setImage:heartButtonIcon forState:UIControlStateNormal];
+    shareButton.contentMode = UIViewContentModeScaleToFill;
+    [shareButton addTarget:self action:@selector(moreButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+  }
+  
     PFImageView *imageView = (PFImageView *)[cell viewWithTag:100];
     imageView.file = [photo objectForKey:@"image"];
     [imageView loadInBackground];
@@ -375,12 +411,29 @@
     desc.text = [photo objectForKey:@"caption"];//@"Mountain View, CA";
     
     UILabel *likes = (UILabel *)[cell viewWithTag:106];
-    likes.text = @"22 likes";
-    
-    
-
+    likes.text = @"22 likes ";
+  
+  UILabel *comments = (UILabel *)[cell viewWithTag:107];
+  comments.text = @"12 comments ";
+  
   
   return cell;
+}
+
+#pragma mark - UIActionSheetDelegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+  if (buttonIndex == actionSheet.cancelButtonIndex) {
+    return;
+  }
+  NSString *message = [moreActions buttonTitleAtIndex:buttonIndex];
+}
+
+- (void)moreButtonPressed
+{
+  [moreActions showFromTabBar:[[self tabBarController] tabBar]];
+
 }
 
 

@@ -344,7 +344,7 @@
       [informationView addSubview:desc];
     
     // setup separator
-    UIImageView *separator = [[UIImageView alloc] initWithFrame:CGRectMake(14.75, desc.frame.origin.y + desc.frame.size.height + 25, 291, 5)];
+    UIImageView *separator = [[UIImageView alloc] initWithFrame:CGRectMake(14.75, desc.frame.origin.y + desc.frame.size.height + 25, 291, 3)];
     separator.image = [UIImage imageNamed:@"newsfeedborder.png"];
     separator.tag = 105;
     [informationView addSubview:separator];

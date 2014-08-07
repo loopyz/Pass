@@ -31,7 +31,7 @@
         self.callback = callback;
         self.navigationItem.title = @"Select location";
 
-        [Util getFoursquareVenuesNearGeoPoint:geoPoint withCallback:^(NSArray *locs) {
+        [Util getGooglePlacesNearGeoPoint:geoPoint withCallback:^(NSArray *locs) {
             if ([locs count] == 0) {
                 [self dismissViewControllerAnimated:YES completion:^(){
                     // TODO: What to do if there are no locations? Currently using Medium as fallback data
@@ -40,12 +40,13 @@
                 }];
                 return;
             }
-            // sort venues by distance away
-            self.venues = [locs sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *d1, NSDictionary *d2) {
-                
+
+            // Sort venues by distance away (from Foursquare API only!)
+            /*self.venues = [locs sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *d1, NSDictionary *d2) {
                 return [d1[@"location"][@"distance"] compare:d2[@"location"][@"distance"]];
-                
-            }];
+            }];*/
+
+            self.venues = locs;
             [self.tableView reloadData];
         }];
 
@@ -113,6 +114,7 @@
     [view addSubview:map];
     
     // foursquare attribution
+    // TODO: Replace with Google Places attribution
     UIImageView *foursquare = [[UIImageView alloc] initWithFrame:CGRectMake(0, 320, 320, 39)];
     foursquare.image = [UIImage imageNamed:@"foursquare.png"];
     [view addSubview:foursquare];
@@ -135,11 +137,12 @@
     cell.textLabel.text = venue[@"name"];
     [[cell textLabel] setLineBreakMode:NSLineBreakByWordWrapping];
     
-    NSString *addr = ([venue[@"location"][@"formattedAddress"] count] == 0) ? @"" : venue[@"location"][@"formattedAddress"][0];
-    
-    [[cell detailTextLabel] setText:[NSString stringWithFormat:@"%@ (%@ m)", addr, venue[@"location"][@"distance"]]];
-    // TODO: add icon
+    //NSString *addr = ([venue[@"location"][@"formattedAddress"] count] == 0) ? @"" : venue[@"location"][@"formattedAddress"][0];
+    //[[cell detailTextLabel] setText:[NSString stringWithFormat:@"%@ (%@ m)", addr, venue[@"location"][@"distance"]]];
+    [[cell detailTextLabel] setText:venue[@"vicinity"]];
     [[cell detailTextLabel] setLineBreakMode:NSLineBreakByWordWrapping];
+
+    // TODO: add icon
     
     return cell;
 }

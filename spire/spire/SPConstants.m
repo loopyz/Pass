@@ -42,4 +42,4 @@ NSString *const kSPUserAttributesIsFollowedByCurrentUserKey = @"isFollowedByCurr
 
 #pragma mark - Google APIs
 
-const int kSPGooglePlacesMaxRadius = 20000;
+const int kSPGooglePlacesMaxRadius = 10;

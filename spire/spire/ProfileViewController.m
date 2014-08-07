@@ -8,6 +8,8 @@
 
 #import "ProfileViewController.h"
 #import "PetProfileViewController.h"
+#import "SPProfilePetCell.h"
+
 #import <Parse/Parse.h>
 #import <FacebookSDK/FacebookSDK.h>
 
@@ -318,7 +320,8 @@ static const int kHeaderSize = 210;
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:@"Header"];
         }
         else {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier];
+            PFObject *pet = [[self.photos objectAtIndex:(indexPath.row-1)] objectForKey:@"pet"];
+            cell = [[SPProfilePetCell alloc] initWithPet:pet style:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier];
         }
         
         cell.layer.shadowColor = [[UIColor whiteColor] CGColor];
@@ -329,85 +332,6 @@ static const int kHeaderSize = 210;
             cell.backgroundColor = [UIColor whiteColor];
             [cell addSubview:self.profileSnippetView];
         }
-        else {
-            cell.backgroundColor = self.bgColor;
-            UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
-            
-            imgView.tag = 200;
-            [cell addSubview:imgView];
-            
-            //setup Location label
-            UIColor *descColor = [UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f];
-            UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
-            [desc setTextColor:descColor];
-            [desc setBackgroundColor:[UIColor clearColor]];
-            [desc setFont:[UIFont fontWithName:@"Avenir" size:24]];
-            desc.lineBreakMode = NSLineBreakByWordWrapping;
-            desc.numberOfLines = 0;
-            desc.tag = 201;
-            [cell addSubview:desc];
-            
-            // set up miles traveled
-            UILabel *numMiles = [[UILabel alloc] initWithFrame:CGRectMake(120, 40, 200, 50)];
-            [numMiles setTextColor:descColor];
-            [numMiles setBackgroundColor:[UIColor clearColor]];
-            [numMiles setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
-            numMiles.lineBreakMode = NSLineBreakByWordWrapping;
-            numMiles.numberOfLines = 0;
-            numMiles.tag = 202;
-            [cell addSubview:numMiles];
-            
-            // setup miles label
-            UILabel *milesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 40, 200, 50)];
-            [milesLabel setTextColor:descColor];
-            [milesLabel setBackgroundColor:[UIColor clearColor]];
-            [milesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
-            
-            milesLabel.text = @"miles traveled";
-            milesLabel.lineBreakMode = NSLineBreakByWordWrapping;
-            milesLabel.numberOfLines = 0;
-            milesLabel.tag = 203;
-            [cell addSubview:milesLabel];
-            
-            // set up miles traveled
-            UILabel *numPasses = [[UILabel alloc] initWithFrame:CGRectMake(120, 60, 200, 50)];
-            [numPasses setTextColor:descColor];
-            [numPasses setBackgroundColor:[UIColor clearColor]];
-            [numPasses setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
-            numPasses.lineBreakMode = NSLineBreakByWordWrapping;
-            numPasses.numberOfLines = 0;
-            numPasses.tag = 204;
-            [cell addSubview:numPasses];
-            
-            // setup miles label
-            UILabel *passesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 60, 200, 50)];
-            [passesLabel setTextColor:descColor];
-            [passesLabel setBackgroundColor:[UIColor clearColor]];
-            [passesLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:15]];
-            
-            passesLabel.text = @"passes";
-            passesLabel.lineBreakMode = NSLineBreakByWordWrapping;
-            passesLabel.numberOfLines = 0;
-            passesLabel.tag = 205;
-            [cell addSubview:passesLabel];
-        }
-    }
-  
-    if (indexPath.row != 0) {
-        PFObject *pet = [[self.photos objectAtIndex:(indexPath.row-1)] objectForKey:@"pet"];
-    
-        UIImageView *imgView = (UIImageView *)[cell viewWithTag:200];
-        imgView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[pet objectForKey:@"type"]]];
-        UILabel *desc = (UILabel *)[cell viewWithTag:201];
-        desc.text = [pet objectForKey:@"name"];//@"Pusheen";
-    
-
-        UILabel *numMiles = (UILabel *)[cell viewWithTag:202];
-        
-        numMiles.text = [NSString stringWithFormat:@"%d", [[pet objectForKey:@"miles"] intValue]];//@"2187";
-    
-        UILabel *numPasses = (UILabel *)[cell viewWithTag:204];
-        numPasses.text = [[pet objectForKey:@"passes"] stringValue];//@"1322";
     }
   
     return cell;

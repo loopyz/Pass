@@ -10,7 +10,7 @@
 
 @interface SPProfilePetCell ()
 
-@property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) UIImageView *petImageView;
 @property (nonatomic, strong) UILabel *description;
 @property (nonatomic, strong) UILabel *numMiles;
 @property (nonatomic, strong) UILabel *numPasses;
@@ -25,8 +25,10 @@
     
     if (self) {
         // do custom initialization
-        self.imageView =[[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
-        self.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[pet objectForKey:@"type"]]];
+        self.backgroundColor = [UIColor colorWithRed:248/255.0f green:248/255.0f blue:248/255.0f alpha:1.0f];
+
+        self.petImageView =[[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
+        self.petImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[pet objectForKey:@"type"]]];
         
         UIColor *descColor = [UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f];
         self.description = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];[[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
@@ -72,7 +74,7 @@
         passesLabel.numberOfLines = 0;
         
         // add to content view
-        [self addSubview:self.imageView];
+        [self addSubview:self.petImageView];
         [self addSubview:self.description];
         [self addSubview:self.numMiles];
         [self addSubview:milesLabel];

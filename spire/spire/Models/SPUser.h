@@ -22,4 +22,12 @@
 +(SPUser *)currentUser;
 +(void)setCurrentUser:(PFUser *)user;
 
+- (void)setAttributesWithPhotoCount:(NSNumber *)count followedByCurrentUser:(BOOL)following;
+- (NSDictionary *)getAttributes;
+
+- (NSNumber *)photoCount;
+- (BOOL)followStatus;
+- (void)setPhotoCount:(NSNumber *)count;
+- (void)setFollowStatus:(BOOL)following;
+
 @end

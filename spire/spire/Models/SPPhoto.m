@@ -19,7 +19,7 @@
 
 + (NSString *)parseClassName
 {
-    return @"SPPhoto";
+    return @"Photo";
 }
 
 - (void) setAttributesWithLikers:(NSArray *)likers commenters:(NSArray *)commenters likedByCurrentUser:(BOOL)likedByCurrentUser
@@ -36,8 +36,7 @@
 
 - (NSDictionary *)getAttributes
 {
-    NSString *key = [[SPCache sharedCache] keyForPhoto:self];
-    return [[SPCache sharedCache] objectForKey:key];
+    return [[SPCache sharedCache] attributesForPhoto:self];
 }
 
 - (NSNumber *)likeCount
@@ -50,7 +49,7 @@
     return [NSNumber numberWithInt:0];
 }
 
-- (NSNumber *)commentCountForPhoto:(PFObject *)photo
+- (NSNumber *)commentCount
 {
     NSDictionary *attributes = [self getAttributes];
     if (attributes) {

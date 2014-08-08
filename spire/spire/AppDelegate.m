@@ -8,8 +8,6 @@
 
 #import <Parse/Parse.h>
 
-#import "SPPet.h"
-
 #import "AppDelegate.h"
 #import "LoginViewController.h"
 
@@ -32,7 +30,7 @@
     // Register subclasses (before initilziating Parse)
     [SPPet registerSubclass];
     [SPUser registerSubclass];
-    
+    [SPPhoto registerSubclass];
     [Parse setApplicationId:kSPParseApplicationId clientKey:kSPParseClientKey];
     [PFFacebookUtils initializeFacebook];
     

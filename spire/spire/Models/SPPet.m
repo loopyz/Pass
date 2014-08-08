@@ -31,6 +31,7 @@
 + (void)setCurrentPet:(PFObject *)pet
 {
     _instance = pet;
+    [SPCache sharedCache]
 }
 
 @end

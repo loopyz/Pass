@@ -47,20 +47,17 @@ const CGFloat kCommentPaddingFromRight = 8.0f;
         [self.likeButton setImage:[UIImage imageNamed:@"likeButton_selected.png"] forState:UIControlStateSelected];
         [self.likeButton setImage:[UIImage imageNamed:@"likeButton_highlighted.png"] forState:UIControlStateHighlighted];
         [self.likeButton addTarget:self action:@selector(likeButtonSelected:) forControlEvents:UIControlEventTouchUpInside];
-        [self addSubview:self.likeButton];
-        
+      
         self.likeCountLabel = [[UILabel alloc] init];
         self.likeCountLabel.numberOfLines = 1;
         self.likeCountLabel.textColor = [UIColor grayColor];
         self.likeCountLabel.textAlignment = NSTextAlignmentLeft;
         self.likeCountLabel.font = [UIFont secretFontLightWithSize:12.f];
         self.likeCountLabel.hidden = YES;
-        [self addSubview:self.likeCountLabel];
-        
+      
         self.likeCountImageView = [[UIImageView alloc] init];
         self.likeCountImageView.image = [UIImage imageNamed:@"like_greyIcon.png"];
         self.likeCountImageView.hidden = YES;
-        [self addSubview:self.likeCountImageView];
         
         
 

@@ -31,5 +31,62 @@
     _instance = user;
 }
 
+- (void)setAttributesWithPhotoCount:(NSNumber *)count followedByCurrentUser:(BOOL)following
+{
+    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                count, kSPUserAttributesPhotoCountKey,
+                                [NSNumber numberWithBool:following], kSPUserAttributesIsFollowedByCurrentUserKey,
+                                nil];
+    [[SPCache sharedCache] setAttributes:attributes forUser:self];
+}
+
+- (NSDictionary *)attributes
+{
+    NSString *key = [[SPCache sharedCache] keyForUser:self];
+    return [[SPCache sharedCache] objectForKey:key];
+}
+
+- (NSNumber *)photoCount
+{
+    NSDictionary *attributes = [self getAttributes];
+    
+    if (attributes) {
+        NSNumber *photoCount = [attributes objectForKey:kSPUserAttributesPhotoCountKey];
+        
+        if (photoCount) {
+            return photoCount;
+        }
+    }
+    
+    return [NSNumber numberWithInt:0];
+}
+
+- (BOOL)followStatus
+{
+    NSDictionary *attributes = [self getAttributes];
+    
+    if (attributes) {
+        NSNumber *followStatus = [attributes objectForKey:kSPUserAttributesIsFollowedByCurrentUserKey];
+        if (followStatus) {
+            return [followStatus boolValue];
+        }
+    }
+    
+    return NO;
+}
+
+- (void)setPhotoCount:(NSNumber *)count
+{
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithDictionary:[self getAttributes]];
+    [attributes setObject:count forKey:kSPUserAttributesPhotoCountKey];
+    [[SPCache sharedCache] setAttributes:attributes forUser:self];
+}
+
+- (void)setFollowStatus:(BOOL)following
+{
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithDictionary:[self getAttributes]];
+    [attributes setObject:[NSNumber numberWithBool:following] forKey:kSPUserAttributesIsFollowedByCurrentUserKey];
+    [[SPCache sharedCache] setAttributes:attributes forUser:self];
+}
 
 @end

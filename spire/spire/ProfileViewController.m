@@ -176,21 +176,23 @@ static const int kHeaderSize = 210;
     if (self.isFollowing) {
         self.isFollowing = NO;
         btnImage = [UIImage imageNamed:@"followbutton.png"];
+        [Util unfollowUserEventually:self.user];
     }
     else {
         self.isFollowing = YES;
         btnImage = [UIImage imageNamed:@"followingbutton.png"];
+        [Util followUserInBackground:self.user block:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                NSLog(@"yay, followed");
+            } else {
+                NSLog(@"booh. no followed");
+            }
+        }];
     }
     
     [self.followButton setImage:btnImage forState:UIControlStateNormal];
     
-    [Util followUserInBackground:self.user block:^(BOOL succeeded, NSError *error) {
-        if (succeeded) {
-            NSLog(@"yay, followed");
-        } else {
-            NSLog(@"booh. no followed");
-        }
-    }];
+    
 }
 
 - (void)addProfile

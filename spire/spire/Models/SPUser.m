@@ -40,10 +40,9 @@
     [[SPCache sharedCache] setAttributes:attributes forUser:self];
 }
 
-- (NSDictionary *)attributes
+- (NSDictionary *)getAttributes
 {
-    NSString *key = [[SPCache sharedCache] keyForUser:self];
-    return [[SPCache sharedCache] objectForKey:key];
+    return [[SPCache sharedCache] attributesForUser:self];
 }
 
 - (NSNumber *)photoCount

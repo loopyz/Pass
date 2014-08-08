@@ -74,23 +74,26 @@
     }
 }
 
-
-
-
-- (void) setAttributes:(NSDictionary *)attributes forPhoto:(PFObject *)photo
+- (void) setAttributes:(NSDictionary *)attributes forPhoto:(SPPhoto *)photo
 {
     NSString *key = [self keyForPhoto:photo];
     [self.cache setObject:attributes forKey:key];
 }
 
-- (NSString *)keyForPhoto:(PFObject *)photo
+- (NSString *)keyForPhoto:(SPPhoto *)photo
 {
     return [NSString stringWithFormat:@"photo_%@", [photo objectId]];
 }
 
+- (NSDictionary *)attributesForPhoto:(SPPhoto *)photo
+{
+    NSString *key = [self keyForPhoto:photo];
+    return [self.cache objectForKey:key];
+}
+
 - (void) setAttributes:(NSDictionary *)attributes forUser:(PFUser *)user
 {
-    NSString *key = [self keyForPhoto:user];
+    NSString *key = [self keyForUser:user];
     [self.cache setObject:attributes forKey:key];
 }
 
@@ -99,9 +102,15 @@
     return [NSString stringWithFormat:@"user_%@", [user objectId]];
 }
 
+- (NSDictionary *)attributesForUser:(PFUser *)user
+{
+    NSString *key = [self keyForUser:user];
+    return [self.cache objectForKey:key];
+}
+
 - (void) setAttributes:(NSDictionary *)attributes forPet:(SPPet *)pet
 {
-    NSString *key = [self keyForPhoto:pet];
+    NSString *key = [self keyForPet:pet];
     [self.cache setObject:attributes forKey:key];
 }
 
@@ -110,5 +119,10 @@
     return [NSString stringWithFormat:@"pet_%@", [pet objectId]];
 }
 
+- (NSDictionary *)attributesForPet:(SPPet *)pet
+{
+    NSString *key = [self keyForPet:pet];
+    return [self.cache objectForKey:key];
+}
 
 @end

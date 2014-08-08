@@ -104,7 +104,7 @@
 
 - (void)updatePhotos
 {
-    PFQuery *query = [PFQuery queryWithClassName:kSPPhotoClassKey];
+    PFQuery *query = [SPPhoto query];
     [query orderByDescending:@"createdAt"];
     [query includeKey:@"user"];
     
@@ -177,7 +177,7 @@
     UIView *commentView = (UIView *)sender;
     UITableViewCell *containingCell = (UITableViewCell *)[[commentView superview] superview];
     NSIndexPath *indexPath = [self.tableView indexPathForCell:containingCell];
-    PFObject *photo = [self.photos objectAtIndex:indexPath.section];
+    SPPhoto *photo = [self.photos objectAtIndex:indexPath.section];
     CommentsViewController *ppvc = [[CommentsViewController alloc] initWithPhoto:photo];
     
     [self.navigationController pushViewController:ppvc animated:YES];
@@ -192,7 +192,7 @@
     UIView *commentView = (UIView *)sender;
     UITableViewCell *containingCell = (UITableViewCell *)[[commentView superview] superview];
     NSIndexPath *indexPath = [self.tableView indexPathForCell:containingCell];
-    PFObject *photo = [self.photos objectAtIndex:indexPath.section];
+    SPPhoto *photo = [self.photos objectAtIndex:indexPath.section];
 
     // TODO: toggle styles of heart
     // TODO: add dislike part
@@ -232,7 +232,7 @@
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     // TODO: if this is clicked, then open person's profile
-    PFObject *photo = [self.photos objectAtIndex:section];
+    SPPhoto *photo = [self.photos objectAtIndex:section];
   UIView *outerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 400)];
     UIButton *view = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 400)];
     [view addTarget:self action:@selector(personTouched:) forControlEvents:UIControlEventTouchUpInside];
@@ -245,7 +245,7 @@
     PFImageView *avatarView = [[PFImageView alloc] initWithFrame:CGRectMake(10, 15, 40, 40)];
     
     avatarView.image =[UIImage imageNamed:@"tempnewsavatar.png"];
-    avatarView.file = [[photo objectForKey:@"user"] objectForKey:@"fbProfilePic"];
+    avatarView.file = [[photo user] objectForKey:@"fbProfilePic"];//objectForKey:@"user"] objectForKey:@"fbProfilePic"];
     [avatarView loadInBackground];
     avatarView.layer.masksToBounds = YES;
     float width = avatarView.bounds.size.width;
@@ -261,7 +261,7 @@
   [avatarName setBackgroundColor:[UIColor clearColor]];
   [avatarName setFont:[UIFont fontWithName:@"Avenir" size:16]];
   
-    avatarName.text = [[photo objectForKey:@"user"] objectForKey:@"fbName"];//@"startstar";
+    avatarName.text = [[photo user] objectForKey:@"username"];//[[photo objectForKey:@"user"] objectForKey:@"fbName"];//@"startstar";
   avatarName.lineBreakMode = NSLineBreakByWordWrapping;
   avatarName.numberOfLines = 0;
   [view addSubview:avatarName];
@@ -283,7 +283,7 @@
     locationIconView.tag = 101;
     [view addSubview:locationIconView];
     
-    tags.text = [photo objectForKey:@"locName"];
+    tags.text = [photo locName];
   
   view.backgroundColor = [UIColor clearColor];
     outerView.backgroundColor = [UIColor whiteColor];
@@ -317,7 +317,8 @@
 }
 //for each cell in table
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-  PFObject *photo = [self.photos objectAtIndex:indexPath.section];
+  SPPhoto *photo = (SPPhoto *)[self.photos objectAtIndex:indexPath.section];
+    [photo setAttributesWithLikers:[[NSArray alloc] init] commenters:[[NSArray alloc] init] likedByCurrentUser:NO];
   static NSString *MyIdentifier = @"Cell";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
   if (cell == nil) {
@@ -439,18 +440,17 @@
   }
   
     PFImageView *imageView = (PFImageView *)[cell viewWithTag:100];
-    imageView.file = [photo objectForKey:@"image"];
+    imageView.file = [photo image];//objectForKey:@"image"];
     [imageView loadInBackground];
 
     UILabel *desc = (UILabel *)[cell viewWithTag:104];
-    desc.text = [photo objectForKey:@"caption"];//@"Mountain View, CA";
+    desc.text = [photo caption];//objectForKey:@"caption"];//@"Mountain View, CA";
     
     UIButton *likes = (UIButton *)[cell viewWithTag:106];
-  [likes setTitle:@"22 likes" forState:UIControlStateNormal];
+  [likes setTitle:[NSString stringWithFormat:@"%@ likes", [photo likeCount]] forState:UIControlStateNormal];
   
   UIButton *comments = (UIButton *)[cell viewWithTag:107];
-  [comments setTitle:@"12 comments" forState:UIControlStateNormal];
-  
+  [comments setTitle:[NSString stringWithFormat:@"%@ comments", [photo commentCount]] forState:UIControlStateNormal];
   
   return cell;
 }

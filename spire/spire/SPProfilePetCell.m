@@ -31,7 +31,7 @@
         self.petImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[pet objectForKey:@"type"]]];
         
         UIColor *descColor = [UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f];
-        self.description = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];[[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
+        self.description = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];//[[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
         [self.description setTextColor:descColor];
         [self.description setBackgroundColor:[UIColor clearColor]];
         [self.description setFont:[UIFont fontWithName:@"Avenir" size:24]];

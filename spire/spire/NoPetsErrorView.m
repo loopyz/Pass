@@ -44,6 +44,10 @@
   [self addSubview:submitButton];
 }
 
+- (void)buttonTouched:(id)sender
+{
+    // do nothing for now.
+}
 
 /*
 // Only override drawRect: if you perform custom drawing.

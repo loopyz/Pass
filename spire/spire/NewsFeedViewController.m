@@ -360,22 +360,44 @@
     [informationView addSubview:separator];
     
       //setup likes label
-      UILabel *likes = [[UILabel alloc] initWithFrame:CGRectMake(15, desc.frame.origin.y + desc.frame.size.height - 16, 55, 50)];
-      [likes setTextColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f]];
-      [likes setBackgroundColor:[UIColor clearColor]];
-      [likes setFont:[UIFont fontWithName:@"Avenir" size:12]];
-      likes.numberOfLines = 1;
-      likes.tag = 106;
-      [informationView addSubview:likes];
+    UIButton *likesButton = [[UIButton alloc] initWithFrame:CGRectMake(9, desc.frame.origin.y + desc.frame.size.height, 55, 20)];
+    [likesButton addTarget:self action:@selector(seeLikes:) forControlEvents:UIControlEventTouchUpInside];
+    
+
+    [likesButton setTitleColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f] forState:UIControlStateNormal];
+    [likesButton setTitle:@"22 likes" forState:UIControlStateNormal];
+    likesButton.tag = 106;
+    likesButton.titleLabel.font =[UIFont fontWithName:@"Avenir" size:12];
+
+    
+//      UILabel *likes = [[UILabel alloc] initWithFrame:CGRectMake(15, desc.frame.origin.y + desc.frame.size.height - 16, 55, 50)];
+//      [likes setTextColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f]];
+//      [likes setBackgroundColor:[UIColor clearColor]];
+//      [likes setFont:[UIFont fontWithName:@"Avenir" size:12]];
+//      likes.numberOfLines = 1;
+//      likes.tag = 106;
+//    [likesButton addSubview:likes];
+    
+      [informationView addSubview:likesButton];
     
     //setup comments label
-    UILabel *comments = [[UILabel alloc] initWithFrame:CGRectMake(likes.frame.origin.x + likes.frame.size.width, desc.frame.origin.y + desc.frame.size.height - 16, 200, 50)];
-    [comments setTextColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f]];
-    [comments setBackgroundColor:[UIColor clearColor]];
-    [comments setFont:[UIFont fontWithName:@"Avenir" size:12]];
-    comments.numberOfLines = 1;
-    comments.tag = 107;
-    [informationView addSubview:comments];
+    UIButton *commentsButton = [[UIButton alloc] initWithFrame:CGRectMake(likesButton.frame.origin.x + likesButton.frame.size.width, desc.frame.origin.y + desc.frame.size.height, 100, 20)];
+    
+    [commentsButton setTitleColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f] forState:UIControlStateNormal];
+    [commentsButton setTitle:@"12 comments" forState:UIControlStateNormal];
+    commentsButton.tag = 107;
+    commentsButton.titleLabel.font = [UIFont fontWithName:@"Avenir" size:12];
+    [commentsButton addTarget:self action:@selector(commentTouched:) forControlEvents:UIControlEventTouchUpInside];
+    [informationView addSubview:commentsButton];
+    
+    
+//    UILabel *comments = [[UILabel alloc] initWithFrame:CGRectMake(likesButton.frame.origin.x + likesButton.frame.size.width, desc.frame.origin.y + desc.frame.size.height - 16, 200, 50)];
+//    [comments setTextColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f]];
+//    [comments setBackgroundColor:[UIColor clearColor]];
+//    [comments setFont:[UIFont fontWithName:@"Avenir" size:12]];
+//    comments.numberOfLines = 1;
+//    comments.tag = 107;
+//    [informationView addSubview:comments];
     
     [cell addSubview:informationView];
     
@@ -424,14 +446,18 @@
     UILabel *desc = (UILabel *)[cell viewWithTag:104];
     desc.text = [photo caption];//objectForKey:@"caption"];//@"Mountain View, CA";
     
-    UILabel *likes = (UILabel *)[cell viewWithTag:106];
-    likes.text = [NSString stringWithFormat:@"%@ likes", [photo likeCount]];//@"22 likes ";
+    UIButton *likes = (UIButton *)[cell viewWithTag:106];
+  [likes setTitle:[NSString stringWithFormat:@"%@ likes", [photo likeCount]] forState:UIControlStateNormal];
   
-  UILabel *comments = (UILabel *)[cell viewWithTag:107];
-    comments.text = [NSString stringWithFormat:@"%@ comments", [photo commentCount]];//@"12 comments ";
-  
+  UIButton *comments = (UIButton *)[cell viewWithTag:107];
+  [comments setTitle:[NSString stringWithFormat:@"%@ comments", [photo commentCount]] forState:UIControlStateNormal];
   
   return cell;
+}
+
+- (void)seeLikes:(id)self
+{
+  NSLog(@"show people who have liked it here");
 }
 
 #pragma mark - UIActionSheetDelegate

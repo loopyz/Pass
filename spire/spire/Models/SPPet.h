@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) PFUser *currentUser;
 @property (nonatomic, strong) NSNumber *miles;
+@property (nonatomic, strong) NSString *type;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) PFUser *owner;
 

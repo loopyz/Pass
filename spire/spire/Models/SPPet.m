@@ -12,6 +12,7 @@
 
 @dynamic currentUser;
 @dynamic miles;
+@dynamic type;
 @dynamic name;
 @dynamic owner;
 
@@ -30,6 +31,7 @@
 + (void)setCurrentPet:(PFObject *)pet
 {
     _instance = pet;
+    [SPCache sharedCache]
 }
 
 @end

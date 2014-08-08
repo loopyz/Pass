@@ -19,9 +19,11 @@
   UIImage *locationIcon;
     UIImage *heartIcon;
     UIImage *commentIcon;
-  UIImage *heartButtonIcon;
+  UIImage *heartButtonUnactiveIcon;
+  UIImage *heartButtonActiveIcon;
   UIImage *commentButtonIcon;
   UIActionSheet *moreActions;
+  UIImage *shareButtonIcon;
 }
 
 
@@ -34,11 +36,14 @@
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     // Custom initialization
-    commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
+    commentButtonIcon = [UIImage imageNamed:@"newsfeedcommentbutton.png"];
     locationIcon = [UIImage imageNamed:@"locationicon.png"];
       heartIcon = [UIImage imageNamed:@"hearticon.png"];
       commentIcon = [UIImage imageNamed:@"commenticon.png"];
-    heartButtonIcon = [UIImage imageNamed:@"heartbutton.png"];
+    heartButtonUnactiveIcon = [UIImage imageNamed:@"heartbuttonunactive.png"];
+    heartButtonActiveIcon = [UIImage imageNamed:@"heartbuttonactive.png"];
+    shareButtonIcon = [UIImage imageNamed:@"newsfeedmoreoptions.png"];
+    
     // commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
     
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -180,6 +185,10 @@
 
 - (void)heartTouched:(id)sender
 {
+    // change image of button
+  UIButton *heartButton = (UIButton *)sender;
+  heartButton.selected = !heartButton.selected;
+  
     UIView *commentView = (UIView *)sender;
     UITableViewCell *containingCell = (UITableViewCell *)[[commentView superview] superview];
     NSIndexPath *indexPath = [self.tableView indexPathForCell:containingCell];
@@ -369,38 +378,42 @@
     
     [cell addSubview:informationView];
     
-    // setup heart button
-    UIButton *heartButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [heartButton setTitle:@"Heart" forState:UIControlStateNormal];
+    // testing shit out
     
-    heartButton.frame = CGRectMake(15, separator.frame.origin.y + separator.frame.size.height + 10, 32.5 * 1.2, 22 * 1.2);
-    [heartButton addTarget:self action:@selector(heartTouched:) forControlEvents:UIControlEventTouchUpInside];
+    UIButton *heartButton = [[UIButton alloc] init];
+    // Hardcode the x value and size for simplicity
+    BOOL isLiked = NO;
+    heartButton.selected = isLiked ? YES : NO;
+    heartButton.frame = CGRectMake(15, separator.frame.origin.y + separator.frame.size.height + 10, 28, 28);
     heartButton.tag = 103;
-    [informationView addSubview:heartButton];
-    [heartButton setImage:heartButtonIcon forState:UIControlStateNormal];
-    heartButton.contentMode = UIViewContentModeScaleToFill;
+    [heartButton setImage:[UIImage imageNamed:@"likeButton_unselected.png"] forState:UIControlStateNormal];
+    [heartButton setImage:[UIImage imageNamed:@"likeButton_selected.png"] forState:UIControlStateSelected];
+    [heartButton setImage:[UIImage imageNamed:@"likeButton_highlighted.png"] forState:UIControlStateHighlighted];
+    [heartButton addTarget:self action:@selector(heartTouched:) forControlEvents:UIControlEventTouchUpInside];
+    [cell addSubview:heartButton];
     
     // setup comment button
     UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [commentButton setTitle:@"Comment" forState:UIControlStateNormal];
-    commentButton.frame = CGRectMake(heartButton.frame.size.height + heartButton.frame.origin.x + 30, separator.frame.origin.y + separator.frame.size.height + 10, 32.5 * 1.2f, 22 * 1.2f);
+    commentButton.frame = CGRectMake(heartButton.frame.size.height + heartButton.frame.origin.x + 30, separator.frame.origin.y + separator.frame.size.height + 10, 28, 26);
     
     commentButton.tag = 102;
     [informationView addSubview:commentButton];
-    [commentButton setImage:heartButtonIcon forState:UIControlStateNormal];
+    [commentButton setImage:commentButtonIcon forState:UIControlStateNormal];
     commentButton.contentMode = UIViewContentModeScaleToFill;
     [commentButton addTarget:self action:@selector(commentTouched:) forControlEvents:UIControlEventTouchUpInside];
     
     // setup share button
     UIButton *shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [shareButton setTitle:@"Share" forState:UIControlStateNormal];
-    shareButton.frame = CGRectMake(self.view.frame.size.width - 50, separator.frame.origin.y + separator.frame.size.height + 10, 32.5 * 1.2f, 22 * 1.2f);
+    shareButton.frame = CGRectMake(self.view.frame.size.width - 50, separator.frame.origin.y + separator.frame.size.height + 10, 31, 31);
     
     shareButton.tag = 108;
     [informationView addSubview:shareButton];
-    [shareButton setImage:heartButtonIcon forState:UIControlStateNormal];
+    [shareButton setImage:shareButtonIcon forState:UIControlStateNormal];
     shareButton.contentMode = UIViewContentModeScaleToFill;
     [shareButton addTarget:self action:@selector(moreButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+
   }
   
     PFImageView *imageView = (PFImageView *)[cell viewWithTag:100];
@@ -433,8 +446,9 @@
 - (void)moreButtonPressed
 {
   [moreActions showFromTabBar:[[self tabBarController] tabBar]];
-
+  
 }
+
 
 
 @end

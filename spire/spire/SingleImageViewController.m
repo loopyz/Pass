@@ -64,6 +64,13 @@ const CGFloat kCommentCellHeight = 50.0f;
     return self;
 }
 
+- (NSString *)randomPersonAvatar
+{
+    NSArray* types = @[@"andrewhuang", @"charlotte", @"keithmiller", @"lucyguo", @"nivejayasekar", @"vivianma"];
+
+    return types[arc4random() % [types count]];
+}
+
 //- (id)initWithPhoto:(PFObject *)photo
 //{
 //    self = [super initWithNibName:nil bundle:nil];
@@ -777,6 +784,11 @@ const CGFloat kCommentCellHeight = 50.0f;
       commentCell.timeLabel.frame = (CGRect) {.origin = {CGRectGetMinX(commentCell.commentLabel.frame), CGRectGetMaxY(commentCell.commentLabel.frame)}};
       commentCell.timeLabel.text = @"1d ago";
       [commentCell.timeLabel sizeToFit];
+      
+      
+//      UIImageView *avatar = [[UIImageView alloc] initWithFrame:CGRectMake(17, 18, 40, 40)];
+//      avatar.image = [UIImage imageNamed:@"lucyguo.png"];
+//      [commentCell addSubview:avatar];
       
       // Don't judge my magic numbers or my crappy assets!!!
       commentCell.likeCountImageView.frame = CGRectMake(CGRectGetMaxX(commentCell.timeLabel.frame) + 7, CGRectGetMinY(commentCell.timeLabel.frame) + 3, 10, 10);

@@ -19,7 +19,7 @@ const CGFloat kCommentPaddingFromRight = 8.0f;
         self.backgroundColor = [UIColor whiteColor];
         self.iconView = [[UIImageView alloc] initWithFrame:CGRectMake(15, 15, 35, 35)];
         // Go Toronto!
-        self.iconView.image =[UIImage imageNamed:@"bluejay.jpg"];
+        self.iconView.image =[UIImage imageNamed:@"lucyguo.png"];
         self.iconView.layer.cornerRadius = CGRectGetWidth(self.iconView.frame) / 2.0f;
         self.iconView.layer.masksToBounds = YES;
         [self addSubview:self.iconView];
@@ -58,7 +58,7 @@ const CGFloat kCommentPaddingFromRight = 8.0f;
         self.likeCountImageView = [[UIImageView alloc] init];
         self.likeCountImageView.image = [UIImage imageNamed:@"like_greyIcon.png"];
         self.likeCountImageView.hidden = YES;
-        
+      
         
 
     }

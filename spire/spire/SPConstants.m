@@ -41,5 +41,20 @@ NSString *const kSPUserAttributesPhotoCountKey = @"photoCount";
 NSString *const kSPUserAttributesIsFollowedByCurrentUserKey = @"isFollowedByCurrentUser";
 
 #pragma mark - Google APIs
-
 const int kSPGooglePlacesMaxRadius = 10;
+
+#pragma mark - Images
+
+@implementation SPConstants
+
++ (NSArray *)kSPPetTypes
+{
+    static NSArray *_pets;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _pets = @[@"bunny", @"fatlion", @"fox", @"golfdm", @"happybeast", @"happyblob", @"happydino", @"happydog", @"hawaiiandm", @"heartpug", @"hungrybeast", @"lamb", @"lamb2", @"lamb3", @"mehblob", @"monkey", @"monster", @"musicdino", @"ninjabunny", @"ninjarabbit", @"pandacat", @"pandadog", @"pusheen", @"pusheen2", @"rockstardog", @"sillyblob", @"superdino", @"supermanbunny"];
+    });
+    return _pets;
+}
+
+@end

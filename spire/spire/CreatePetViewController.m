@@ -136,8 +136,7 @@
 
 - (NSString *)randomPetType
 {
-    NSArray* types = @[@"bunny", @"fatlion", @"fox", @"golfdm", @"happybeast", @"happyblob", @"happydino", @"happydog", @"hawaiiandm", @"heartpug", @"hungrybeast", @"lamb", @"lamb2", @"lamb3", @"mehblob", @"monkey", @"monster", @"musicdino", @"ninjabunny", @"ninjarabbit", @"pandacat", @"pandadog", @"pusheen", @"pusheen2", @"rockstardog", @"sillyblob", @"superdino", @"supermanbunny"];
-    
+    NSArray* types = [SPConstants kSPPetTypes];
     return types[arc4random() % [types count]];
 }
 

@@ -38,5 +38,12 @@ extern NSString *const kSPUserAttributesPhotoCountKey;
 extern NSString *const kSPUserAttributesIsFollowedByCurrentUserKey;
 
 #pragma mark - Google APIs
-
 extern const int kSPGooglePlacesMaxRadius;
+
+#pragma mark - Images
+
+@interface SPConstants : NSObject
+
++ (NSArray *) kSPPetTypes;
+
+@end

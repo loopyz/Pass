@@ -13,7 +13,7 @@
 
 @property (nonatomic, strong) NSMutableArray *comments;
 @property (nonatomic, strong) NSMutableArray *usernames;
-@property (nonatomic, strong) PFObject *photo;
+@property (nonatomic, strong) SPPhoto *photo;
 
-- (id) initWithPhoto: (PFObject *)photo;
+- (id) initWithPhoto: (SPPhoto *)photo;
 @end

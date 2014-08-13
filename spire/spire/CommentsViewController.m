@@ -46,7 +46,7 @@ static NSString * const CellIdentifier = @"cell";
   self.navigationItem.title = @"Comments";
 }
 
-- (id)initWithPhoto:(PFObject *)photo
+- (id)initWithPhoto:(SPPhoto *)photo
 {
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
@@ -80,7 +80,7 @@ static NSString * const CellIdentifier = @"cell";
 - (void) saveCommentToParse: (NSString *)commentText
 {
   if (commentText.length != 0) {
-    PFUser *toUser = [self.photo objectForKey:@"user"] ;
+      PFUser *toUser = [self.photo user];
     PFObject *comment = [PFObject objectWithClassName:kSPActivityClassKey];
     [comment setObject:commentText forKey:@"content"];
     [comment setObject:kSPActivityTypeComment forKey:@"type"];
@@ -98,7 +98,8 @@ static NSString * const CellIdentifier = @"cell";
     
     // todo -- update comment records in SPCACHE
     [self.comments addObject:comment];
-    [self.usernames addObject:[[self.photo objectForKey:@"user"] objectForKey:@"fbName"]];
+      
+      [self.usernames addObject:[[self.photo user] fbName]];
     [self.tableView reloadData];
     [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
       if (error){
@@ -201,7 +202,7 @@ static NSString * const CellIdentifier = @"cell";
     [description setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
     [cell addSubview:description];
     
-    description.text = [self.photo objectForKey:@"caption"];
+      description.text = [self.photo caption];
     
   }
   if (indexPath.row == 1) {

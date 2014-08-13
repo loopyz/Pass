@@ -10,7 +10,7 @@
 
 @interface SPProfilePetCell : UITableViewCell
 
-@property (nonatomic, strong) PFObject *pet;
+@property (nonatomic, strong) SPPet *pet;
 
-- (id) initWithPet:(PFObject *)pet style:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
+- (id) initWithPet:(SPPet *)pet style:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
 @end

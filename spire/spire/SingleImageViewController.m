@@ -63,6 +63,7 @@ const CGFloat kCommentCellHeight = 50.0f;
     }
     return self;
 }
+
 - (NSString *)randomPersonAvatar
 {
     NSArray* types = @[@"andrewhuang", @"charlotte", @"keithmiller", @"lucyguo", @"nivejayasekar", @"vivianma"];
@@ -98,12 +99,12 @@ const CGFloat kCommentCellHeight = 50.0f;
   _backgroundScrollView.scrollEnabled = NO;
   _backgroundScrollView.contentSize = CGSizeMake(320, 1000);
   UIImageView *imageView = [[UIImageView alloc] initWithFrame:HEADER_INIT_FRAME];
-  // imageView.image = [UIImage imageNamed:@"secret.png"];
+
   imageView.image = [UIImage imageNamed:@"tempsingleimage.png"];
   
   PFImageView *imgView = [[PFImageView alloc] initWithFrame:HEADER_INIT_FRAME];
   imgView.image = [UIImage imageNamed:@"tempsingleimage.png"];
-    imgView.file = [self.photo image];//objectForKey:@"image"];
+    imgView.file = [self.photo image];
   [imgView loadInBackground];
   [imageView addSubview:imgView];
   
@@ -211,13 +212,14 @@ const CGFloat kCommentCellHeight = 50.0f;
 
 - (void)setupCaption
 {
-    PFUser *user = [self.photo user];//[self.photo objectForKey:@"user"];
+    SPUser *user = [self.photo user];
   UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 164)];
   
   self.captionView = view;
   self.fbProfilePic = [[FBProfilePictureView alloc] init];
   
-  self.fbProfilePic.profileID = [user objectForKey:@"fbId"];
+    self.fbProfilePic.profileID = [user fbId];
+
   //setup name label
   UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
   UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, 300, 35)];
@@ -227,7 +229,7 @@ const CGFloat kCommentCellHeight = 50.0f;
   [name setBackgroundColor:[UIColor clearColor]];
   [name setFont:[UIFont fontWithName:@"Avenir" size:15]];
   
-  name.text = [user objectForKey:@"username"]; //@"loopyz";
+    name.text = [user username];
   [self.captionView addSubview:name];
   [self addProfile];
   
@@ -239,7 +241,7 @@ const CGFloat kCommentCellHeight = 50.0f;
   [description setTextColor:descriptionColor];
   [description setBackgroundColor:[UIColor clearColor]];
   [description setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
-    description.text = [self.photo caption];//objectForKey:@"caption"];//@"I really like pizza. And travel.";
+    description.text = [self.photo caption];
   
   [self.captionView addSubview:description];
 }

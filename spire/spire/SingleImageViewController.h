@@ -19,5 +19,5 @@
 @property (nonatomic, strong) NSArray *comments;
 @property (nonatomic, strong) NSArray *usernames;
 
-- (id)initWithPhoto: (PFObject *)photo;
+- (id)initWithPhoto: (SPPhoto *)photo;
 @end

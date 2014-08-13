@@ -241,11 +241,10 @@
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
   
   //setup avatar
-                         
+    SPUser *avatar = [photo user];
     PFImageView *avatarView = [[PFImageView alloc] initWithFrame:CGRectMake(10, 15, 40, 40)];
-    
     avatarView.image =[UIImage imageNamed:@"tempnewsavatar.png"];
-    avatarView.file = [[photo user] objectForKey:@"fbProfilePic"];//objectForKey:@"user"] objectForKey:@"fbProfilePic"];
+    avatarView.file = [avatar fbProfilePic];
     [avatarView loadInBackground];
     avatarView.layer.masksToBounds = YES;
     float width = avatarView.bounds.size.width;
@@ -261,7 +260,7 @@
   [avatarName setBackgroundColor:[UIColor clearColor]];
   [avatarName setFont:[UIFont fontWithName:@"Avenir" size:16]];
   
-    avatarName.text = [[photo user] objectForKey:@"username"];//[[photo objectForKey:@"user"] objectForKey:@"fbName"];//@"startstar";
+    avatarName.text = [avatar username];
   avatarName.lineBreakMode = NSLineBreakByWordWrapping;
   avatarName.numberOfLines = 0;
   [view addSubview:avatarName];
@@ -272,7 +271,6 @@
   [tags setBackgroundColor:[UIColor clearColor]];
   [tags setFont:[UIFont fontWithName:@"Avenir" size:12]];
   
-    // tags.text = [photo objectForKey:@"caption"];//@"I love Foxy hehe.";
   tags.lineBreakMode = NSLineBreakByWordWrapping;
   tags.numberOfLines = 0;
   [view addSubview:tags];
@@ -306,7 +304,7 @@
 - (void)personTouched:(id)sender
 {
     UIButton *button = (UIButton *)sender;
-    PFUser *user = [[self.photos objectAtIndex:(button.tag - 800)] objectForKey:@"user"];
+    SPUser *user = [[self.photos objectAtIndex:(button.tag - 800)] objectForKey:@"user"];
     
     if ([user.objectId isEqualToString:[[PFUser currentUser] objectId]]) {
         [self.tabBarController setSelectedIndex:4];
@@ -317,7 +315,7 @@
 }
 //for each cell in table
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-  SPPhoto *photo = (SPPhoto *)[self.photos objectAtIndex:indexPath.section];
+  SPPhoto *photo = [self.photos objectAtIndex:indexPath.section];
     [photo setAttributesWithLikers:[[NSArray alloc] init] commenters:[[NSArray alloc] init] likedByCurrentUser:NO];
   static NSString *MyIdentifier = @"Cell";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];

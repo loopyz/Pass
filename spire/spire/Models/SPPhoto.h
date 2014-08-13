@@ -12,8 +12,8 @@
 
 @property (nonatomic, strong) PFFile *image;
 @property (nonatomic, strong) NSString *caption;
-@property (nonatomic, strong) PFUser *user;
-@property (nonatomic, strong) PFObject *pet;
+@property (nonatomic, strong) SPUser *user;
+@property (nonatomic, strong) SPPet *pet;
 @property (nonatomic, strong) NSNumber *first;
 @property (nonatomic, strong) NSString *locName;
 @property (nonatomic, strong) PFGeoPoint *geoPoint;

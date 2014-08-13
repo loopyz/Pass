@@ -83,40 +83,19 @@
 //    [cell.contentView addSubview:self.mapButton];
   }
   
-//  dispatch_async(dispatch_get_main_queue(), ^{
-//    
-//    //  ********* Changed *******
-//    
-//    for (UIView *v in [cell.contentView subviews])
-//      [v removeFromSuperview];
-//    
-//    // ********** Changed **********
-//    if (indexPath.row == 0) {
-//      // [cell addSubview:self.header];
-//      cell.backgroundView = self.header;
-//    }
-//    else {
-//      PFFile *image = [[self.photos objectAtIndex:(indexPath.row - 1)] objectForKey:@"image"];
-//      PFImageView *photo = [[PFImageView alloc] init];
-//      photo.image = [UIImage imageNamed:@"tempsingleimage.png"];
-//      photo.file = image;
-//      [photo loadInBackground];
-//      cell.backgroundView = photo;
-//      // [cell addSubview:photo];
-//    }
-//  });
   
  // photoTouched
         if (indexPath.row == 0) {
             cell.backgroundView = self.header;
         }
         else {
-            PFFile *image = [[self.photos objectAtIndex:(indexPath.row - 1)] objectForKey:@"image"];
-            PFImageView *photo = [[PFImageView alloc] init];
-            photo.image = [UIImage imageNamed:@"tempsingleimage.png"];
-            photo.file = image;
-            [photo loadInBackground];
-            cell.backgroundView = photo;
+            SPPhoto *photo =[self.photos objectAtIndex:(indexPath.row - 1)];
+            PFFile *image = [photo image];
+            PFImageView *photoView = [[PFImageView alloc] init];
+            photoView.image = [UIImage imageNamed:@"tempsingleimage.png"];
+            photoView.file = image;
+            [photoView loadInBackground];
+            cell.backgroundView = photoView;
             cell.backgroundView.backgroundColor = [UIColor blackColor];
         }
 
@@ -136,11 +115,8 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
   NSLog(@"%d", indexPath.row);
     if (indexPath.row != 0) {
-        PFObject *photo = self.photos[indexPath.row - 1];
+        SPPhoto *photo = self.photos[indexPath.row - 1];
         SingleImageViewController *ppvc = [[SingleImageViewController alloc] initWithPhoto:photo];
-//        CreatePetViewController *ppvc = [[CreatePetViewController alloc] initWithNibName:nil bundle:nil] ;
-
-  // [self presentViewController:ppvc animated:YES completion:nil];
 [self.navigationController pushViewController:ppvc animated:YES];
     }
 }
@@ -150,7 +126,7 @@
   return YES;
 }
 
-- (void) setupPetSnippet:(PFObject *)pet
+- (void) setupPetSnippet:(SPPet *)pet
 {
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 115)];
     //setup name label
@@ -159,14 +135,14 @@
     [name setTextColor:nameColor];
     [name setBackgroundColor:[UIColor clearColor]];
     [name setFont:[UIFont fontWithName:@"Avenir" size:25]];
-    name.text = [pet objectForKey:@"name"];//@"Foxy";
+    name.text = [pet name];
   
     //sets up on nav bar also
     self.navigationController.navigationBar.topItem.title = name.text;
   self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
   // [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
 
-    NSString *petFName = [NSString stringWithFormat:@"%@.png", [pet objectForKey:@"type"]];
+    NSString *petFName = [NSString stringWithFormat:@"%@.png", [pet type]];
     UIImageView *petPic = [[UIImageView alloc] initWithImage:[UIImage imageNamed:petFName]]; // todo
     petPic.frame = CGRectMake(10, 10, 100, 100);
     
@@ -185,7 +161,7 @@
   [numMiles setBackgroundColor:[UIColor clearColor]];
   [numMiles setFont:[UIFont fontWithName:@"HelveticaNeue" size:15]];
   
-    numMiles.text = [NSString stringWithFormat:@"%d", [[pet objectForKey:@"miles"] intValue]];//@"2187";
+    numMiles.text = [NSString stringWithFormat:@"%d", [[pet miles] intValue]];
   numMiles.lineBreakMode = NSLineBreakByWordWrapping;
   numMiles.numberOfLines = 0;
   [view addSubview:numMiles];
@@ -207,7 +183,7 @@
   [numPasses setBackgroundColor:[UIColor clearColor]];
   [numPasses setFont:[UIFont fontWithName:@"HelveticaNeue" size:15]];
   
-    numPasses.text = [[pet objectForKey:@"passes"] stringValue];//@"1322";
+    numPasses.text = [NSString stringWithFormat:@"%d", [[pet passes] intValue]];
   numPasses.lineBreakMode = NSLineBreakByWordWrapping;
   numPasses.numberOfLines = 0;
   [view addSubview:numPasses];
@@ -240,7 +216,7 @@
   [ownerLabel setTextColor:ownerColor];
   [ownerLabel setBackgroundColor:[UIColor clearColor]];
   [ownerLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:12]];
-    ownerLabel.text = [[pet objectForKey:@"owner"] objectForKey:@"username"];//@"poopypants";
+    ownerLabel.text = [[pet owner] username];
   
   [view addSubview:ownerLabel];
   
@@ -353,21 +329,21 @@
   [self.navigationController setNavigationBarHidden:NO];
   // Do any additional setup after loading the view.
     if (self.petId) {
-        PFQuery *query = [PFQuery queryWithClassName:kSPPetClassKey];
+        PFQuery *query = [SPPet query];
         [query includeKey:@"owner"];
         [query getObjectInBackgroundWithId:self.petId block:^(PFObject *object, NSError *error) {
-            PFQuery *photosquery = [PFQuery queryWithClassName:kSPPhotoClassKey];
+            SPPet *pet = (SPPet *)object;
+            PFQuery *photosquery = [SPPhoto query];
             [photosquery includeKey:@"user"];
-            [photosquery whereKey:@"pet" equalTo:object];
+            [photosquery whereKey:@"pet" equalTo:pet];
             [photosquery orderByDescending:@"createdAt"];
             
             [photosquery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-                self.photos = [[NSMutableArray alloc] init];
-                [self.photos addObjectsFromArray:objects];
+                self.photos = [[NSMutableArray alloc] initWithArray:objects];
               
                 [self.collectionView reloadData];
             }];
-            [self setupPetSnippet:object];
+            [self setupPetSnippet:pet];
         }];
         
         
@@ -382,15 +358,6 @@
 {
   return YES;
 }
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

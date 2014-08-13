@@ -19,7 +19,7 @@
 
 @implementation SPProfilePetCell
 
-- (id) initWithPet:(PFObject *)pet style:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+- (id) initWithPet:(SPPet *)pet style:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self =[super initWithStyle:style reuseIdentifier:reuseIdentifier];
     
@@ -28,16 +28,16 @@
         self.backgroundColor = [UIColor colorWithRed:248/255.0f green:248/255.0f blue:248/255.0f alpha:1.0f];
 
         self.petImageView =[[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
-        self.petImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[pet objectForKey:@"type"]]];
+        self.petImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[pet type]]];
         
         UIColor *descColor = [UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f];
-        self.description = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];//[[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
+        self.description = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
         [self.description setTextColor:descColor];
         [self.description setBackgroundColor:[UIColor clearColor]];
         [self.description setFont:[UIFont fontWithName:@"Avenir" size:24]];
         self.description.lineBreakMode = NSLineBreakByWordWrapping;
         self.description.numberOfLines = 0;
-        self.description.text = [pet objectForKey:@"name"];
+        self.description.text = [pet name];
         
         self.numMiles = [[UILabel alloc] initWithFrame:CGRectMake(120, 40, 200, 50)];
         [self.numMiles setTextColor:descColor];
@@ -45,7 +45,7 @@
         [self.numMiles setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
         self.numMiles.lineBreakMode = NSLineBreakByWordWrapping;
         self.numMiles.numberOfLines = 0;
-        self.numMiles.text = [NSString stringWithFormat:@"%d", [[pet objectForKey:@"miles"] intValue]];
+        self.numMiles.text = [NSString stringWithFormat:@"%d", [[pet miles] intValue]];
         
         UILabel *milesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 40, 200, 50)];
         [milesLabel setTextColor:descColor];
@@ -62,7 +62,7 @@
         [self.numPasses setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
         self.numPasses.lineBreakMode = NSLineBreakByWordWrapping;
         self.numPasses.numberOfLines = 0;
-        self.numPasses.text = [[pet objectForKey:@"passes"] stringValue];
+        self.numPasses.text = [NSString stringWithFormat:@"%d", [[pet passes] intValue]];
         
         UILabel *passesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 60, 200, 50)];
         [passesLabel setTextColor:descColor];

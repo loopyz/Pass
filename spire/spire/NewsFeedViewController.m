@@ -10,6 +10,7 @@
 #import "PullToRefresh.h"
 #import "CommentsViewController.h"
 #import "ProfileViewController.h"
+#import "SPNewsFeedCell.h"
 
 #import <MediaPlayer/MediaPlayer.h>
 #import <Parse/Parse.h>
@@ -140,12 +141,29 @@
                                              selector:@selector(refreshView:)
                                                  name:@"refreshView"
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cellTouched:) name:@"openCommentsForPhoto"  object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cellTouched:) name:@"openMoreForPhoto"  object:nil];
   
 }
 
 -(void)refreshView:(NSNotification *) notification{
     if (self == self.navigationController.topViewController)
         [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
+}
+
+-(void)cellTouched:(NSNotification *)notification
+{
+    if ([[notification name] isEqualToString:@"openCommentsForPhoto"]) {
+        NSDictionary *userInfo = notification.userInfo;
+        NSNumber *photoIndex = [userInfo objectForKey:@"photoIndex"];
+        
+        SPPhoto *photo = [self.photos objectAtIndex:[photoIndex integerValue]];
+        CommentsViewController *ppvc = [[CommentsViewController alloc] initWithPhoto:photo];
+        
+        [self.navigationController pushViewController:ppvc animated:YES];
+    } else if ([[notification name] isEqualToString:@"openMoreForPhoto"]) {
+        [moreActions showFromTabBar:[[self tabBarController] tabBar]];
+    }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView  {
@@ -172,40 +190,6 @@
   // Dispose of any resources that can be recreated.
 }
 
-- (void)commentTouched:(id)sender
-{
-    UIView *commentView = (UIView *)sender;
-    UITableViewCell *containingCell = (UITableViewCell *)[[commentView superview] superview];
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:containingCell];
-    SPPhoto *photo = [self.photos objectAtIndex:indexPath.section];
-    CommentsViewController *ppvc = [[CommentsViewController alloc] initWithPhoto:photo];
-    
-    [self.navigationController pushViewController:ppvc animated:YES];
-}
-
-- (void)heartTouched:(id)sender
-{
-    // change image of button
-  UIButton *heartButton = (UIButton *)sender;
-  heartButton.selected = !heartButton.selected;
-  
-    UIView *commentView = (UIView *)sender;
-    UITableViewCell *containingCell = (UITableViewCell *)[[commentView superview] superview];
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:containingCell];
-    SPPhoto *photo = [self.photos objectAtIndex:indexPath.section];
-
-    // TODO: toggle styles of heart
-    // TODO: add dislike part
-    [Util likePhotoInBackground:photo block:^(BOOL succeeded, NSError *error) {
-        if (error) {
-            NSLog(@"error liking photo");
-        } else {
-            NSLog(@"liked photo successfully");
-        }
-    }];
-    
-    
-}
 
 #pragma mark - Table view data source
 
@@ -315,147 +299,20 @@
 }
 //for each cell in table
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-  SPPhoto *photo = [self.photos objectAtIndex:indexPath.section];
+    SPPhoto *photo = [self.photos objectAtIndex:indexPath.section];
     [photo setAttributesWithLikers:[[NSArray alloc] init] commenters:[[NSArray alloc] init] likedByCurrentUser:NO];
+    
   static NSString *MyIdentifier = @"Cell";
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+  SPNewsFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
   if (cell == nil) {
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
-      cell.backgroundColor =  [UIColor colorWithRed:237/255.0f green:237/255.0f blue:237/255.0f alpha:1.0f];
-    
-    // setup information view
-    UIView *informationView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, cell.frame.size.width, 450)];
-    informationView.backgroundColor = [UIColor whiteColor];
-      PFImageView *imageView = [[PFImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
-      imageView.image =[UIImage imageNamed:@"tempsingleimage.png"];
-      imageView.tag = 100;
-      [informationView addSubview:imageView];
-      
-      UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
-    
-    
-      // setup comment icon
-//      UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 348, 12, 12)];
-//      locationIconView.image = commentIcon;
-//      locationIconView.tag = 101;
-//      locationIconView.backgroundColor = [UIColor clearColor];
-//      [informationView addSubview:locationIconView];
-      
-      //setup caption label
-      UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(15, 320, 200, 50)];
-      [desc setTextColor:descColor];
-      [desc setBackgroundColor:[UIColor clearColor]];
-      [desc setFont:[UIFont fontWithName:@"Avenir" size:17]];
-      desc.lineBreakMode = NSLineBreakByWordWrapping;
-      desc.numberOfLines = 0;
-      desc.tag = 104;
-      [informationView addSubview:desc];
-    
-    // setup separator
-    UIImageView *separator = [[UIImageView alloc] initWithFrame:CGRectMake(14.75, desc.frame.origin.y + desc.frame.size.height + 25, 291, 3)];
-    separator.image = [UIImage imageNamed:@"newsfeedborder.png"];
-    separator.tag = 105;
-    [informationView addSubview:separator];
-    
-      //setup likes label
-    UIButton *likesButton = [[UIButton alloc] initWithFrame:CGRectMake(9, desc.frame.origin.y + desc.frame.size.height, 55, 20)];
-    [likesButton addTarget:self action:@selector(seeLikes:) forControlEvents:UIControlEventTouchUpInside];
-    
-
-    [likesButton setTitleColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f] forState:UIControlStateNormal];
-    [likesButton setTitle:@"22 likes" forState:UIControlStateNormal];
-    likesButton.tag = 106;
-    likesButton.titleLabel.font =[UIFont fontWithName:@"Avenir" size:12];
-
-    
-//      UILabel *likes = [[UILabel alloc] initWithFrame:CGRectMake(15, desc.frame.origin.y + desc.frame.size.height - 16, 55, 50)];
-//      [likes setTextColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f]];
-//      [likes setBackgroundColor:[UIColor clearColor]];
-//      [likes setFont:[UIFont fontWithName:@"Avenir" size:12]];
-//      likes.numberOfLines = 1;
-//      likes.tag = 106;
-//    [likesButton addSubview:likes];
-    
-      [informationView addSubview:likesButton];
-    
-    //setup comments label
-    UIButton *commentsButton = [[UIButton alloc] initWithFrame:CGRectMake(likesButton.frame.origin.x + likesButton.frame.size.width, desc.frame.origin.y + desc.frame.size.height, 100, 20)];
-    
-    [commentsButton setTitleColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f] forState:UIControlStateNormal];
-    [commentsButton setTitle:@"12 comments" forState:UIControlStateNormal];
-    commentsButton.tag = 107;
-    commentsButton.titleLabel.font = [UIFont fontWithName:@"Avenir" size:12];
-    [commentsButton addTarget:self action:@selector(commentTouched:) forControlEvents:UIControlEventTouchUpInside];
-    [informationView addSubview:commentsButton];
-    
-    
-//    UILabel *comments = [[UILabel alloc] initWithFrame:CGRectMake(likesButton.frame.origin.x + likesButton.frame.size.width, desc.frame.origin.y + desc.frame.size.height - 16, 200, 50)];
-//    [comments setTextColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f]];
-//    [comments setBackgroundColor:[UIColor clearColor]];
-//    [comments setFont:[UIFont fontWithName:@"Avenir" size:12]];
-//    comments.numberOfLines = 1;
-//    comments.tag = 107;
-//    [informationView addSubview:comments];
-    
-    [cell addSubview:informationView];
-    
-    // testing shit out
-    
-    UIButton *heartButton = [[UIButton alloc] init];
-    // Hardcode the x value and size for simplicity
-    BOOL isLiked = NO;
-    heartButton.selected = isLiked ? YES : NO;
-    heartButton.frame = CGRectMake(15, separator.frame.origin.y + separator.frame.size.height + 10, 28, 28);
-    heartButton.tag = 103;
-    [heartButton setImage:[UIImage imageNamed:@"likeButton_unselected.png"] forState:UIControlStateNormal];
-    [heartButton setImage:[UIImage imageNamed:@"likeButton_selected.png"] forState:UIControlStateSelected];
-    [heartButton setImage:[UIImage imageNamed:@"likeButton_highlighted.png"] forState:UIControlStateHighlighted];
-    [heartButton addTarget:self action:@selector(heartTouched:) forControlEvents:UIControlEventTouchUpInside];
-    [cell addSubview:heartButton];
-    
-    // setup comment button
-    UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [commentButton setTitle:@"Comment" forState:UIControlStateNormal];
-    commentButton.frame = CGRectMake(heartButton.frame.size.height + heartButton.frame.origin.x + 30, separator.frame.origin.y + separator.frame.size.height + 10, 28, 26);
-    
-    commentButton.tag = 102;
-    [informationView addSubview:commentButton];
-    [commentButton setImage:commentButtonIcon forState:UIControlStateNormal];
-    commentButton.contentMode = UIViewContentModeScaleToFill;
-    [commentButton addTarget:self action:@selector(commentTouched:) forControlEvents:UIControlEventTouchUpInside];
-    
-    // setup share button
-    UIButton *shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [shareButton setTitle:@"Share" forState:UIControlStateNormal];
-    shareButton.frame = CGRectMake(self.view.frame.size.width - 50, separator.frame.origin.y + separator.frame.size.height + 10, 31, 31);
-    
-    shareButton.tag = 108;
-    [informationView addSubview:shareButton];
-    [shareButton setImage:shareButtonIcon forState:UIControlStateNormal];
-    shareButton.contentMode = UIViewContentModeScaleToFill;
-    [shareButton addTarget:self action:@selector(moreButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-
+      cell = [[SPNewsFeedCell alloc] initWithPhoto:photo photoIndex:indexPath.section style:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier];
+  } else {
+    cell.photo = photo;
+    cell.photoIndex = [NSNumber numberWithInteger:indexPath.section];
+    [cell reloadCell];
   }
   
-    PFImageView *imageView = (PFImageView *)[cell viewWithTag:100];
-    imageView.file = [photo image];//objectForKey:@"image"];
-    [imageView loadInBackground];
-
-    UILabel *desc = (UILabel *)[cell viewWithTag:104];
-    desc.text = [photo caption];//objectForKey:@"caption"];//@"Mountain View, CA";
-    
-    UIButton *likes = (UIButton *)[cell viewWithTag:106];
-  [likes setTitle:[NSString stringWithFormat:@"%@ likes", [photo likeCount]] forState:UIControlStateNormal];
-  
-  UIButton *comments = (UIButton *)[cell viewWithTag:107];
-  [comments setTitle:[NSString stringWithFormat:@"%@ comments", [photo commentCount]] forState:UIControlStateNormal];
-  
   return cell;
-}
-
-- (void)seeLikes:(id)self
-{
-  NSLog(@"show people who have liked it here");
 }
 
 #pragma mark - UIActionSheetDelegate
@@ -466,12 +323,7 @@
     return;
   }
   NSString *message = [moreActions buttonTitleAtIndex:buttonIndex];
-}
-
-- (void)moreButtonPressed
-{
-  [moreActions showFromTabBar:[[self tabBarController] tabBar]];
-  
+    NSLog(@"action logged: %@", message);
 }
 
 

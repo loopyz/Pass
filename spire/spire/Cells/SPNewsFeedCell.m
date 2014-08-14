@@ -31,11 +31,6 @@
     
     if (self) {
         UIImage *commentButtonIcon = [UIImage imageNamed:@"newsfeedcommentbutton.png"];
-        UIImage *locationIcon = [UIImage imageNamed:@"locationicon.png"];
-        UIImage *heartIcon = [UIImage imageNamed:@"hearticon.png"];
-        UIImage *commentIcon = [UIImage imageNamed:@"commenticon.png"];
-        UIImage *heartButtonUnactiveIcon = [UIImage imageNamed:@"heartbuttonunactive.png"];
-        UIImage *heartButtonActiveIcon = [UIImage imageNamed:@"heartbuttonactive.png"];
         UIImage *shareButtonIcon = [UIImage imageNamed:@"newsfeedmoreoptions.png"];
         
         self.backgroundColor =  [UIColor colorWithRed:237/255.0f green:237/255.0f blue:237/255.0f alpha:1.0f];

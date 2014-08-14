@@ -158,7 +158,11 @@
     // show number of notifications here
     PFQuery *unreadNotifcationsQuery = [Util queryForNotifications:YES];
     [unreadNotifcationsQuery countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
-        ffvc.tabBarItem.badgeValue = [NSString stringWithFormat:@"%d", number];
+        if (number > 0) {
+            ffvc.tabBarItem.badgeValue = [NSString stringWithFormat:@"%d", number];
+        } else {
+            ffvc.tabBarItem.badgeValue = nil;
+        }
     }];
     
     [placevc.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"pettab-highlighted.png"] withFinishedUnselectedImage:[UIImage imageNamed:@"pettabsmall.png"]];

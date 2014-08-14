@@ -306,54 +306,44 @@ static const int kHeaderSize = 210;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   
   static NSString *MyIdentifier = @"Cell";
-  UITableViewCell *cell;
-  if (indexPath.row != 0) {
-    cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+
+  if (indexPath.row == 0) {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Header"];
+      if (cell == nil) {
+          cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:@"Header"];
+          cell.layer.shadowColor = [[UIColor whiteColor] CGColor];
+          cell.layer.shadowOpacity = 1.0;
+          cell.layer.shadowRadius = 0;
+          cell.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+          cell.backgroundColor = [UIColor whiteColor];
+          [cell addSubview:self.profileSnippetView];
+      }
+      return cell;
   }
   else {
-    cell = [tableView dequeueReusableCellWithIdentifier:@"Header"];
+    SPProfilePetCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+      SPPet *pet = [[self.photos objectAtIndex:(indexPath.row-1)] objectForKey:@"pet"];
+      if (cell == nil) {
+          cell = [[SPProfilePetCell alloc] initWithPet:pet style:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier];
+          cell.layer.shadowColor = [[UIColor whiteColor] CGColor];
+          cell.layer.shadowOpacity = 1.0;
+          cell.layer.shadowRadius = 0;
+          cell.layer.shadowOffset = CGSizeMake(0.0, 1.0);
+      } else {
+          cell.pet = pet;
+          [cell reloadCell];
+      }
+      return cell;
   }
-    
-    if (cell == nil) {
-        if (indexPath.row == 0) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:@"Header"];
-        }
-        else {
-            SPPet *pet = [[self.photos objectAtIndex:(indexPath.row-1)] objectForKey:@"pet"];
-            cell = [[SPProfilePetCell alloc] initWithPet:pet style:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier];
-        }
-        
-        cell.layer.shadowColor = [[UIColor whiteColor] CGColor];
-        cell.layer.shadowOpacity = 1.0;
-        cell.layer.shadowRadius = 0;
-        cell.layer.shadowOffset = CGSizeMake(0.0, 1.0);
-        if (indexPath.row == 0) {
-            cell.backgroundColor = [UIColor whiteColor];
-            [cell addSubview:self.profileSnippetView];
-        }
-    }
-  
-    return cell;
-}
-
-- (void)commentTouched
-{
-  
-}
-
-- (void)heartTouched
-{
-  
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   // blah
   if (indexPath.row == 0) {
-    
-  }//do not nothing
-  else {
+    //do not nothing
+  } else {
     NSLog(@"opening pet profile");
       SPPet *pet = [[self.photos objectAtIndex:(indexPath.row-1)] objectForKey:@"pet"];
     PetProfileViewController *ppvc = [[PetProfileViewController alloc] initWithNibName:nil bundle:nil];

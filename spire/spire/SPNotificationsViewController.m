@@ -81,7 +81,11 @@
 {
     PFQuery *unreadNotifcationsQuery = [Util queryForNotifications:YES];
     [unreadNotifcationsQuery countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+        if (number > 0) {
         self.tabBarItem.badgeValue = [NSString stringWithFormat:@"%d", number];
+        } else {
+            self.tabBarItem.badgeValue = nil;
+        }
     }];
     
     PFQuery *notificationsQuery = [Util queryForNotifications:NO];

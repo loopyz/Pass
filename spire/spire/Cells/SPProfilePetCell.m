@@ -28,7 +28,6 @@
         self.backgroundColor = [UIColor colorWithRed:248/255.0f green:248/255.0f blue:248/255.0f alpha:1.0f];
 
         self.petImageView =[[UIImageView alloc] initWithFrame:CGRectMake(20, 20, 77, 77)];
-        self.petImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[pet type]]];
         
         UIColor *descColor = [UIColor colorWithRed:169/255.0f green:169/255.0f blue:169/255.0f alpha:1.0f];
         self.description = [[UILabel alloc] initWithFrame:CGRectMake(120, 10, 200, 50)];
@@ -37,7 +36,6 @@
         [self.description setFont:[UIFont fontWithName:@"Avenir" size:24]];
         self.description.lineBreakMode = NSLineBreakByWordWrapping;
         self.description.numberOfLines = 0;
-        self.description.text = [pet name];
         
         self.numMiles = [[UILabel alloc] initWithFrame:CGRectMake(120, 40, 200, 50)];
         [self.numMiles setTextColor:descColor];
@@ -45,7 +43,6 @@
         [self.numMiles setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
         self.numMiles.lineBreakMode = NSLineBreakByWordWrapping;
         self.numMiles.numberOfLines = 0;
-        self.numMiles.text = [NSString stringWithFormat:@"%d", [[pet miles] intValue]];
         
         UILabel *milesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 40, 200, 50)];
         [milesLabel setTextColor:descColor];
@@ -62,7 +59,6 @@
         [self.numPasses setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15]];
         self.numPasses.lineBreakMode = NSLineBreakByWordWrapping;
         self.numPasses.numberOfLines = 0;
-        self.numPasses.text = [NSString stringWithFormat:@"%d", [[pet passes] intValue]];
         
         UILabel *passesLabel = [[UILabel alloc] initWithFrame:CGRectMake(160, 60, 200, 50)];
         [passesLabel setTextColor:descColor];
@@ -81,9 +77,19 @@
         [self addSubview:self.numPasses];
         [self addSubview:passesLabel];
         
+        self.pet = pet;
+        [self reloadCell];
+        
     }
     return self;
 }
 
+- (void) reloadCell
+{
+    self.petImageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[self.pet type]]];
+    self.description.text = [self.pet name];
+    self.numMiles.text = [NSString stringWithFormat:@"%d", [[self.pet miles] intValue]];
+    self.numPasses.text = [NSString stringWithFormat:@"%d", [[self.pet passes] intValue]];
+}
 
 @end

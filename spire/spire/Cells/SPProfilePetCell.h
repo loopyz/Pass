@@ -13,4 +13,6 @@
 @property (nonatomic, strong) SPPet *pet;
 
 - (id) initWithPet:(SPPet *)pet style:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
+
+- (void) reloadCell;
 @end

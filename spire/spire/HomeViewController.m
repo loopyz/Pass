@@ -18,7 +18,11 @@
 
 #import <Parse/Parse.h>
 
-@interface HomeViewController ()
+@interface HomeViewController () {
+  PetPlacementViewController *placevc;
+  NewsFeedViewController *nvc;
+  UIViewController *previousController;
+}
 
 @end
 
@@ -33,7 +37,8 @@
         [self modifyBackground];
         [self initNavBar];
         [self setupTabBars];
-    
+      self.delegate = (id<UITabBarControllerDelegate>)self;
+      previousController = nvc;
     }
     return self;
 }
@@ -89,41 +94,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    // Uncomment to migrate latitude and longitude to geoPoint!
-//    [Util migrateLatitudeLongitudeToGeoPoint];
 
 //    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
 //    [currentInstallation addUniqueObject:@"PetsNearby" forKey:@"channels"];
 //    [currentInstallation saveInBackground];
-    // Uncomment to add a bunch of pets!
-    /*for (int i = 0; i < 10; i++) {
-        PFObject *pet = [PFObject objectWithClassName:@"Pet"];
-        pet[@"currentUser"] = [PFUser currentUser];
-        pet[@"owner"] = [PFUser currentUser];
-        pet[@"name"] = [NSString stringWithFormat:@"Pet%d", i];
-        pet[@"miles"] = @0;
-        pet[@"passes"] = @0;
-        pet[@"type"] = @"pandacat";
-        [pet saveInBackground];
-    }*/
-    
-    // Do any additional setup after loading the view.
-//    if (![[PFUser currentUser] objectForKey:@"fbProfilePic"]) {
-//        
-//        NSString *url = [NSString stringWithFormat:@"http://graph.facebook.com/%@/picture?type=square", [[PFUser currentUser] objectForKey:@"fbId"]];
-//        NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
-//        
-//        PFFile *image = [PFFile fileWithName:@"profile.png" data:imageData];
-//        [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-//            if (succeeded) {
-//                [[PFUser currentUser] setObject:image forKey:@"fbProfilePic"];
-//                [[PFUser currentUser] saveInBackground];
-//            } else {
-//                NSLog(@"parse error --saving profile image%@", error);
-//            }
-//        }];
-//    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -148,14 +122,13 @@
 
 - (void)setupTabBars
 {
-    [[UITabBar appearance] setBackgroundColor:[UIColor whiteColor]];
-    NewsFeedViewController *nvc = [[NewsFeedViewController alloc]initWithNibName:nil bundle:nil];
+    nvc = [[NewsFeedViewController alloc]initWithNibName:nil bundle:nil];
     nvc.tabBarItem.image = [UIImage imageNamed:@"hometabsmall.png"];
-    
+  
     FindPetViewController *evc = [[FindPetViewController alloc] initWithNibName:nil bundle:nil];
     evc.tabBarItem.image = [UIImage imageNamed:@"searchtabsmall.png"];
     
-    PetPlacementViewController *placevc = [[PetPlacementViewController alloc] initWithNibName:nil bundle:nil];
+    placevc = [[PetPlacementViewController alloc] initWithNibName:nil bundle:nil];
     placevc.tabBarItem.image = [UIImage imageNamed:@"pettabsmall.png"];
     
     SPNotificationsViewController *ffvc = [[SPNotificationsViewController alloc] initWithNibName:nil bundle:nil];
@@ -166,12 +139,19 @@
     pvc.tabBarItem.image = [UIImage imageNamed:@"profiletabsmall.png"];
     
     // show number of notifications here
-    ffvc.tabBarItem.badgeValue = @"53";
+    PFQuery *unreadNotifcationsQuery = [Util queryForNotifications:YES];
+    [unreadNotifcationsQuery countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+        if (number > 0) {
+            ffvc.tabBarItem.badgeValue = [NSString stringWithFormat:@"%d", number];
+        } else {
+            ffvc.tabBarItem.badgeValue = nil;
+        }
+    }];
     
     [placevc.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"pettab-highlighted.png"] withFinishedUnselectedImage:[UIImage imageNamed:@"pettabsmall.png"]];
     
     
-    self.viewControllers=[NSArray arrayWithObjects:[[UINavigationController alloc] initWithRootViewController:nvc], [[UINavigationController alloc] initWithRootViewController:evc], [[UINavigationController alloc] initWithRootViewController:placevc], [[UINavigationController alloc] initWithRootViewController:ffvc], [[UINavigationController alloc] initWithRootViewController:pvc], nil];
+  self.viewControllers=[NSArray arrayWithObjects:[[UINavigationController alloc] initWithRootViewController:nvc], [[UINavigationController alloc] initWithRootViewController:evc], [[UINavigationController alloc] initWithRootViewController:placevc], [[UINavigationController alloc] initWithRootViewController:ffvc], [[UINavigationController alloc] initWithRootViewController:pvc], nil];
 }
 
 - (void)assignTabColors
@@ -211,10 +191,19 @@
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController
 {
     // [self assignTabColors];
+  // reset camera if index is 2
+  if (tabBarController.selectedIndex == 2) {
+    placevc = [[PetPlacementViewController alloc] initWithNibName:nil bundle:nil];
+  }
+  
     [viewController viewWillAppear:YES];
 //    if ([])
 //    [viewController Refresh];
     
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle{
+  return UIStatusBarStyleLightContent;
 }
 
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController {
@@ -228,20 +217,13 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshView" object:nil];
         }
     }
-    return YES;
+  
+    // return YES;
     
-//    static UIViewController *previousController = nil;
-//    if (previousController == viewController) {
-//        // the same tab was tapped a second time
-//        UITableViewController *tableViewController = (UITableViewController *)viewController;
-//        [tableViewController.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0
-//                                                                                 inSection:0]
-//                                             atScrollPosition:UITableViewScrollPositionTop
-//                                                     animated:YES];
-//        
-//    }
-//    previousController = viewController;
-//    return YES;
+    if (previousController == viewController) {
+    }
+    previousController = viewController;
+     return (tabBarController.selectedViewController != viewController);
 }
 
 

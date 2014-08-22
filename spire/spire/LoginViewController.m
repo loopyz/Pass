@@ -42,6 +42,10 @@
         }
         // Custom initialization
         // moved to view did load temporarily
+      
+      [self.navigationController setNavigationBarHidden:YES];
+      self.tabBarController.tabBar.alpha = 0;
+      [self.tabBarController.tabBar setHidden:YES];
     }
     return self;
 }
@@ -56,6 +60,8 @@
     if ([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]] && !FORCE_REGISTER) {
         //[PFUser logOut];
         [Util updateCurrentPetInBackground];
+        [Util updateCurrentUserActiveInBackground];
+
         HomeViewController *svc = [[HomeViewController alloc] init];
         [self.navigationController pushViewController:svc animated:YES];
         return;
@@ -96,6 +102,7 @@
         }
         if (user.isNew || ![user objectForKey:@"registered"] || FORCE_REGISTER) {
             NSLog(@"User just joined the app. Successful login.");
+            [Util updateCurrentUserActiveInBackground];
             PFUser *currentUser = [PFUser currentUser];
             if (![currentUser objectForKey:@"fbId"]) {
                 FBRequest *request = [FBRequest requestForMe];
@@ -132,6 +139,7 @@
         } else {
             NSLog(@"Successful login.");
             [Util updateCurrentPetInBackground];
+            [Util updateCurrentUserActiveInBackground];
 
             HomeViewController *svc = [[HomeViewController alloc] init];
             [self.navigationController pushViewController:svc animated:YES];
@@ -193,7 +201,7 @@
     
     self.facebookButton.frame = CGRectMake((self.view.frame.size.width - 278)/2 + 3, loginPadding, 278, 41);
     [self.facebookButton addTarget:self action:@selector(buttonTouched:) forControlEvents:UIControlEventTouchUpInside];
-    
+  
     UIImage *btnImage = [UIImage imageNamed:@"facebook-login.png"];
     [self.facebookButton setImage:btnImage forState:UIControlStateNormal];
     self.facebookButton.contentMode = UIViewContentModeScaleToFill;
@@ -204,6 +212,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [self.navigationController setNavigationBarHidden:YES];
+  self.tabBarController.tabBar.alpha = 0;
+  [self.tabBarController.tabBar setHidden:YES];
     // Do any additional setup after loading the view.
 }
 

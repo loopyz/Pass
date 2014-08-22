@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 
 #import "FXForms.h"
+#import "PrivacyPolicyViewController.h"
+#import "TermsViewController.h"
 
 
 typedef NS_ENUM(NSInteger, Gender)
@@ -56,6 +58,9 @@ typedef NS_OPTIONS(NSInteger, ServicePlan)
 @property (nonatomic, assign) ServicePlan plan;
 
 @property (nonatomic, copy) NSString *notifications;
+@property (nonatomic, readonly) PrivacyPolicyViewController *privacyPolicy;
+@property (nonatomic, readonly) TermsViewController *termsAndConditions;
+
 @property (nonatomic, assign) BOOL agreedToTerms;
 
 @end

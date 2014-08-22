@@ -9,6 +9,7 @@
 #import "PetPlacementViewController.h"
 #import "VenueTableViewController.h"
 #import "NoPetsErrorView.h"
+#import <Social/Social.h>
 
 @interface PetPlacementViewController () {
     CGFloat screenWidth;
@@ -40,10 +41,6 @@
 - (void)updatePet:(PFObject *)pet withDropped:(BOOL)dropped withGeoPoint:(PFGeoPoint *)newGeoPoint withName:(NSString *)locName
 {
     PFGeoPoint *oldGeoPoint = [pet objectForKey:@"geoPoint"];
-
-    // TODO: Deprecated, remove.
-    //[pet setObject:latitude forKey:@"latitude"];
-    //[pet setObject:longitude forKey:@"longitude"];
     [pet setObject:newGeoPoint forKey:@"geoPoint"];
     [pet setObject:locName forKey:@"locName"];
     if (dropped) {
@@ -67,18 +64,15 @@
     PFFile *image = [PFFile fileWithName:@"image.png" data:photoData];
     [image saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
-            PFObject *photo = [PFObject objectWithClassName:@"Photo"];
+            PFObject *photo = [PFObject objectWithClassName:kSPPhotoClassKey];
             [photo setObject:user forKey:@"user"];
             [photo setObject:pet forKey:@"pet"];
             [photo setObject:image forKey:@"image"];
             [photo setObject:caption forKey:@"caption"];
-            // TODO: deprecated, remove.
-            //[photo setObject:latitude forKey:@"latitude"];
-            //[photo setObject:longitude forKey:@"longitude"];
             [photo setObject:geoPoint forKey:@"geoPoint"];
             [photo setObject:locName forKey:@"locName"];
             
-            PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
+            PFQuery *query = [PFQuery queryWithClassName:kSPPhotoClassKey];
             [query whereKey:@"user" equalTo:user];
             [query whereKey:@"pet" equalTo:pet];
             [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
@@ -90,24 +84,103 @@
     }];
 }
 
-- (void)saveToParse:(NSData *)photoData withCaption:(NSString *)caption withDropped:(BOOL) dropped
+- (void)saveToParse:(UIImage *)image withCaption:(NSString *)caption withDropped:(BOOL) dropped
 {
+    NSData *photoData = UIImagePNGRepresentation(image);
     PFUser *currentUser = [PFUser currentUser];
     PFObject *currentPet = [[SPCache sharedCache] currentPet];
 
     // Callback to call when location determined.
     void (^callback)(PFGeoPoint *geoPoint, NSString *locName) = ^void(PFGeoPoint *geoPoint, NSString *locName) {
-        [self updatePet:currentPet withDropped:dropped withGeoPoint:geoPoint withName:locName];
-        [self addPhoto:photoData withUser:currentUser withPet:currentPet withGeoPoint:geoPoint withName:locName withCaption:caption];
-        
-        if (dropped) {
-            PFPush *push = [[PFPush alloc] init];
-            [push setChannel:@"PetsNearby"];
-            [push setMessage:[NSString stringWithFormat:@"A pet's been dropped at %@", locName]];
-            [push sendPushInBackground];
+        if (self.facebookShareActivated) {
+            [Util shareToFacebook:[PFUser currentUser] photo:image caption:self.textEntry.text block:^(BOOL succeeded, NSError *error) {
+                if (error) {
+                    NSLog(@"%@", error.description);
+                    [self.tabBarController setSelectedIndex:0];
+                } else {
+                    if (self.twitterShareActivated) {
+                        if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
+                            SLComposeViewController *tweetSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
+                            [tweetSheet setInitialText:self.textEntry.text];
+                            [tweetSheet addImage:image];
+                            [self presentViewController:tweetSheet animated:YES completion:^{
+                                [self updatePet:currentPet withDropped:dropped withGeoPoint:geoPoint withName:locName];
+                                [self addPhoto:photoData withUser:currentUser withPet:currentPet withGeoPoint:geoPoint withName:locName withCaption:caption];
+                                
+                                if (dropped) {
+                                    PFPush *push = [[PFPush alloc] init];
+                                    [push setChannel:@"PetsNearby"];
+                                    [push setMessage:[NSString stringWithFormat:@"A pet's been dropped at %@", locName]];
+                                    [push sendPushInBackground];
+                                }
+                                // go back to home tab
+                                [self.tabBarController setSelectedIndex:0];
+                            }];
+                        } else {
+                            NSLog(@"can't twitter");
+                            [self updatePet:currentPet withDropped:dropped withGeoPoint:geoPoint withName:locName];
+                            [self addPhoto:photoData withUser:currentUser withPet:currentPet withGeoPoint:geoPoint withName:locName withCaption:caption];
+                            
+                            if (dropped) {
+                                PFPush *push = [[PFPush alloc] init];
+                                [push setChannel:@"PetsNearby"];
+                                [push setMessage:[NSString stringWithFormat:@"A pet's been dropped at %@", locName]];
+                                [push sendPushInBackground];
+                            }
+                            // go back to home tab
+                            [self.tabBarController setSelectedIndex:0];
+                        }
+                    }
+                }
+                // do nothing
+            }];
+        } else if (self.twitterShareActivated) {
+            if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
+                SLComposeViewController *tweetSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
+                [tweetSheet setInitialText:self.textEntry.text];
+                [tweetSheet addImage:image];
+                [self presentViewController:tweetSheet animated:YES completion:^{
+                    [self updatePet:currentPet withDropped:dropped withGeoPoint:geoPoint withName:locName];
+                    [self addPhoto:photoData withUser:currentUser withPet:currentPet withGeoPoint:geoPoint withName:locName withCaption:caption];
+                    
+                    if (dropped) {
+                        PFPush *push = [[PFPush alloc] init];
+                        [push setChannel:@"PetsNearby"];
+                        [push setMessage:[NSString stringWithFormat:@"A pet's been dropped at %@", locName]];
+                        [push sendPushInBackground];
+                    }
+                    // go back to home tab
+                    [self.tabBarController setSelectedIndex:0];
+                }];
+            } else {
+                NSLog(@"can't twitter");
+                [self updatePet:currentPet withDropped:dropped withGeoPoint:geoPoint withName:locName];
+                [self addPhoto:photoData withUser:currentUser withPet:currentPet withGeoPoint:geoPoint withName:locName withCaption:caption];
+                
+                if (dropped) {
+                    PFPush *push = [[PFPush alloc] init];
+                    [push setChannel:@"PetsNearby"];
+                    [push setMessage:[NSString stringWithFormat:@"A pet's been dropped at %@", locName]];
+                    [push sendPushInBackground];
+                }
+                // go back to home tab
+                [self.tabBarController setSelectedIndex:0];
+                
+            }
+        } else {
+            [self updatePet:currentPet withDropped:dropped withGeoPoint:geoPoint withName:locName];
+            [self addPhoto:photoData withUser:currentUser withPet:currentPet withGeoPoint:geoPoint withName:locName withCaption:caption];
+            
+            if (dropped) {
+                PFPush *push = [[PFPush alloc] init];
+                [push setChannel:@"PetsNearby"];
+                [push setMessage:[NSString stringWithFormat:@"A pet's been dropped at %@", locName]];
+                [push sendPushInBackground];
+            }
+            // go back to home tab
+            [self.tabBarController setSelectedIndex:0];
         }
-        // go back to home tab
-        [self.tabBarController setSelectedIndex:0];
+        
     };
 
 
@@ -443,26 +516,7 @@
     NSLog(@"%f, %f", image.size.height, image.size.width);
 
     // submit image to parse
-    [self saveToParse:UIImagePNGRepresentation(image) withCaption:self.textEntry.text withDropped:self.toggleDrop.on];
-    
-    // posting to other social networks
-    if (self.facebookShareActivated) {
-        [Util shareToFacebook:[PFUser currentUser] photo:image caption:self.textEntry.text block:^(BOOL succeeded, NSError *error) {
-            if (error) {
-                NSLog(@"%@", error.description);
-            }
-            // do nothing
-        }];
-    }
-    if (self.twitterShareActivated) {
-        [Util shareToTwitter:[PFUser currentUser] photo:image caption:self.textEntry.text block:^(BOOL succeeded, NSError *error) {
-            if (error) {
-                NSLog(@"%@", error.description);
-            }
-            // do nothing
-        }];
-        
-    }
+    [self saveToParse:image withCaption:self.textEntry.text withDropped:self.toggleDrop.on];
 }
 
 - (void)shareOnFacebook

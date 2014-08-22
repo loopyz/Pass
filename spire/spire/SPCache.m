@@ -63,7 +63,7 @@
         return [self.cache objectForKey:key];
     } else {
         //    PFObject *pet = [[NSUserDefaults standardUserDefaults] objectForKey:key];
-        PFQuery *petQuery = [PFQuery queryWithClassName:@"Pet"];
+        PFQuery *petQuery = [PFQuery queryWithClassName:kSPPetClassKey];
         [petQuery whereKey:@"currentUser" equalTo:[PFUser currentUser]];
         PFObject *pet = [petQuery getFirstObject];
         if (pet) {
@@ -74,5 +74,55 @@
     }
 }
 
+- (void) setAttributes:(NSDictionary *)attributes forPhoto:(SPPhoto *)photo
+{
+    NSString *key = [self keyForPhoto:photo];
+    [self.cache setObject:attributes forKey:key];
+}
+
+- (NSString *)keyForPhoto:(SPPhoto *)photo
+{
+    return [NSString stringWithFormat:@"photo_%@", [photo objectId]];
+}
+
+- (NSDictionary *)attributesForPhoto:(SPPhoto *)photo
+{
+    NSString *key = [self keyForPhoto:photo];
+    return [self.cache objectForKey:key];
+}
+
+- (void) setAttributes:(NSDictionary *)attributes forUser:(PFUser *)user
+{
+    NSString *key = [self keyForUser:user];
+    [self.cache setObject:attributes forKey:key];
+}
+
+- (NSString *)keyForUser:(PFUser *)user
+{
+    return [NSString stringWithFormat:@"user_%@", [user objectId]];
+}
+
+- (NSDictionary *)attributesForUser:(PFUser *)user
+{
+    NSString *key = [self keyForUser:user];
+    return [self.cache objectForKey:key];
+}
+
+- (void) setAttributes:(NSDictionary *)attributes forPet:(SPPet *)pet
+{
+    NSString *key = [self keyForPet:pet];
+    [self.cache setObject:attributes forKey:key];
+}
+
+- (NSString *)keyForPet:(SPPet *)pet
+{
+    return [NSString stringWithFormat:@"pet_%@", [pet objectId]];
+}
+
+- (NSDictionary *)attributesForPet:(SPPet *)pet
+{
+    NSString *key = [self keyForPet:pet];
+    return [self.cache objectForKey:key];
+}
 
 @end

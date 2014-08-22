@@ -14,8 +14,8 @@
 + (CGFloat)screenWidth;
 + (CGFloat)screenHeight;
 
-+ (NSString *)currentUserId;
 + (void)updateCurrentPetInBackground;
++ (void)updateCurrentUserActiveInBackground;
 
 + (void)likePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock;
 + (void)unlikePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock;
@@ -25,10 +25,11 @@
 
 + (PFQuery *)queryForActivitiesOnPhoto:(PFObject *)photo cachePolicy:(PFCachePolicy)cachePolicy;
 
-+ (void)migrateLatitudeLongitudeToGeoPoint;
-
-+ (void)shareToTwitter:(PFUser *)user photo:(UIImage *)image caption:(NSString *)caption block:(void(^) (BOOL succeeded, NSError *error)) completionBlock;
 + (void)shareToFacebook:(PFUser *)user photo:(UIImage *)image caption:(NSString *)caption block:(void(^) (BOOL succeeded, NSError *error)) completionBlock;
++ (PFQuery *)queryForNotifications:(BOOL *)getUnread;
 
++ (void)getFoursquareVenuesNearGeoPoint:(PFGeoPoint *)geoPoint withCallback:(void (^)(NSArray *locs))callback;
+
++ (void)getGooglePlacesNearGeoPoint:(PFGeoPoint *)geoPoint withCallback:(void (^)(NSArray *locs))callback;
 
 @end

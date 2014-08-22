@@ -13,17 +13,15 @@ User:
 * description
 * hometown
 * registered
+* lastActiveAt - Date
 
 Pet:
 * name
 * type
 * owner - User
 * currentUser - User
-* currentUserId (DEPRECATED, do not use)
 * miles
 * passes
-* latitude (DEPRECATED, do not use)
-* longitude (DEPRECATED, do not use)
 * locName
 * geoPoint - PFGeoPoint
 
@@ -33,8 +31,6 @@ Photo:
 * user - User
 * pet - Pet
 * first
-* latitude (DEPRECATED, do not use)
-* longitude (DEPRECATED, do not use)
 * locName
 * geoPoint - PFGeoPoint
 

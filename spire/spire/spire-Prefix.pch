@@ -13,6 +13,10 @@
 #ifdef __OBJC__
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
+    #import "SPPet.h"
+    #import "SPUser.h"
+    #import "SPPhoto.h"
     #import "SPCache.h"
+    #import "SPConstants.h"
     #import "Util.h"
 #endif

@@ -10,17 +10,21 @@
 #import "PullToRefresh.h"
 #import "CommentsViewController.h"
 #import "ProfileViewController.h"
+#import "SPNewsFeedCell.h"
 
 #import <MediaPlayer/MediaPlayer.h>
 #import <Parse/Parse.h>
 #import "SettingsViewController.h"
 
-@interface NewsFeedViewController () {
+@interface NewsFeedViewController ()<UIActionSheetDelegate> {
   UIImage *locationIcon;
     UIImage *heartIcon;
     UIImage *commentIcon;
-  UIImage *heartButtonIcon;
+  UIImage *heartButtonUnactiveIcon;
+  UIImage *heartButtonActiveIcon;
   UIImage *commentButtonIcon;
+  UIActionSheet *moreActions;
+  UIImage *shareButtonIcon;
 }
 
 
@@ -33,23 +37,47 @@
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     // Custom initialization
+    commentButtonIcon = [UIImage imageNamed:@"newsfeedcommentbutton.png"];
     locationIcon = [UIImage imageNamed:@"locationicon.png"];
       heartIcon = [UIImage imageNamed:@"hearticon.png"];
       commentIcon = [UIImage imageNamed:@"commenticon.png"];
-    heartButtonIcon = [UIImage imageNamed:@"heartbutton.png"];
-    commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
+    heartButtonUnactiveIcon = [UIImage imageNamed:@"heartbuttonunactive.png"];
+    heartButtonActiveIcon = [UIImage imageNamed:@"heartbuttonactive.png"];
+    shareButtonIcon = [UIImage imageNamed:@"newsfeedmoreoptions.png"];
+    
+    // commentButtonIcon = [UIImage imageNamed:@"commentbutton.png"];
     
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-      
+    moreActions = [[UIActionSheet alloc] initWithTitle:@"More Actions" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil, nil];
       [self initNavBar];
+    [self setupMoreActions];
       
   }
   return self;
 }
 
+- (void)setupMoreActions
+{
+  [moreActions addButtonWithTitle:@"Report this post"];
+  [moreActions addButtonWithTitle:@"Share post"];
+  moreActions.cancelButtonIndex = [moreActions addButtonWithTitle:@"Cancel"];
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle{
+  return UIStatusBarStyleLightContent;
+}
+
+- (void)scrollToTop
+{
+  [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0
+                                                            inSection:0]
+                        atScrollPosition:UITableViewScrollPositionTop
+                                animated:YES];
+}
+
 - (void)initNavBar
 {
-    
+  
     // Logo in the center of navigation bar
     UIView *logoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 55, 37.5)];
     UIImageView *titleImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"navlogo.png"]];
@@ -77,13 +105,13 @@
 
 - (void)updatePhotos
 {
-    PFQuery *query = [PFQuery queryWithClassName:@"Photo"];
+    PFQuery *query = [SPPhoto query];
     [query orderByDescending:@"createdAt"];
     [query includeKey:@"user"];
     
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (objects) {
-            self.photos = objects;
+            self.photos = [[NSMutableArray alloc] initWithArray:objects];
             
             [self.tableView reloadData];
         }
@@ -113,12 +141,29 @@
                                              selector:@selector(refreshView:)
                                                  name:@"refreshView"
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cellTouched:) name:@"openCommentsForPhoto"  object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cellTouched:) name:@"openMoreForPhoto"  object:nil];
   
 }
 
 -(void)refreshView:(NSNotification *) notification{
     if (self == self.navigationController.topViewController)
         [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
+}
+
+-(void)cellTouched:(NSNotification *)notification
+{
+    if ([[notification name] isEqualToString:@"openCommentsForPhoto"]) {
+        NSDictionary *userInfo = notification.userInfo;
+        NSNumber *photoIndex = [userInfo objectForKey:@"photoIndex"];
+        
+        SPPhoto *photo = [self.photos objectAtIndex:[photoIndex integerValue]];
+        CommentsViewController *ppvc = [[CommentsViewController alloc] initWithPhoto:photo];
+        
+        [self.navigationController pushViewController:ppvc animated:YES];
+    } else if ([[notification name] isEqualToString:@"openMoreForPhoto"]) {
+        [moreActions showFromTabBar:[[self tabBarController] tabBar]];
+    }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView  {
@@ -145,36 +190,6 @@
   // Dispose of any resources that can be recreated.
 }
 
-- (void)commentTouched:(id)sender
-{
-    UIView *commentView = (UIView *)sender;
-    UITableViewCell *containingCell = (UITableViewCell *)[[commentView superview] superview];
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:containingCell];
-    PFObject *photo = [self.photos objectAtIndex:indexPath.section];
-    CommentsViewController *ppvc = [[CommentsViewController alloc] initWithPhoto:photo];
-    
-    [self.navigationController pushViewController:ppvc animated:YES];
-}
-
-- (void)heartTouched:(id)sender
-{
-    UIView *commentView = (UIView *)sender;
-    UITableViewCell *containingCell = (UITableViewCell *)[[commentView superview] superview];
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:containingCell];
-    PFObject *photo = [self.photos objectAtIndex:indexPath.section];
-
-    // TODO: toggle styles of heart
-    // TODO: add dislike part
-    [Util likePhotoInBackground:photo block:^(BOOL succeeded, NSError *error) {
-        if (error) {
-            NSLog(@"error liking photo");
-        } else {
-            NSLog(@"liked photo successfully");
-        }
-    }];
-    
-    
-}
 
 #pragma mark - Table view data source
 
@@ -194,14 +209,14 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  return 385;
+  return 480;
 }
 
 //for each header
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     // TODO: if this is clicked, then open person's profile
-    PFObject *photo = [self.photos objectAtIndex:section];
+    SPPhoto *photo = [self.photos objectAtIndex:section];
   UIView *outerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 400)];
     UIButton *view = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 400)];
     [view addTarget:self action:@selector(personTouched:) forControlEvents:UIControlEventTouchUpInside];
@@ -210,11 +225,10 @@
   UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
   
   //setup avatar
-                         
+    SPUser *avatar = [photo user];
     PFImageView *avatarView = [[PFImageView alloc] initWithFrame:CGRectMake(10, 15, 40, 40)];
-    
     avatarView.image =[UIImage imageNamed:@"tempnewsavatar.png"];
-    avatarView.file = [[photo objectForKey:@"user"] objectForKey:@"fbProfilePic"];
+    avatarView.file = [avatar fbProfilePic];
     [avatarView loadInBackground];
     avatarView.layer.masksToBounds = YES;
     float width = avatarView.bounds.size.width;
@@ -230,7 +244,7 @@
   [avatarName setBackgroundColor:[UIColor clearColor]];
   [avatarName setFont:[UIFont fontWithName:@"Avenir" size:16]];
   
-    avatarName.text = [[photo objectForKey:@"user"] objectForKey:@"fbName"];//@"startstar";
+    avatarName.text = [avatar username];
   avatarName.lineBreakMode = NSLineBreakByWordWrapping;
   avatarName.numberOfLines = 0;
   [view addSubview:avatarName];
@@ -239,9 +253,8 @@
   UILabel *tags = [[UILabel alloc] initWithFrame:CGRectMake(71, 21, 300, 50)];
   [tags setTextColor:descColor];
   [tags setBackgroundColor:[UIColor clearColor]];
-  [tags setFont:[UIFont fontWithName:@"Avenir-Light" size:12]];
+  [tags setFont:[UIFont fontWithName:@"Avenir" size:12]];
   
-    // tags.text = [photo objectForKey:@"caption"];//@"I love Foxy hehe.";
   tags.lineBreakMode = NSLineBreakByWordWrapping;
   tags.numberOfLines = 0;
   [view addSubview:tags];
@@ -252,7 +265,7 @@
     locationIconView.tag = 101;
     [view addSubview:locationIconView];
     
-    tags.text = [photo objectForKey:@"locName"];
+    tags.text = [photo locName];
   
   view.backgroundColor = [UIColor clearColor];
     outerView.backgroundColor = [UIColor whiteColor];
@@ -275,7 +288,7 @@
 - (void)personTouched:(id)sender
 {
     UIButton *button = (UIButton *)sender;
-    PFUser *user = [[self.photos objectAtIndex:(button.tag - 800)] objectForKey:@"user"];
+    SPUser *user = [[self.photos objectAtIndex:(button.tag - 800)] objectForKey:@"user"];
     
     if ([user.objectId isEqualToString:[[PFUser currentUser] objectId]]) {
         [self.tabBarController setSelectedIndex:4];
@@ -286,90 +299,33 @@
 }
 //for each cell in table
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-  PFObject *photo = [self.photos objectAtIndex:indexPath.section];
+    SPPhoto *photo = [self.photos objectAtIndex:indexPath.section];
+    [photo setAttributesWithLikers:[[NSArray alloc] init] commenters:[[NSArray alloc] init] likedByCurrentUser:NO];
+    
   static NSString *MyIdentifier = @"Cell";
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+  SPNewsFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
   if (cell == nil) {
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:MyIdentifier];
-      cell.backgroundColor = [UIColor clearColor];
-      PFImageView *imageView = [[PFImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
-      imageView.image =[UIImage imageNamed:@"tempsingleimage.png"];
-      imageView.tag = 100;
-      [cell addSubview:imageView];
-      
-      UIColor *descColor = [UIColor colorWithRed:136/255.0f green:136/255.0f blue:136/255.0f alpha:1.0f];
-      
-      // setup heart icon
-      UIImageView *heartIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 325, 12, 12)];
-      heartIconView.image = heartIcon;
-      heartIconView.tag = 105;
-      [cell addSubview:heartIconView];
-      
-      // setup location icon
-      UIImageView *locationIconView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 348, 12, 12)];
-      locationIconView.image = commentIcon;
-      locationIconView.tag = 101;
-      locationIconView.backgroundColor = [UIColor clearColor];
-      [cell addSubview:locationIconView];
-      
-      
-      // setup comment button
-      UIButton *commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
-      [commentButton setTitle:@"Comment" forState:UIControlStateNormal];
-      commentButton.frame = CGRectMake(self.view.frame.size.width - 90, 345, 32.5, 22);
-
-      commentButton.tag = 102;
-      [cell addSubview:commentButton];
-      [commentButton setImage:commentButtonIcon forState:UIControlStateNormal];
-      commentButton.contentMode = UIViewContentModeScaleToFill;
-      [commentButton addTarget:self action:@selector(commentTouched:) forControlEvents:UIControlEventTouchUpInside];
-      
-      // setup heart button
-      UIButton *heartButton = [UIButton buttonWithType:UIButtonTypeCustom];
-      [heartButton setTitle:@"Heart" forState:UIControlStateNormal];
-      
-      heartButton.frame = CGRectMake(self.view.frame.size.width - 40, 345, 32.5, 22);
-      [heartButton addTarget:self action:@selector(heartTouched:) forControlEvents:UIControlEventTouchUpInside];
-      heartButton.tag = 103;
-      [cell addSubview:heartButton];
-      [heartButton setImage:heartButtonIcon forState:UIControlStateNormal];
-      heartButton.contentMode = UIViewContentModeScaleToFill;
-      
-      //setup caption label
-      UILabel *desc = [[UILabel alloc] initWithFrame:CGRectMake(32, 330, 200, 50)];
-      [desc setTextColor:descColor];
-      [desc setBackgroundColor:[UIColor clearColor]];
-      [desc setFont:[UIFont fontWithName:@"Avenir" size:11]];
-      desc.lineBreakMode = NSLineBreakByWordWrapping;
-      desc.numberOfLines = 0;
-      desc.tag = 104;
-      [cell addSubview:desc];
-      
-      //setup likes label
-      UILabel *likes = [[UILabel alloc] initWithFrame:CGRectMake(32, 307, 200, 50)];
-      [likes setTextColor:[UIColor colorWithRed:25/255.0f green:138/255.0f blue:149/255.0f alpha:1.0f]];
-      [likes setBackgroundColor:[UIColor clearColor]];
-      [likes setFont:[UIFont fontWithName:@"Avenir" size:11]];
-      likes.numberOfLines = 1;
-      likes.tag = 106;
-      [cell addSubview:likes];
+      cell = [[SPNewsFeedCell alloc] initWithPhoto:photo photoIndex:indexPath.section style:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier];
+  } else {
+    cell.photo = photo;
+    cell.photoIndex = [NSNumber numberWithInteger:indexPath.section];
+    [cell reloadCell];
   }
-    
-    PFImageView *imageView = (PFImageView *)[cell viewWithTag:100];
-    imageView.file = [photo objectForKey:@"image"];
-    [imageView loadInBackground];
-
-    UILabel *desc = (UILabel *)[cell viewWithTag:104];
-    desc.text = [photo objectForKey:@"caption"];//@"Mountain View, CA";
-    
-    UILabel *likes = (UILabel *)[cell viewWithTag:106];
-    likes.text = @"22 likes";
-    
-    
-
   
   return cell;
 }
+
+#pragma mark - UIActionSheetDelegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+  if (buttonIndex == actionSheet.cancelButtonIndex) {
+    return;
+  }
+  NSString *message = [moreActions buttonTitleAtIndex:buttonIndex];
+    NSLog(@"action logged: %@", message);
+}
+
 
 
 @end

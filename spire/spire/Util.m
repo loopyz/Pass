@@ -29,11 +29,6 @@
 
 #pragma mark - Parse Utilities
 
-+ (NSString *)currentUserId
-{
-    return [[PFUser currentUser] objectId];
-}
-
 + (void)updateCurrentPetInBackground
 {
     PFUser *user = [PFUser currentUser];
@@ -42,7 +37,7 @@
         return;
     }
 
-    PFQuery *query = [PFQuery queryWithClassName:@"Pet"];
+    PFQuery *query = [PFQuery queryWithClassName:kSPPetClassKey];
     [query whereKey:@"currentUser" equalTo:user];
     query.cachePolicy = kPFCachePolicyNetworkOnly;
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *pet, NSError *error) {
@@ -54,16 +49,27 @@
     }];
 }
 
++ (void)updateCurrentUserActiveInBackground
+{
+    PFUser *user = [PFUser currentUser];
+    [user setObject:[NSDate date] forKey:@"lastActiveAt"];
+    [user saveInBackground];
+}
+
 + (void)likePhotoInBackground:(id)photo block:(void (^)(BOOL succeeded, NSError *error))completionBlock
 {
-    PFObject *likeActivity = [PFObject objectWithClassName:@"Activity"];
-    [likeActivity setObject:@"like" forKey:@"type"];
+    PFUser *toUser = [photo objectForKey:@"user"];
+    PFObject *likeActivity = [PFObject objectWithClassName:kSPActivityClassKey];
+    [likeActivity setObject:kSPActivityTypeLike forKey:@"type"];
     [likeActivity setObject:[PFUser currentUser] forKey:@"fromUser"];
-    [likeActivity setObject:[photo objectForKey:@"user"] forKey:@"toUser"];
+    [likeActivity setObject:toUser forKey:@"toUser"];
     [likeActivity setObject:photo forKey:@"photo"];
+    [likeActivity setObject:@1 forKey:@"unread"];
     
     // TODO: ACL protection
-    PFACL *likeACL = [PFACL ACLWithUser:[PFUser currentUser]];
+    PFACL *likeACL = [PFACL ACL];
+    [likeACL setWriteAccess:YES forUser:toUser];
+    [likeACL setWriteAccess:YES forUser:[PFUser currentUser]];
     [likeACL setPublicReadAccess:YES];
     likeActivity.ACL = likeACL;
 
@@ -89,12 +95,19 @@
         return;
     }
     
-    PFObject *followActivity = [PFObject objectWithClassName:@"Activity"];
-    [followActivity setObject:@"follow" forKey:@"type"];
+
+    PFObject *followActivity = [PFObject objectWithClassName:kSPActivityClassKey];
+    [followActivity setObject:kSPActivityTypeFollow forKey:@"type"];
     [followActivity setObject:[PFUser currentUser] forKey:@"fromUser"];
     [followActivity setObject:user forKey:@"toUser"];
+    [followActivity setObject:@1 forKey:@"unread"];
     
-    // TODO: ACL protection
+    //ACL protection
+    PFACL *followACL = [PFACL ACL];
+    [followACL setWriteAccess:YES forUser:user];
+    [followACL setWriteAccess:YES forUser:[PFUser currentUser]];
+    [followACL setPublicReadAccess:YES];
+    followActivity.ACL = followACL;
     
     [followActivity saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (completionBlock) {
@@ -111,13 +124,13 @@
 
 + (PFQuery *)queryForActivitiesOnPhoto:(PFObject *)photo cachePolicy:(PFCachePolicy)cachePolicy
 {
-    PFQuery *queryLikes = [PFQuery queryWithClassName:@"Activity"];
+    PFQuery *queryLikes = [PFQuery queryWithClassName:kSPActivityClassKey];
     [queryLikes whereKey:@"photo" equalTo:photo];
-    [queryLikes whereKey:@"type" equalTo:@"like"];
+    [queryLikes whereKey:@"type" equalTo:kSPActivityTypeLike];
     
-    PFQuery *queryComments = [PFQuery queryWithClassName:@"Activity"];
+    PFQuery *queryComments = [PFQuery queryWithClassName:kSPActivityClassKey];
     [queryComments whereKey:@"photo" equalTo:photo];
-    [queryComments whereKey:@"type" equalTo:@"comment"];
+    [queryComments whereKey:@"type" equalTo:kSPActivityTypeComment];
     
     PFQuery *query = [PFQuery orQueryWithSubqueries:[NSArray arrayWithObjects:queryLikes,queryComments,nil]];
     // TODO: set cache policy
@@ -127,103 +140,6 @@
     return query;
 }
 
-+ (void)migrateLatitudeLongitudeToGeoPoint
-{
-    NSLog(@"Migrating LL for pets...");
-    NSArray *pets = [[PFQuery queryWithClassName:@"Pet"] findObjects];
-    for (PFObject *pet in pets) {
-        if ([pet objectForKey:@"geoPoint"] == nil) {
-            PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:[[pet objectForKey:@"latitude"] doubleValue] longitude:[[pet objectForKey:@"longitude"] doubleValue]];
-            [pet setObject:geoPoint forKey:@"geoPoint"];
-            [pet saveInBackground];
-        }
-    }
-
-    NSLog(@"Migrating LL for photos...");
-    NSArray *photos = [[PFQuery queryWithClassName:@"Photo"] findObjects];
-    for (PFObject *photo in photos) {
-        if ([photo objectForKey:@"geoPoint"] == nil) {
-            PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLatitude:[[photo objectForKey:@"latitude"] doubleValue] longitude:[[photo objectForKey:@"longitude"] doubleValue]];
-            [photo setObject:geoPoint forKey:@"geoPoint"];
-            [photo saveInBackground];
-        }
-    }
-}
-
-+ (void)shareToTwitter:(PFUser *)user photo:(UIImage *)image caption:(NSString *)caption block:(void(^) (BOOL succeeded, NSError *error)) completionBlock
-{
-    if (![PFTwitterUtils isLinkedWithUser:user]) {
-        [PFTwitterUtils linkUser:user block:^(BOOL succeeded, NSError *error) {
-            // sharing
-            [self twitterImageConverstion:image caption:caption];
-        }];
-    } else {
-        // sharing
-        //UIImagePNGRepresentation(image)
-        [self twitterImageConverstion:image caption:caption];
-    }
-}
-
-+ (void) twitterImageConverstion:(UIImage *)image caption:(NSString *)caption
-{
-    NSURL *requestURL = [NSURL URLWithString:@"https://upload.twitter.com/1.1/statuses/update_with_media.json"];
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    request.HTTPMethod = @"POST";
-    NSString *stringBoundary = @"---------------------------14737809831466499882746641449";
-    
-    // set Content-Type in HTTP header
-    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", stringBoundary];
-    [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
-    
-    // post body
-    NSMutableData *body = [NSMutableData data];
-    
-    
-    [body appendData:[[NSString stringWithFormat:@"--%@\r\n", stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"status\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-    [body appendData:[[NSString stringWithFormat:@"%@\r\n", [caption stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    
-    // add image data
-    NSData *imageData = UIImagePNGRepresentation(image);
-    if (imageData) {
-        [body appendData:[[NSString stringWithFormat:@"--%@\r\n", stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
-        [body appendData:[@"Content-Disposition: form-data; name=\"media[]\"; filename=\"image.jpg\"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-        [body appendData:[@"Content-Type: image/jpeg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-        [body appendData:imageData];
-        [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-    }
-    
-    [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", stringBoundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    // setting the body of the post to the reqeust
-    [request setHTTPBody:body];
-    
-    // set URL
-    [request setURL:requestURL];
-    
-    
-    // Construct the parameters string. The value of "status" is percent-escaped.
-    
-    
-    [[PFTwitterUtils twitter] signRequest:request];
-    
-    NSURLResponse *response = nil;
-    NSError *error = nil;
-    
-    // Post status synchronously.
-    NSData *data1 = [NSURLConnection sendSynchronousRequest:request
-                                          returningResponse:&response
-                                                      error:&error];
-    
-    // Handle response.
-    if (!error) {
-        NSString *responseBody = [[NSString alloc] initWithData:data1 encoding:NSUTF8StringEncoding];
-        NSLog(@"Error: %@", responseBody);
-    } else {
-        NSLog(@"Error: %@", error);
-    }
-}
 
 + (void)shareToFacebook:(PFUser *)user photo:(UIImage *)image caption:(NSString *)caption block:(void(^) (BOOL succeeded, NSError *error)) completionBlock
 {
@@ -255,5 +171,78 @@
     }
 }
 
++ (PFQuery *)queryForNotifications:(BOOL *)getUnread
+{
+    PFQuery *query = [PFQuery queryWithClassName:kSPActivityClassKey];
+    [query whereKey:@"toUser" equalTo:[PFUser currentUser]];
+    [query whereKey:@"fromUser" notEqualTo:[PFUser currentUser]];
+    [query whereKeyExists:@"fromUser"];
+    [query includeKey:@"fromUser"];
+    //[query includeKey:@"photo"]; // todo?
+    if (getUnread) {
+        [query whereKey:@"unread" equalTo:@1];
+    } else {
+        [query setLimit:50];
+    }
+    [query orderByDescending:@"createdAt"];
+    
+    [query setCachePolicy:kPFCachePolicyNetworkOnly];
+    
+    // todo: add caching
+    
+    return query;
+}
 
+#pragma mark - HTTP Requests
+
++ (void)sendGETRequest:(NSString *)url withCallback:(void (^)(NSDictionary *json))callback
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
+    [request setHTTPMethod: @"GET"];
+
+    //__block NSDictionary *json;
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                               if (data) {
+                                   NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
+                                                                                        options:0
+                                                                                          error:nil];
+                                   callback(json);
+                               } else {
+                                   // TODO: Pass in failure callback.
+                                   NSLog(@"Error loading %@: %@", url, connectionError);
+                               }
+                           }];
+}
+
+#pragma mark - Foursquare API
+
++ (void)getFoursquareVenuesNearGeoPoint:(PFGeoPoint *)geoPoint withCallback:(void (^)(NSArray *locs))callback
+{
+    NSString *locFormat = @"https://api.foursquare.com/v2/venues/search?client_id=%@&client_secret=%@&v=20130815&ll=%f,%f";
+    NSString *queryAddr = [NSString stringWithFormat:locFormat, kSPFoursquareClientId, kSPFoursquareClientSecret, geoPoint.latitude, geoPoint.longitude];
+  
+    [self sendGETRequest:queryAddr withCallback:^(NSDictionary *json) {
+        callback(json[@"response"][@"venues"]);
+    }];
+}
+
+#pragma mark - Google API
+
++ (void)getGooglePlacesNearGeoPoint:(PFGeoPoint *)geoPoint withCallback:(void (^)(NSArray *locs))callback
+{
+    NSString *locFormat = @"https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=%@&radius=%d&location=%f,%f";
+    NSString *queryAddr = [NSString stringWithFormat:locFormat, kSPGoogleApplicationKey, kSPGooglePlacesMaxRadius, geoPoint.latitude, geoPoint.longitude];
+  
+    [self sendGETRequest:queryAddr withCallback:^(NSDictionary *json) {
+        if ([json[@"status"] isEqualToString:@"OK"]) {
+            callback(json[@"results"]);
+        } else {
+            // TODO: failure callback?
+            NSString *errorMessage = [json objectForKey:@"error_message"];
+            NSLog(@"Error retrieving Google Places: %@\n%@", json[@"status"], errorMessage ? errorMessage : @"");
+        }
+    }];
+}
 @end

@@ -14,5 +14,6 @@
 
 @property (nonatomic, strong) PullToRefresh *ptr;
 @property (nonatomic, strong) NSMutableArray *photos;
+- (void)scrollToTop;
 
 @end

@@ -1,6 +1,6 @@
 //
 //  PullToRefresh.h
-//  clip
+//  spire
 //
 //  Created by Lucy Guo on 7/19/14.
 //  Copyright (c) 2014 Niveditha Jayasekar. All rights reserved.
@@ -13,7 +13,7 @@
 
 @required
 
-/// Initilalize the refreshing process in this method. For example, call the JSON API to get the updated data. Once done, call isDoneRefreshing (see below) to stop the animation.
+// Initialize the refreshing process in this method. For example, call the JSON API to get the updated data. Once done, call isDoneRefreshing (see below) to stop the animation.
 - (void)Refresh;
 
 @end

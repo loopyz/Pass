@@ -23,28 +23,6 @@
 }
 
 
-- (void)getVenues:(NSString *)url withCallback:(void (^)(NSArray *locs)) callback
-{
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
-    
-    [request setHTTPMethod: @"GET"];
-    
-    __block NSDictionary *json;
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                               if (data) {
-                                   json = [NSJSONSerialization JSONObjectWithData:data
-                                                                          options:0
-                                                                            error:nil];
-                                   NSLog(@"%@", json[@"response"][@"venues"][0][@"name"]);
-                                   
-                                   callback(json[@"response"][@"venues"]);
-                               }
-                           }];
-}
-
-
 - (id)initWithGeoPoint:(PFGeoPoint *)geoPoint andCallback:(DictCallback)callback
 {
     self = [super init];
@@ -52,14 +30,8 @@
         self.venues = @[];
         self.callback = callback;
         self.navigationItem.title = @"Select location";
-        
-        NSString *_foursquareId = @"02K3GC4J1Y34WDZG4XIWHBSF2WJKOHIOMSTPWTWQVMPFALL2";
-        NSString *_foursquareSecret = @"XYHXKNHOVBPTX4KLXR1QID4QNA2RSMXZZQML32ANKP1H4VHJ";
-        NSString *locFormat = @"https://api.foursquare.com/v2/venues/search?client_id=%@&client_secret=%@&v=20130815&ll=%f,%f";
-        
-        NSString *queryAddr = [NSString stringWithFormat:locFormat, _foursquareId, _foursquareSecret, geoPoint.latitude, geoPoint.longitude];
-        
-        [self getVenues:queryAddr withCallback:^(NSArray *locs) {
+
+        [Util getGooglePlacesNearGeoPoint:geoPoint withCallback:^(NSArray *locs) {
             if ([locs count] == 0) {
                 [self dismissViewControllerAnimated:YES completion:^(){
                     // TODO: What to do if there are no locations? Currently using Medium as fallback data
@@ -68,12 +40,13 @@
                 }];
                 return;
             }
-            // sort venues by distance away
-            self.venues = [locs sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *d1, NSDictionary *d2) {
-                
+
+            // Sort venues by distance away (from Foursquare API only!)
+            /*self.venues = [locs sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *d1, NSDictionary *d2) {
                 return [d1[@"location"][@"distance"] compare:d2[@"location"][@"distance"]];
-                
-            }];
+            }];*/
+
+            self.venues = locs;
             [self.tableView reloadData];
         }];
 
@@ -141,6 +114,7 @@
     [view addSubview:map];
     
     // foursquare attribution
+    // TODO: Replace with Google Places attribution
     UIImageView *foursquare = [[UIImageView alloc] initWithFrame:CGRectMake(0, 320, 320, 39)];
     foursquare.image = [UIImage imageNamed:@"foursquare.png"];
     [view addSubview:foursquare];
@@ -163,11 +137,12 @@
     cell.textLabel.text = venue[@"name"];
     [[cell textLabel] setLineBreakMode:NSLineBreakByWordWrapping];
     
-    NSString *addr = ([venue[@"location"][@"formattedAddress"] count] == 0) ? @"" : venue[@"location"][@"formattedAddress"][0];
-    
-    [[cell detailTextLabel] setText:[NSString stringWithFormat:@"%@ (%@ m)", addr, venue[@"location"][@"distance"]]];
-    // TODO: add icon
+    //NSString *addr = ([venue[@"location"][@"formattedAddress"] count] == 0) ? @"" : venue[@"location"][@"formattedAddress"][0];
+    //[[cell detailTextLabel] setText:[NSString stringWithFormat:@"%@ (%@ m)", addr, venue[@"location"][@"distance"]]];
+    [[cell detailTextLabel] setText:venue[@"vicinity"]];
     [[cell detailTextLabel] setLineBreakMode:NSLineBreakByWordWrapping];
+
+    // TODO: add icon
     
     return cell;
 }

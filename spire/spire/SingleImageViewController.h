@@ -15,9 +15,9 @@
 @property (nonatomic, strong) UIView *imageView;
 @property (nonatomic, strong) UIView *captionView;
 @property (nonatomic, strong) FBProfilePictureView *fbProfilePic;
-@property (nonatomic, strong) PFObject *photo;
+@property (nonatomic, strong) SPPhoto *photo;
 @property (nonatomic, strong) NSArray *comments;
 @property (nonatomic, strong) NSArray *usernames;
 
-- (id)initWithPhoto: (PFObject *)photo;
+- (id)initWithPhoto: (SPPhoto *)photo;
 @end

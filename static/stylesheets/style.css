@@ -1,0 +1,30 @@
+#beta-landing-page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -10;
+  top: 0;
+  left: 0;
+  color: white;
+  background-image: url(../images/beta-background.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  font-family: Avenir, sans-serif;
+}
+
+#beta-title {
+  margin: 15% 0;
+}
+
+#beta-form {
+  margin: 40px auto;
+}
+
+#beta-form #beta-email {
+  width: 100%;
+}
+
+#logo {
+  margin: 40px auto;
+  width: 500px;
+}

@@ -3,8 +3,22 @@ layout: default
 title: Sign up for beta
 ---
 
-<div class="jumbotron">
-  <h1>Wander</h1>
-  <h2>Explore the world through the eyes of a virtual pet.</h2>
-  <p>Sign up for beta now!</p>
-</div>
+<section id="beta-landing-page">
+  <div class="container">
+    <div id="beta-title" class="text-center col-lg-10 col-lg-offset-1">
+      <img id="logo" class="img-responsive"
+           src="{{site.url}}/static/images/logo.png"/>
+
+      <form id="beta-form" class="form-inline" role="form">
+        <div class="form-group">
+          <label class="sr-only" for="beta-email">Email address</label>
+          <input type="email" class="form-control input-lg" id="beta-email"
+                 placeholder="Enter your email to sign up for beta"/>
+        </div>
+        <button type="submit" class="btn btn-lg btn-info">Sign up</button>
+      </form>
+
+      <h1>connecting the world one picture at a time</h1>
+    </div>
+  </div>
+</section>

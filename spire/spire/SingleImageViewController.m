@@ -443,7 +443,7 @@ const CGFloat kCommentCellHeight = 50.0f;
           commentCell.selectionStyle = UITableViewCellSelectionStyleNone;
           commentCell.commentLabel.frame = (CGRect) {.origin = commentCell.commentLabel.frame.origin , .size = {CGRectGetMinX(commentCell.likeButton.frame) - CGRectGetMaxY(commentCell.iconView.frame) - kCommentPaddingFromLeft - kCommentPaddingFromRight,[self tableView:tableView heightForRowAtIndexPath:indexPath] - kCommentCellHeight + 20}};
           commentCell.commentLabel.text = comments[indexPath.row];
-          commentCell.nameLabel.frame = (CGRect) {.origin = {CGRectGetMinX(commentCell.commentLabel.frame), CGRectGetMinY(commentCell.commentLabel.frame)}};
+          commentCell.nameLabel.frame = (CGRect) {.origin = {CGRectGetMinX(commentCell.commentLabel.frame), CGRectGetMinY(commentCell.commentLabel.frame) - 5}};
           commentCell.nameLabel.text = @"Vivian Ma";
           [commentCell.nameLabel sizeToFit];
           

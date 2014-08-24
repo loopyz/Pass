@@ -24,18 +24,24 @@ const CGFloat kCommentPaddingFromRight = 8.0f;
         self.iconView.layer.masksToBounds = YES;
         [self addSubview:self.iconView];
         
+        UIColor *commentColor = [UIColor colorWithRed:137/255.0f green:137/255.0f blue:137/255.0f alpha:1.0f];
         self.commentLabel = [[UILabel alloc] init];
-        self.commentLabel.textColor = [UIColor blackColor];
+        // self.commentLabel.textColor = [UIColor blackColor];
+        self.commentLabel.textColor = commentColor;
         self.commentLabel.textAlignment = NSTextAlignmentLeft;
-        self.commentLabel.font = [UIFont secretFontLightWithSize:16.f];
+        // self.commentLabel.font = [UIFont secretFontLightWithSize:16.f];
+        self.commentLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:13];
         self.commentLabel.numberOfLines = 0;
         self.commentLabel.frame = (CGRect){.origin = {CGRectGetMinX(self.iconView.frame) + CGRectGetWidth(self.iconView.frame) + kCommentPaddingFromLeft, CGRectGetMinY(self.iconView.frame) + kCommentPaddingFromTop}};
         [self addSubview:self.commentLabel];
         
+        UIColor *nameColor = [UIColor colorWithRed:91/255.0f green:91/255.0f blue:91/255.0f alpha:1.0f];
         self.nameLabel = [[UILabel alloc] init];
-        self.nameLabel.textColor = [UIColor grayColor];
+//        self.nameLabel.textColor = [UIColor grayColor];
+        self.nameLabel.textColor = nameColor;
         self.nameLabel.textAlignment = NSTextAlignmentLeft;
-        self.nameLabel.font = [UIFont secretFontLightWithSize:12.f];
+        // self.nameLabel.font = [UIFont secretFontLightWithSize:12.f];
+        self.nameLabel.font = [UIFont fontWithName:@"Avenir" size:15];
         self.nameLabel.numberOfLines = 1;
         [self addSubview:self.nameLabel];
         

@@ -14,4 +14,5 @@ extern const CGFloat kCommentPaddingFromRight;
 @property (nonatomic, strong) UILabel *likeCountLabel;
 @property (nonatomic, strong) UIImageView *likeCountImageView;
 @property (nonatomic, strong) UIButton *likeButton;
+@property (nonatomic, strong) UILabel *nameLabel;
 @end

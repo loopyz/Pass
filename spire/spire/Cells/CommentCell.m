@@ -32,12 +32,12 @@ const CGFloat kCommentPaddingFromRight = 8.0f;
         self.commentLabel.frame = (CGRect){.origin = {CGRectGetMinX(self.iconView.frame) + CGRectGetWidth(self.iconView.frame) + kCommentPaddingFromLeft, CGRectGetMinY(self.iconView.frame) + kCommentPaddingFromTop}};
         [self addSubview:self.commentLabel];
         
-        self.timeLabel = [[UILabel alloc] init];
-        self.timeLabel.textColor = [UIColor grayColor];
-        self.timeLabel.textAlignment = NSTextAlignmentLeft;
-        self.timeLabel.font = [UIFont secretFontLightWithSize:12.f];
-        self.timeLabel.numberOfLines = 1;
-        [self addSubview:self.timeLabel];
+        self.nameLabel = [[UILabel alloc] init];
+        self.nameLabel.textColor = [UIColor grayColor];
+        self.nameLabel.textAlignment = NSTextAlignmentLeft;
+        self.nameLabel.font = [UIFont secretFontLightWithSize:12.f];
+        self.nameLabel.numberOfLines = 1;
+        [self addSubview:self.nameLabel];
         
         
         self.likeButton = [[UIButton alloc] init];
